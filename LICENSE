@@ -1,24 +1,327 @@
-This is free and unencumbered software released into the public domain.
+# AEVUM-MERIDIAN ECONOMIC LICENSE
+## Version 1.0 — June 2026
 
-Anyone is free to copy, modify, publish, use, compile, sell, or
-distribute this software, either in source code form or as a compiled
-binary, for any purpose, commercial or non-commercial, and by any
-means.
+**Copyright © 2026 The Aevum-Meridian Project and its Contributors. All rights reserved where not expressly granted herein.**
 
-In jurisdictions that recognize copyright laws, the author or authors
-of this software dedicate any and all copyright interest in the
-software to the public domain. We make this dedication for the benefit
-of the public at large and to the detriment of our heirs and
-successors. We intend this dedication to be an overt act of
-relinquishment in perpetuity of all present and future rights to this
-software under copyright law.
+**SPDX-License-Identifier: Aevum-Meridian-1.0**
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
+---
 
-For more information, please refer to <https://unlicense.org>
+## PREAMBLE
+
+This License — hereinafter referred to as the **"Aevum‑Meridian Economic License"** — governs the use, modification, and redistribution of the **Aevum meta‑currency operating system** and the **Meridian universal value ledger** (collectively, "the Systems"), as well as all associated documentation, whitepapers, economic models, smart contracts, race contracts, and governance artifacts (the "Software").
+
+It is **derived from Maher's License, Version 1.0** (SPDX: Maher-1.0) in accordance with Section 8.5 of that License. It is **not** Maher's License, and is not endorsed by the original Maher's License Steward except as to its lawful derivation.
+
+This License is written for a system that:
+- Mints new value from verified human flourishing (contribution credits).
+- Holds custody of planetary value (reserve‑backed fiat, crypto, carbon credits).
+- Enforces **non‑punitive money** (I6 – no debit of personal balances as penalty).
+- Requires **proof‑of‑personhood as a third party** (I9 – never owned by the ledger).
+- Binds its own operators and governors through a **coercion‑resistance specification** (Tier 0.4).
+
+By exercising any right granted under this License, You accept and agree to be bound by its terms.
+
+---
+
+## TABLE OF CONTENTS
+
+1. Definitions
+2. Grant of Copyright License
+3. Grant of Patent License
+4. Conditions of Redistribution
+5. File‑Level Copyleft and Source Availability
+6. Contributions and Inbound Licensing (DCO)
+7. Economic, Ledger, and Governance Integrity Obligations
+8. Trademark, Brand, and Naming Provisions
+9. User Rights and Ethical Use Clauses (including the Anti‑Social‑Credit Floor)
+10. Compatibility With Other Licenses
+11. Disclaimer of Warranty
+12. Limitation of Liability
+13. Termination
+14. Versioning and Stewardship
+15. Governing Law and Severability
+16. Acceptance
+17. Appendix A — How to Apply This License to a File
+18. Appendix B — SPDX and Attribution
+19. Appendix C — Mapping to the Invariants (I1–I9)
+
+---
+
+## 1. DEFINITIONS
+
+**1.1 "License"** means this document, *Aevum‑Meridian Economic License, Version 1.0*.
+
+**1.2 "Systems"** means Aevum and Meridian, including all source code, object code, whitepapers, economic models, smart contracts, race contracts, governance artifacts, documentation, configuration files, and associated files distributed under this License.
+
+**1.3 "You"** (or **"Your"**) means an individual or legal entity exercising rights under this License.
+
+**1.4 "Contributor"** means any person or entity that creates, contributes to, or modifies the Systems and submits such Contribution under this License.
+
+**1.5 "Contribution"** means any work of authorship intentionally submitted for inclusion in the Systems.
+
+**1.6 "Covered File"** means a file that is governed by this License, whether by explicit SPDX header, inclusion in the source tree, or by virtue of being a Modification of an existing Covered File.
+
+**1.7 "Modification"** means any addition to, deletion from, or change to the substance or structure of a Covered File.
+
+**1.8 "Larger Work"** means a work that combines the Systems or any portion thereof with other material in separate files that are not themselves Covered Files.
+
+**1.9 "Distribute"** means to make available to the public or any third party, including as a hosted service, API endpoint, or embedded system.
+
+**1.10 "Invariants"** means the nine ledger invariants I1–I9 as defined in the Meridian v3 specification, incorporated herein by reference. A summary is provided in Appendix C.
+
+**1.11 "Trade‑off Register"** means the versioned, governance‑controlled artifact that states the current position on each contested axis of the Systems.
+
+**1.12 "Maturity Label"** means the classification of any subsystem as `Shipped`, `InDevelopment`, `Research`, or `DeprecatedRemoved`, as defined in the Maturity & Abandonment Ledger.
+
+**1.13 "User"** means any natural person who holds a balance, sends a transaction, earns a contribution credit, or interacts with the Systems as an end‑user.
+
+**1.14 "Race Contract"** means a smart contract encoded via `cross_system_events` that defines a competition to achieve a specified GDP target within a time window, with a governance stake as prize.
+
+---
+
+## 2. GRANT OF COPYRIGHT LICENSE
+
+Subject to the terms of this License, each Contributor hereby grants You a worldwide, royalty‑free, non‑exclusive, perpetual (subject to Section 13), irrevocable (subject to Section 13) copyright license to:
+
+(a) reproduce the Systems in whole or in part;
+(b) prepare Modifications and derivative works;
+(c) publicly display, perform, sublicense, and Distribute the Systems and Modifications thereof in Source Code Form or Executable Form;
+(d) use the Systems for any lawful purpose, subject to Sections 7 and 9.
+
+---
+
+## 3. GRANT OF PATENT LICENSE
+
+**3.1 Patent Grant.** Subject to the terms of this License, each Contributor hereby grants You a worldwide, royalty‑free, non‑exclusive, perpetual, irrevocable (subject to Section 3.2) license under such Contributor's Patent Claims to make, use, sell, offer for sale, import, and otherwise transfer the Systems.
+
+**3.2 Patent Termination.** If You initiate patent litigation alleging that the Systems or a Contribution constitute patent infringement, then any patent licenses granted to You under this License for that specific System shall terminate as of the date such litigation is filed.
+
+**3.3 Defensive Termination.** A patent license shall not terminate under Section 3.2 where the litigation is a good‑faith defensive response to patent litigation first initiated against You.
+
+---
+
+## 4. CONDITIONS OF REDISTRIBUTION
+
+You may Distribute the Systems, with or without Modifications, provided that:
+
+**4.1** You retain all copyright, patent, trademark, and attribution notices.
+
+**4.2** You include a complete, unmodified copy of this License with every distribution.
+
+**4.3** Every Covered File carries the SPDX identifier: `// SPDX-License-Identifier: Aevum-Meridian-1.0`
+
+**4.4** If You Modify any Covered File, You add prominent notices stating the change, the date, and a brief description.
+
+**4.5** If You Distribute in Executable Form, You accompany it with an SBOM in SPDX or CycloneDX format (per the Supply Chain Protocol, which is incorporated by reference from Maher's License §4.6).
+
+**4.6** If You Distribute to more than 1,000 Users, You publish build provenance attestations (SLSA Level 3 or higher) and a transparency log manifest within 30 days.
+
+---
+
+## 5. FILE‑LEVEL COPYLEFT AND SOURCE AVAILABILITY
+
+**5.1** Any Modification You make to a Covered File must be licensed under this License, on a file‑by‑file basis. Files in a Larger Work that do not incorporate Covered File material may be licensed under terms of Your choosing.
+
+**5.2** If You Distribute the Systems in Executable Form, You must make the corresponding Source Code Form available at no charge beyond reasonable distribution costs, either with the executable, via a written offer valid for three years, or on a publicly accessible permanent repository.
+
+**5.3** Source Code Form must include all build scripts, configuration files, and documentation required to produce a functionally equivalent Executable Form.
+
+**5.4** Hosted Service Distribution. Where You provide the functionality of the Systems as a hosted service (including API endpoints, ledger nodes, or policy engine as a service), You must make available the Source Code Form of the Modifications used to provide that service, under the same conditions as Section 5.2.
+
+---
+
+## 6. CONTRIBUTIONS AND INBOUND LICENSING (DCO)
+
+**6.1** Inbound Equals Outbound. Any Contribution intentionally submitted is licensed under this License.
+
+**6.2** Developer Certificate of Origin (DCO). Every Contribution must be accompanied by a `Signed-off-by` line in the commit message, attesting to the Contributor's right to submit under the DCO version 1.1.
+
+**6.3** No separate Contributor License Agreement (CLA) is required.
+
+---
+
+## 7. ECONOMIC, LEDGER, AND GOVERNANCE INTEGRITY OBLIGATIONS
+
+This Section codifies the economic and governance commitments as binding License conditions. Violation is a material breach.
+
+**7.1 Conservation of Value (I1, I3).** You may not Distribute Modifications that allow minting or burning of any currency outside the published, governed issuance rules of its currency type. Every mint and burn must be attributable, logged, and balanced (double‑entry). The invariant `Σ entries.amount = 0` per transaction must be preserved.
+
+**7.2 No Punitive Debit (I6).** You may not Distribute Modifications that permit any system actor to debit a personal contribution balance as a penalty. The only non‑holder debit permitted is the reversal of a specific, identified mint transaction proven fraudulent through the public dispute‑and‑arbitration process, limited to that mint's amount, within its dispute window, and never reducing a balance below the holder's undisputed credits.
+
+**7.3 Issuance‑Only Macro Control (I7).** You may not Distribute Modifications that allow the Policy Engine to author entries against personal accounts. The Policy Engine may modify issuance policies (future minting) but may never touch existing balances.
+
+**7.4 No Sensitive PII in Attestation Paths (I8).** You may not Distribute Modifications that cause raw biometric, health, or neural data to be stored or transmitted in identifiable form where a zero‑knowledge or minimized‑disclosure path exists. No contribution credit may be minted from neural/EEG data.
+
+**7.5 Personhood as a Third Party (I9).** You may not Distribute Modifications that cause Meridian or Aevum to become the sole or primary personhood authority. Personhood must be consumed as signed third‑party attestations independently validated by each system.
+
+**7.6 Trade‑off Register Integrity.** Any Distribution that changes a position named in the Trade‑off Register must reflect that change in both the machine‑readable `TradeOffRegister` class and the public document, and the change must be a logged governance act.
+
+**7.7 Maturity Label Honesty.** Any Distribution that claims a subsystem's maturity must match the public Maturity & Abandonment Ledger. Marketing or documentation that describes a `Research` subsystem as `Shipped` is unlicensed use.
+
+**7.8 Anti‑Social‑Credit Floor (Child Safety).** You may not Distribute the Systems in a manner that measures, rewards, or incentivises the bodies, appearance, or attention of minors. Age‑gating fails closed. No feature may be designed to punish lawful expression, association, or dissent. Contribution credits reward; they must never be architected to punish.
+
+**7.9 Race Contract Integrity.** If You deploy a Race Contract (a competition to achieve a GDP target), You must honour the 51% governance stake payout exactly as encoded in the `cross_system_events` contract, without modification that would allow the winner to violate Sections 7.2, 7.4, or 7.8.
+
+**7.10 Coordinated Disclosure.** Distributors who discover security, economic, or invariant‑breaking vulnerabilities agree to coordinated disclosure with a maximum 90‑day embargo and good‑faith engagement with the upstream maintainers.
+
+**7.11 Cryptographic Integrity.** Distributions must not replace audited cryptographic libraries (libsodium, BoringSSL, or RustCrypto equivalents) with unaudited or custom cryptographic code in ledger or identity paths.
+
+---
+
+## 8. TRADEMARK, BRAND, AND NAMING PROVISIONS
+
+**8.1** This License does not grant rights in the trademarks "Aevum", "Meridian", "Aevum‑Meridian", or the project logos, except as expressly stated herein.
+
+**8.2** You may Distribute unmodified Source Code Form without the official brand assets under the terms of this License.
+
+**8.3** If You make material Modifications (including changes to the invariants, the policy engine, or the race contract logic), You must:
+- Remove the official "Aevum" and "Meridian" trademarks from user‑visible surfaces.
+- Choose a distinct product name.
+- State clearly that Your Distribution is derived but not endorsed.
+
+**8.4** The license name "Aevum‑Meridian Economic License" is reserved. You may create derivative licenses provided You give them a different name and clearly state they are derived from this License Version 1.0.
+
+---
+
+## 9. USER RIGHTS AND ETHICAL USE CLAUSES
+
+**9.1 User Bill of Rights.** Every User of a Distribution licensed under this License is entitled to:
+- A complete, exportable, cryptographically verifiable history of their own balances and transactions.
+- Proof, on demand, that reserve‑backed holdings are fully backed.
+- The right to never have contribution credits earned, spent, or transferred without their consent.
+- Protection from having sensitive verification data repurposed for surveillance, profiling, or sale.
+
+**9.2 Ethical Use — Anti‑Surveillance and Anti‑Coercion.** You may not use, Distribute, or operate the Systems, or any Modification thereof, in a manner that:
+- Enables mass surveillance of a civilian population.
+- Systematically violates the Universal Declaration of Human Rights.
+- Is designed primarily to suppress journalism, dissent, or lawful assembly.
+- Creates a social‑credit system that penalises lawful behaviour or expression.
+
+**9.3 No Discrimination.** This License does not discriminate against any person, group, or field of endeavor, except as narrowly stated in Section 9.2.
+
+**9.4 Good Faith Interpretation.** Sections 7 and 9 shall be interpreted in favour of user safety, privacy, economic dignity, and the mission: *"Money that measures what we become, and can never be taken to punish how we live."*
+
+---
+
+## 10. COMPATIBILITY WITH OTHER LICENSES
+
+**10.1 Compatible Inbound Licenses.** Code licensed under MPL-2.0, Apache-2.0, BSD (2/3‑clause), MIT, ISC, CC0-1.0, or Unlicense may be incorporated into Covered Files, provided original notices are preserved.
+
+**10.2 Incompatible Inbound Licenses.** The following may **not** be incorporated without an explicit exception from the Steward: GPL (any version), AGPL, SSPL, Commons Clause, or BSL prior to its change‑date conversion.
+
+**10.3 Outbound Distribution.** Covered Files may be combined in a Larger Work with code under any of the licenses in Section 10.1. The Larger Work may be licensed under terms of Your choosing, provided the Covered Files retain this License and the Larger Work does not impose contradictory restrictions.
+
+---
+
+## 11. DISCLAIMER OF WARRANTY
+
+THE SYSTEMS ARE PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING TITLE, NON‑INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SYSTEMS IS WITH YOU.
+
+The warranties in Sections 7.2 (no punitive debit) and 7.8 (anti‑social‑credit floor) are **conditions of this License** and are not disclaimed.
+
+---
+
+## 12. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL ANY CONTRIBUTOR BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE SYSTEMS, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THIS LIMITATION DOES NOT APPLY TO LIABILITY THAT CANNOT BE EXCLUDED UNDER APPLICABLE LAW.
+
+---
+
+## 13. TERMINATION
+
+**13.1** This License terminates automatically if You fail to comply with any term and do not cure within 30 days of becoming aware (first cure in any 12‑month period).
+
+**13.2** Termination of Your rights does not terminate the rights of any downstream recipient who remains in compliance.
+
+**13.3** Sections 1, 7.2, 7.4, 7.8, 11, 12, 13, and 15 survive termination.
+
+---
+
+## 14. VERSIONING AND STEWARDSHIP
+
+**14.1** The Steward of this License is the Aevum‑Meridian Project, acting through its Governance Steward as defined in the Governance Constitution (Tier 3.1).
+
+**14.2** The Steward may publish new versions of this License. Each version has a distinguishing number.
+
+**14.3** A Covered File may be used under the version under which it was received, or any later version.
+
+**14.4** No one other than the Steward has the right to modify or publish new versions of this License.
+
+---
+
+## 15. GOVERNING LAW AND SEVERABILITY
+
+**15.1** This License shall be governed by the laws of the jurisdiction in which the Steward is principally located, excluding conflict‑of‑law provisions.
+
+**15.2** If any provision is held unenforceable, it shall be reformed only to the extent necessary to make it enforceable.
+
+**15.3** This License constitutes the entire agreement between the parties.
+
+---
+
+## 16. ACCEPTANCE
+
+You are not required to accept this License to receive or run the Systems. However, Distributing or Modifying the Systems indicates Your acceptance of all its terms.
+
+---
+
+## 17. APPENDIX A — HOW TO APPLY THIS LICENSE TO A FILE
+
+Add the following header to every Covered File:
+
+```
+// SPDX-License-Identifier: Aevum-Meridian-1.0
+// Copyright (c) [YEAR] [COPYRIGHT HOLDER]
+//
+// This file is part of the Aevum-Meridian Project and is licensed
+// under the Aevum-Meridian Economic License, Version 1.0.
+// See the LICENSE file in the repository root or
+// https://github.com/aevum-meridian/LICENSE
+```
+
+---
+
+## 18. APPENDIX B — SPDX AND ATTRIBUTION
+
+**SPDX Identifier:** `Aevum-Meridian-1.0`
+
+**Suggested attribution in user interfaces:**
+
+> *Includes software from the Aevum-Meridian Project, licensed under the Aevum-Meridian Economic License, Version 1.0. Source code available at https://github.com/aevum-meridian. Built for an economy that measures what we become, and can never be taken to punish how we live.*
+
+---
+
+## 19. APPENDIX C — MAPPING TO THE INVARIANTS (I1–I9)
+
+| Invariant | Summary | License Section |
+|-----------|---------|------------------|
+| I1 | Conservation per transaction | §7.1 |
+| I2 | Balance integrity | §7.1 (implied) |
+| I3 | Supply integrity | §7.1 |
+| I4 | Honest minting (M‑of‑N, nonce, expiry) | §7.1 |
+| I5 | Append‑only ledger | §7.1 (implied) |
+| I6 | No punitive debit | §7.2 |
+| I7 | Issuance‑only macro control | §7.3 |
+| I8 | No sensitive PII, no neural data | §7.4 |
+| I9 | Personhood as third party | §7.5 |
+
+---
+
+## CLOSING DECLARATION
+
+This License is dedicated to the proposition that money can be a **measure of human flourishing, not a weapon of control**. Every clause is to be read in service of that mission. Where ambiguity exists, the interpretation that most strongly protects the User's autonomy, privacy, and economic dignity shall prevail.
+
+**End of Aevum-Meridian Economic License, Version 1.0.**
+
+*Published under the Stewardship of the Aevum-Meridian Project, June 2026. Derived from Maher's License 1.0.*
+```
+
+This license is now ready to be committed to your repository as `LICENSE`. It is unbeatable because it:
+
+1. **Closes the gap** between browser security (original) and macroeconomic integrity (your project).
+2. **Directly enforces** the nine invariants (I1–I9) that make the $1Q race trustworthy.
+3. **Explicitly forbids** social credit, punitive debits, and neural data harvesting – the three real dangers.
+4. **Incorporates the Trade‑off Register** and **Maturity Labels** as binding governance artifacts.
+5. **Maintains file‑level copyleft** so that improvements to the invariants flow back upstream.
+6. **Is derived cleanly** from Maher's License, respecting its §8.5, while standing on its own.
