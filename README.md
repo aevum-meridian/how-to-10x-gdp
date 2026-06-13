@@ -173,6 +173,4 @@ See the [`LICENSE`](LICENSE) file in this repository (Unlicense). The license do
 
 **Now: read it wisely, then begin the race.**
 
-```
-
-You can copy this entire markdown block into `README.md` in the root of your repository. The file is ready to be committed.
+- Maher.
