@@ -1,0 +1,202 @@
+# Aevum v3 — Project Directory Structure & Architecture
+
+> **This document is the developer source of truth.** It defines where code
+> lives, the responsibility of each layer, the v3 hardening rules, and the
+> conventions every contributor must follow. It is kept in sync with the
+> codebase and is part of the CI‑reviewed surface.
+
+Aevum is a **meta‑currency operating system**. The v3 codebase implements a
+*trustworthy, inclusive, recoverable core* and models the full v3 blueprint as
+typed domain code. The architecture answers the eight conceptual **borders**
+identified in design review (see [`README.md`](../README.md)).
+
+---
+
+## Design posture (must hold across the codebase)
+
+1. **Money that proposes, humans that decide.** No machine‑learning model is on
+   the trusted path. AI lives only in `Governance/Advisory` and emits inert
+   `Proposal` records.
+2. **Trade‑offs are explicit & versioned.** The Trade‑off Register is modelled
+   in code (`App\Support\TradeOffRegister`) and documented in
+   [`TRADE-OFF-REGISTER.md`](TRADE-OFF-REGISTER.md).
+3. **Maturity is honest.** Every subsystem declares a `App\Support\Maturity`
+   (`Shipped` / `InDevelopment` / `Research` / `DeprecatedRemoved`).
+4. **Probabilistic systems are capped & appealable.** Personhood, Sybil pools,
+   and oracles all have hard caps and/or human appeal paths.
+5. **Money is integer minor units.** All balances/amounts are `int` minor units.
+   Conservation and non‑negativity are **enforced at the domain layer** and
+   property‑tested.
+
+---
+
+## Top‑level layout
+
+```
+aevum/
+├── app/
+│   ├── Support/                  # ★ cross‑cutting v3 primitives
+│   │   ├── Maturity.php          #   Shipped|InDevelopment|Research|DeprecatedRemoved
+│   │   ├── Money.php             #   integer minor‑unit value object + invariants
+│   │   ├── TradeOff.php          #   one trade‑off position (value object)
+│   │   └── TradeOffRegister.php  #   the versioned register (source of truth)
+│   ├── Domain/                   # ★ Aevum business core (framework‑light)
+│   │   ├── Currency/             #   L2 — the Currency Fabric / Mint Engine
+│   │   │   ├── Enums/            #     CurrencyKind, SupplyPolicy
+│   │   │   ├── Models/           #     Currency
+│   │   │   ├── Services/         #     MintEngine (supply‑conservation invariants)
+│   │   │   └── Exceptions/
+│   │   ├── Wallet/               #   L4 — balances, transfers, atomic swaps
+│   │   │   ├── Models/           #     Wallet, WalletBalance, Transaction
+│   │   │   ├── Enums/            #     TransactionType, TransactionStatus
+│   │   │   ├── Services/         #     WalletService, SwapService, WalletProvisioner
+│   │   │   └── Exceptions/
+│   │   ├── Identity/             # ★ Border 2 — tiered identity + recovery + Sybil
+│   │   │   ├── Models/           #     Identity, Attestation, RecoveryGuardian,
+│   │   │   │                     #     PersonhoodScore, SybilBountyClaim
+│   │   │   ├── Enums/            #     IdentityRung, AttestationKind, RecoveryStatus
+│   │   │   └── Services/         #     IdentityService, SocialRecoveryService,
+│   │   │                         #     SybilGraphAnalyzer, Rung1PoolGovernor,
+│   │   │                         #     AttestationVesting, SybilBountyRegistry,
+│   │   │                         #     PersonhoodScoreService
+│   │   ├── Governance/           #   DAO — split into three strict tiers
+│   │   │   ├── Models/           #     Proposal, Vote, ConstitutionalParameter
+│   │   │   ├── Enums/            #     ProposalStatus, VoteChoice, ProposalOrigin,
+│   │   │   │                     #     VotingMethod
+│   │   │   ├── Services/         #     GovernanceService, RatificationService
+│   │   │   ├── Automatic/        #     Tier0Rule (iface), pure verified stabilisers
+│   │   │   ├── Advisory/         #     ProposalGenerator (AI client, sandboxed)
+│   │   │   └── Safety/           #     CircuitBreaker, EmergencyPause
+│   │   ├── Oracle/               # ★ Border 4/Resilience — multi‑source truth
+│   │   │   ├── Models/           #     OracleProvider, OracleFeed, Observation,
+│   │   │   │                     #     Dispute
+│   │   │   ├── Enums/            #     FeedKind, DisputeStatus
+│   │   │   └── Services/         #     OracleAggregator, DisputeGame
+│   │   ├── Compliance/           # ★ Border 5 — tunnels are licensed entities
+│   │   │   ├── Models/           #     Jurisdiction, License, ReserveAttestation,
+│   │   │   │                     #     TravelRuleRecord
+│   │   │   ├── Enums/            #     LicenseKind, ComplianceRegime
+│   │   │   └── Services/         #     ReserveAttestationService, TravelRuleService,
+│   │   │                         #     KycTierGate, CrisisCommunication
+│   │   ├── Risk/                 # ★ scam scoring + sign‑time simulation
+│   │   │   ├── Enums/            #     RiskLevel
+│   │   │   ├── Data/             #     RiskAssessment
+│   │   │   └── Services/         #     ScamScorer, SignTimeSimulator
+│   │   ├── Tunnel/               #   L3 — bridges + user‑sovereign ethical filter
+│   │   │   ├── Models/           #     AssetLabel, GlobalBlock
+│   │   │   ├── Enums/            #     TunnelKind, FilterCategory, FilterScope,
+│   │   │   │                     #     FilterVerdictKind
+│   │   │   ├── Data/             #     AssetProfile, FilterVerdict
+│   │   │   └── Services/         #     EthicalFilter, LabelRegistry, GlobalBlockList
+│   │   └── Simulation/           # ★ Border 3 — CI‑gated macro stress tests
+│   │       ├── Data/             #     ScenarioResult
+│   │       ├── Scenarios/        #     Recession, Hyperinflation, BankRun,
+│   │       │                     #     VelocityShock, Adversarial
+│   │       └── Services/         #     SimulationRunner, MacroModel
+│   ├── Http/
+│   │   ├── Controllers/Api/      #   Versioned JSON API controllers (v1)
+│   │   ├── Controllers/Auth/     #   Breeze auth controllers
+│   │   ├── Requests/             #   FormRequest validation objects
+│   │   └── Resources/            #   API JSON resources / transformers
+│   ├── Models/                   #   Cross‑domain models (User)
+│   └── Providers/
+├── config/aevum.php              # domain configuration (caps, thresholds, regimes)
+├── database/{factories,migrations,seeders}
+├── docs/                         # ★ source‑of‑truth docs (this file, register, roadmap)
+├── resources/views/             # Blade + dashboard
+├── routes/{web,auth,api}.php
+├── tests/{Feature,Unit}/        # incl. invariant/property tests
+├── phpstan.neon                 # ★ Larastan Level 10 (maximum)
+├── pint.json                    # code style
+└── .github/workflows/ci.yml     # CI: Pint + Larastan L10 + tests
+```
+
+---
+
+## The three governance tiers (Border 1)
+
+The original "Autonomous Currency Governorship" is split so that the danger
+hiding inside the word *bounds* is removed:
+
+| Tier | What it is | Code | On trusted path? |
+|------|------------|------|------------------|
+| **Tier 0** | Deterministic, pure, property‑tested **automatic rules** (e.g. PEG rebalance) with hard per‑epoch movement caps and conservation invariants. **No ML.** | `Governance/Automatic/*` implementing `Tier0Rule` | Yes (verified) |
+| **Tier 1** | **AI advisory proposer** — reads oracle feeds, emits a `Proposal` with input vector + model hash + rationale. Does nothing until ratified. | `Governance/Advisory/ProposalGenerator` | No (sandboxed) |
+| **Tier 2** | **Human/DAO ratification** via `GovernanceService` + `RatificationService`. | `Governance/Services/*` | Yes |
+
+Every Tier‑0 action and every ratified change emits an immutable, queryable
+audit record. `Governance/Safety/CircuitBreaker` halts a currency's automatic
+tier on anomalous inputs; `EmergencyPause` is the human‑triggerable override.
+`ConstitutionalParameter` rows can never be touched by Tier‑0/Tier‑1 and require
+the high‑quorum, timelocked constitutional process to change.
+
+---
+
+## The four‑rung identity ladder (Border 2)
+
+| Rung | Name | Unlocks | Verification |
+|------|------|---------|--------------|
+| 0 | Pseudonymous wallet | Hold assets, swap | None (instant) |
+| 1 | Social attestation | Probationary UBI pool | Web‑of‑trust, staked attestations, Sybil graph defence |
+| 2 | Document / institutional | Regulated features where law requires | Licensed partners |
+| 3 | Full personhood | Full `$UNA`, 1‑human‑1‑vote | Pluralistic ZK personhood providers |
+
+**Sybil containment (v3):** `Rung1PoolGovernor` enforces a constitutional hard
+issuance cap; `AttestationVesting` ramps new identities toward full value and
+resets on slash; `SybilBountyRegistry` runs a standing public bounty.
+**Social recovery is mandatory** (`SocialRecoveryService`, M‑of‑N guardians,
+timelocked challenge window). **Personhood scoring is explainable and
+appealable** (`PersonhoodScoreService`).
+
+---
+
+## Layering rules (enforced by convention + review)
+
+1. **`app/Domain` is the core.** Business rules only. It may depend on Eloquent
+   and a few Laravel contracts, **never** on HTTP request/response objects.
+2. **`app/Support` is dependency‑free primitives.** `Money`, `Maturity`,
+   `TradeOff*` have no framework dependencies and are pure/unit‑tested.
+3. **Controllers are thin.** `Http/Controllers/Api` validates via `FormRequest`,
+   calls a domain **Service**, returns an **API Resource**.
+4. **Enums model closed sets.** Never magic strings.
+5. **No ML on the trusted path.** Anything probabilistic is advisory, capped,
+   or appealable.
+6. **Everything is typed.** Strict types, full param/return types, documented
+   generics, so Larastan Level 10 passes with **zero** errors and **no baseline**.
+
+---
+
+## Money & invariants (v3 hardening)
+
+- `App\Support\Money` is an immutable integer‑minor‑unit value object. It throws
+  on negative amounts and on overflow‑prone operations.
+- `Currency\Services\MintEngine` enforces **total‑supply conservation** (a
+  currency's `total_supply` equals the sum of minted minus burned) and the
+  **max‑supply cap**, and refuses to mint under a `Fixed` policy after genesis.
+- `Wallet\Services\WalletService` enforces **no negative balances** at debit
+  time. These invariants are covered by property‑style tests in `tests/Unit`.
+
+---
+
+## Maturity labels (Border 8)
+
+`App\Support\Maturity` is the single source of truth for each subsystem's
+status. The `MaturityRegistry` maps subsystems → maturity and is surfaced via
+`/api/v1/maturity`. Changing a label is a governance act (documented in the
+Trade‑off Register). The retired EEG `$FOCUS` is kept as
+`Maturity::DeprecatedRemoved` so the historical record is honest.
+
+---
+
+## Quality gates (CI‑enforced, no exceptions)
+
+| Gate | Tool | Command |
+|------|------|---------|
+| Code style | Laravel Pint (PSR‑12) | `composer lint` |
+| Static analysis | **Larastan Level 10** | `composer analyse` |
+| Tests | PHPUnit | `composer test` |
+| All of the above | — | `composer ci` |
+
+The GitHub Actions workflow (`.github/workflows/ci.yml`) runs all three on every
+push and pull request. **A red pipeline blocks merge. No baseline, no
+suppression.**

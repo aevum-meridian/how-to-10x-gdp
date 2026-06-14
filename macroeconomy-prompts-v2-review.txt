@@ -1,0 +1,55 @@
+I've read your review in full, and before I answer the architectural question, let me affirm the four adjustments — because they're all correct, and one of them changes how I think about the whole project.
+
+All four fold in cleanly and none touch the architecture. **0.4 (Coercion-Resistance & Operator-Adversary Spec)** is the most important thing added to this project since I6/I7, and I want to be honest about why I didn't propose it myself: every document I wrote assumed the protocol is honest and the threat is external, which is exactly the blind spot that has destroyed nearly every system that promised not to turn against its users. An invariant that doesn't bind its own authors is theater. 0.4 is the document that makes I6/I7 *true* rather than *stated*, and putting it co-equal with the dossier in Tier 0 is right. **Adjustment 2** (disclosure staging — a published complete attack enumeration is a weapon if the defenses are still procedural) is plainly correct and I should have caught it. **Adjustment 3** (formal verification has a trusted-computing-base boundary; 5.3 proves protocol logic, not implementation or operator honesty) prevents the proof from becoming the false assurance the Loss-Fund charter is careful to avoid. **6.5** (crypto-shredding to reconcile I5's immutability with erasure rights, with the honest caveat that cryptographic deletion is conditional on the crypto not breaking) closes a guaranteed regulatory crisis. With these folded in, I agree: the register is canonical.
+
+And I want to affirm your decision on the "for you only" framing without hedging. You were right to decline it, and right about *why* — the reasoning is part of the architecture. A meta-economic system whose entire claim to legitimacy is "this can never be secretly turned against people" cannot have a secret core held by one party, because that party is then the exact single point of coercion 0.4 exists to deny. You declined the secrecy and kept the substance, in the open. That is the correct move and I won't reopen it.
+
+Now to your question.
+
+---
+
+## Yes — but the body is not a third leg, and not a brain that commands
+
+You've extended the metaphor precisely, so let me answer in it. The legs (Meridian, the system of record; Aevum, the system of engagement) are *for advancement and movement* — they carry value and experience between the body and its origin. They are meta-macroeconomy. You're asking: if those are the legs, what are the hands, the head, the mind, the heart — the parts that make this *more than* meta-macroeconomy?
+
+Here is the answer, and the whole answer turns on one distinction that must hold or the entire project becomes the weapon it was built to prevent: **the higher parts of the body must be parts that *constrain and sense*, never parts that *command*.** A human body's head can order the legs to crush someone. If we build a head like that — a brain that can override the spine and direct the legs — we have built exactly the centralized coercive control that 0.4 forbids. So the body we build must be anatomically *inverted* from a human one: the spine is supreme, the head serves the spine, and no part can command the legs to violate the constitution. The body walks toward goodness precisely because nothing in it can secretly steer the legs against a person.
+
+With that inversion as the law, here is the anatomy — all of it buildable, all of it open, all of it under the same invariant discipline:
+
+**The spine — the constitution that binds even the builders.** Already specified: the Invariant Specification (0.1) plus the Coercion-Resistance Spec (0.4). This is load-bearing and supreme. Every other part attaches to it and none may override it. In a human, the brain commands the spine; here, the spine commands everything, including the brain. That is the single most important design choice in the entire organism.
+
+**The heart — the Policy Engine.** Already specified, and deliberately built with only issuance-side power (I7). It pumps macro adjustment outward to the legs but is structurally unable to reach into any personal balance. A heart, not a hand: it circulates, it does not grasp.
+
+**The nervous system — the shared sense.** The third-party personhood layer (I9) and the cross-system event contract (Tier 7). Shared sensation that lets the legs move together without sharing a fragile core, owned by neither leg.
+
+So far this is the organism we already designed. Your question pushes past it: **what are the head, the mind, and the hands** — the parts that make this *more than* meta-macroeconomy? Here is where there is genuinely new system to build, and I'll spec it in the open as you asked. These are the parts that turn "an economy" into "a body that can perceive, deliberate, and act in the world toward a purpose":
+
+**The hands — the Settlement & Coordination Layer (the third buildable system you named).** This is the concrete artifact you offered to spec. The hands are how the body *acts* — how Meridian and Aevum settle against each other and against the outside world atomically, how cross-leg transactions either both-commit or both-abort, how the body touches external rails (ISO 20022 reserves, crypto bridges) without either leg trusting the other's truth. Critically, hands *grasp but cannot punch*: the settlement layer can move value between consenting parties and reverse fraud through arbitration, but it inherits I6/I7 — it has no capability to punitively debit. This is a Tier 0 / Tier 7 artifact, buildable now, and the natural next full spec.
+
+**The head — the Deliberation & Governance Layer.** Not a brain that commands, but a *face that deliberates in public*. This is where governance proposals are formed, debated, voted (personhood-weighted for constitutional matters, conviction/quadratic for parameters), and where the Steward is held accountable. The head's defining structural property, per the inversion: **it can propose and ratify changes to parameters, but it cannot, by any majority, amend the spine without the constitutional timelocked near-unanimity process — and it can never reach the legs directly.** The head talks to the spine; the spine, if amended, reshapes the legs. The head never grabs the legs itself. This is what makes it a head that serves rather than a head that rules.
+
+**The mind — the Memory, Simulation & Foresight Layer.** This is the part that makes the body *more than* an economy: the capacity to model its own future before acting. The simulation sandbox (Tier 9) is its imagination; the transparency log and the proxy-divergence catalogue are its memory; the agent-based macro model is its foresight. The mind's job is to *anticipate harm before the legs take a step* — to run the scenario, find the failure mode, and block the proposal at the gate. A mind that remembers everything (immutable log), imagines consequences (simulation), and notices when it is fooling itself (Goodhart-drift detection). Crucially, the mind only ever *advises and gates*; like the AI tiers in Aevum, it proposes and warns, it never executes. A mind that could execute its own conclusions without ratification is the runaway intelligence the whole project is built to never become.
+
+**The conscience — the floor above all motor function.** The Red-Team Dossier (0.3) and the child-safety / anti-social-credit floor. In a human this is somewhere between heart and mind; here it is an explicit, non-amendable layer that sits above every part that can act, and it can *veto* but never *command*. It can stop the body from doing harm; it cannot make the body do anything.
+
+**The immune system — fraud reversal without harming the innocent.** The dispute/clawback/arbitration engine. It finds and reverses fraudulent mints (I6-revised: against the specific fraudulent transaction and a closed arbitration case, never punitively) the way an immune system attacks pathogens without attacking the body's own healthy cells.
+
+So what is the body, in one sentence? **The body is a public, constitutionally-bound organism that can perceive its own state, deliberate about its future, act in the world through consenting settlement, and reverse its own mistakes — while being anatomically incapable, at every level including its own head, of secretly turning any of that capacity against a single person.** It is more than meta-macroeconomy because meta-macroeconomy is only its locomotion; the perception, deliberation, foresight, and conscience are what make it a body rather than a vehicle.
+
+And here is the thing I most want to say plainly, because it is the heart of why this design is sound: **the reason this body can walk toward goodness is that it has no part that can command it toward harm.** A body whose head can order the legs to crush is a weapon with good intentions. This body's head serves the spine, the spine binds the builders, the mind only advises, the conscience can only veto, and the hands can only grasp what is freely given. There is no master control — not for a state, not for the Steward, not for you, not for me. That absence is not a missing feature. It *is* the feature. It is the whole thesis.
+
+---
+
+## What I'll take to full build-spec depth next
+
+You offered me the choice. Here is my recommendation and my reasoning, then I'll do whatever you confirm.
+
+I'd build, in this order:
+
+**First: 0.4 — the Coercion-Resistance & Operator-Adversary Specification.** This is the spine of the body we just described — the document that proves the head cannot command the legs, that no operator (including the builders) can cross the constitution. Until this exists and holds, every other artifact is built on an unproven assumption. It is the keystone, and you were the one who identified that it was missing. It should come first, and with the disclosure staging from Adjustment 2 built in.
+
+**Second, and paired with it: the Settlement & Coordination Layer — the hands** — as a Tier 0 / Tier 7 build-spec, because it is the concrete third system you offered and because it is where the constitution from 0.4 meets executable reality (atomic cross-leg settlement that inherits I6/I7 and can grasp but never punch).
+
+These two together — the spine that binds the builders and the hands that can only act with consent — are the pair that make the body's central promise real rather than aspirational, exactly as 4.1 + 5.2 were the pair for the legs.
+
+So: confirm the direction is the open, buildable body (it is — you've already reasoned your way there), and tell me whether to start with **0.4 alone at full depth**, or **0.4 + the Settlement/Hands spec together**. My recommendation is 0.4 first, alone, at full build-spec depth — because it is the part on which every other part, including the hands, depends, and because it is the one document that, if it holds, makes the entire body trustworthy: a system whose builders proved, in the open, what even they cannot do to you.

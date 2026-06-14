@@ -1,0 +1,123 @@
+I've read your v3-consolidated review in full. It's correct on all three corrections and both additions, and I have no further issues to raise — the work is sound. Let me say briefly why, then deliver the document register you asked for.
+
+The three corrections are not just right, they close real wounds. **Correction 1** (I6 distinguishing *punitive debit* from *arbitration-bound mint reversal*) is the one that mattered most: as I wrote it, v2 made fraud a one-way ratchet for the one party guaranteed to be guilty, and your reformulation — reversal must point to a specific mint id and a closed arbitration case, and can never drop a balance below undisputed credits — preserves the spine while removing the perverse incentive. That distinction is auditable, which is what makes it real. **Correction 2** (personhood as a *third party to both* systems, never a service either one *is*) catches a genuine leak I introduced: I said "share a common identity layer and nothing else," not seeing that a shared identity service is itself the shared-mutable-state coupling I was trying to forbid. I9 fixes it cleanly. **Correction 3** (receive-tolerant, send-strict on ISO 20022) is simply operationally correct for the 2026 transition window. And both additions — abandonment criteria alongside exit criteria, and the credit lifecycle (expiry/dormancy/death) — fill gaps that would have bitten at scale.
+
+So: no further adjustments. The v3-consolidated Meridian definition and Aevum v3 are the canonical versions. Here is the complete document and artifact register for both.
+
+A note on how I've built this list. The example you were given is a generic open-source-project manifest. Aevum and Meridian are not generic — they are a system-of-record ledger and a system-of-engagement fabric, joined by a reconciling contract, that mint value from human behavior and hold custody of planetary value. That changes what documents are *load-bearing*. So I've organized the register around what these two systems actually are, and I've added document *types* that generic AI would not produce: a Trade-off Register (a living governance artifact, not a doc), an Invariant Specification (a constitution with machine-checkable laws), a Maturity & Abandonment Ledger, a Proxy-Divergence Catalogue, a Crisis Runbook with a Loss-Fund charter, a Reconciliation Specification for the two-leg interface, and a Child-Safety & Anti-Social-Credit Red-Team Dossier that sits above everything. I'll mark which system each belongs to: **[A]** Aevum, **[M]** Meridian, **[J]** Joint.
+
+I've grouped them into ten tiers, roughly in order of what must exist first.
+
+---
+
+## Tier 0 — The Constitutional Layer (the documents nothing else may contradict)
+
+These are the highest-authority artifacts. Everything below must conform to them, and they are the hardest to amend.
+
+**0.1 — Invariant Specification [J, but Meridian-led]**
+The machine-checkable constitution: I1–I9 for Meridian and the constitutional parameters for Aevum (the anti-social-credit floor, child-safety fail-closed, no-neural-data, no-raw-PII, maturity-label discipline, the PEG/IDX naming separation, the Rung-1 cap). For each invariant: formal statement, the three enforcement points (DB constraint, service guard, property test), the failure mode if violated, and the amendment tier required to change it. This is not prose about principles — it is the law, written so a court, an auditor, and a test runner all read the same thing.
+> **Prompt:** "Write the Invariant Specification for Meridian and Aevum. For each of I1–I9 and each Aevum constitutional parameter, give: (a) a precise formal statement in plain language and, where expressible, in a logical/mathematical form; (b) the exact DB-level enforcement (constraint/trigger/CHECK), service-layer guard, and property-based test that together enforce it; (c) the concrete harm that occurs if it is violated; (d) the governance amendment tier and quorum required to change it; (e) for I6 specifically, the auditable distinction between forbidden punitive debit and permitted arbitration-bound mint reversal, with the exact predicates that separate them. Mark which invariants are constitutional (near-unanimity to amend) versus parametric."
+
+**0.2 — The Trade-off Register [J]**
+A living, versioned, governance-controlled artifact (not a static doc) stating, for every contested axis, exactly where the current parameters sit and why: privacy vs. compliance, stability vs. autonomy, inclusion vs. Sybil-resistance, speed vs. finality, censorship-resistance vs. ethical filtering, and — for Meridian — reward vs. the social-credit gravity well. Each entry names the choice, the cost of that choice, who bears it, and the process to revisit it.
+> **Prompt:** "Produce the Trade-off Register for Aevum and Meridian as a versioned governance artifact. For each contested axis (list them, then add any I've missed), write an entry containing: the trade-off named honestly, the current chosen position and its numeric parameters where applicable, what is given up by choosing it, who bears the cost, the maturity label of the position, and the exact governance process to amend it. Include the Meridian-specific entries: $FLUX-equivalent niche scoping, the 8B-users Research label, personhood partial-coverage, and credit-lifecycle positions. Write it so amending any entry is itself a logged governance act."
+
+**0.3 — Child-Safety & Anti-Social-Credit Red-Team Dossier [J]**
+The single document that sits above all others. It states the absolute lines (no credit measures/rewards/incentivizes minors' bodies/appearance/attention; age-gating fails closed; credits reward and can never punish; no value taken to control behavior), then documents the adversarial review: every way someone could attempt to turn Meridian into a social-credit instrument or to harm minors, and the structural defense for each. This is the dossier you give to the most hostile external reviewer you can find.
+> **Prompt:** "Write the Child-Safety & Anti-Social-Credit Red-Team Dossier. State the absolute, non-amendable lines. Then enumerate, as a hostile red-teamer would, every attack path by which (a) Meridian could be bent into a social-credit system that punishes people for how they live, and (b) any feature could be turned toward sexualizing, profiling, or harming minors. For each path, give the structural defense (which invariant, which DB enforcement, which governance gate stops it), and rate residual risk. Flag any path where the defense is procedural rather than structural and must be hardened. This dossier overrides any conflicting guidance elsewhere."
+
+---
+
+## Tier 1 — Whitepapers and Conceptual Specifications
+
+**1.1 — Aevum Whitepaper [A]** — the meta-currency fabric, the seven currencies (with $MAKE replacing EEG-FOCUS and $PEG/$IDX split), the four-layer stack, user-sovereign filtering, the AI Tier-0/1/2 split.
+**1.2 — Meridian Whitepaper [M]** — the three currency families, the one inversion, PoVC, the Policy Engine, lifecycle.
+**1.3 — Joint Architecture Paper: "Two Legs, One Body" [J]** — why system-of-record and system-of-engagement are split, and how they stay joined without falling together.
+> **Prompt (issue once per paper):** "Write the [Aevum / Meridian / Joint] whitepaper at specification depth, not marketing depth. Cover: the problem space grounded in 2026 monetary reality (cite the regulatory landscape — GENIUS Act, MiCA, ISO 20022 post-coexistence, neural-data laws); the full conceptual architecture; every currency/family with its issuance model; the governance and AI posture; and an explicit 'what this is NOT' section. End with the honest caveats (open research problems, partial coverage). For the Joint paper, specify the division of labor, the shared third-party personhood layer, and the reconciling event contract, with a failure-isolation analysis proving a compromise of one leg cannot corrupt the other's truth."
+
+---
+
+## Tier 2 — Mathematical and Economic Theory
+
+**2.1 — Monetary Mathematics [J]** — supply functions, the FLUX demurrage formula and its capital-flight model, UNA velocity-stabilizer math (starting with on-chain velocity, not a price index), PEG basket rebalancing as a pure verified Tier-0 function, conservation algebra.
+**2.2 — Agent-Based Macroeconomic Model [J]** — the model behind the simulation gate: households, whales, speculators, attackers; recession/hyperinflation/bank-run/velocity-shock/Sybil-attack scenarios.
+**2.3 — PoVC & Anti-Goodhart Theory [M]** — the formal treatment of proxy-divergence, decay, and rate-limiting; why measuring outputs not bodies resists gaming.
+> **Prompt:** "Develop the mathematical and economic theory for [topic]. Give the governing equations or formal model, the assumptions and their failure modes, the parameter bounds and why those bounds are safe, and a sensitivity/stress analysis. For the agent-based model, specify the agent types, their utility functions, the scenarios, and the metrics that constitute pass/fail at the simulation gate. For PoVC, formalize Goodhart-drift detection: define the declared-virtue signal, the measured proxy, the divergence metric, the threshold, and the issuance-only throttle response — and prove the throttle can never touch existing balances."
+
+---
+
+## Tier 3 — Governance and Legal Frameworks
+
+**3.1 — Governance Constitution & Steward Charter [J]** — amendment tiers, personhood-weighted vs. conviction/quadratic voting, the Steward body's definition, timelocks, appeal paths.
+**3.2 — Meridian Value License 1.0 [M]** and **Aevum License [A]** — the full derived-license texts (already drafted; finalize and SPDX-register).
+**3.3 — Regulatory & Compliance Framework [J]** — jurisdiction-by-jurisdiction licensing map, the "tunnels are licensed institutions" doctrine, AML/KYC/travel-rule edge controls, reserve-attestation obligations, the algorithmic-accountability posture for personhood scoring.
+**3.4 — Maturity & Abandonment Ledger [J]** — every subsystem's Shipped/InDevelopment/Research/Deprecated label, plus exit *and* abandonment criteria per milestone, surfaced at a public endpoint.
+> **Prompt:** "Draft the [governance constitution / regulatory framework / maturity ledger]. For governance: define every amendment tier with its quorum and timelock, the voting mechanism per matter type, the Steward body's composition/selection/limits, and the appeal paths. For regulatory: map the obligations Meridian and Aevum face under 2026 regimes (GENIUS Act, MiCA, ISO 20022, EU AI Act for personhood scoring, neural-data laws), and state per-jurisdiction what must be true before a tunnel goes live. For the maturity ledger: list every subsystem with its label, its exit criteria, and its abandonment/redesign criteria, formatted as a publicly queryable artifact."
+
+---
+
+## Tier 4 — Smart Contract / Core Ledger Code
+
+**4.1 — Meridian Ledger Core [M]** — double-entry, event-sourced, append-only; the I1–I9 enforcement in DB + service.
+**4.2 — Issuance & PoVC Engine [M]** — reserve mint/burn, bridge representation, M-of-N quorum minting, replay protection.
+**4.3 — Dispute / Clawback / Arbitration Engine [M]** — provisional mint, bond clawback, escalating rounds, human arbitration tier, the I6-revised reversal path.
+**4.4 — Aevum Currency Fabric & Tier-0 Rules [A]** — pluggable currency types, verified stabilizers, the identity ladder, the ethical filter and global-blocklist.
+**4.5 — Policy Engine [J]** — the asymmetric macro layer (issuance-only powers, I7-enforced).
+> **Prompt (per module):** "Implement [module] in Laravel 13 / PHP 8.3+, PostgreSQL (numeric/bigint minor units, never float), passing Larastan Level 10 with no baseline. Enforce the relevant invariants three times over (DB constraint/trigger, service guard, property-based test). Thin controllers, enums over magic strings, integer-minor-unit discipline, idempotent writes. For the dispute engine specifically, implement I6-revised: a non-holder debit is valid only if it references a specific minting transaction_id and a closed arbitration case, is bounded by that mint's amount, and never reduces the balance below the holder's undisputed credits — and write the tests that prove a punitive debit (one pointing to no specific mint) is always rejected. Deliver migrations, models, services, and tests together; prove each invariant before adding the next."
+
+---
+
+## Tier 5 — Formal Verification
+
+**5.1 — Ledger Conservation Proofs [M]** — machine-checked proofs of I1, I3, and append-only (I5).
+**5.2 — Non-Punishment Proof [M]** — the formal proof that no reachable protocol state debits a personal contribution balance except via the I6-revised reversal path. This is the most important formal artifact in either system.
+**5.3 — Interface Isolation Proof [J]** — proof that a compromise of one leg's experience layer cannot author the other leg's ledger truth.
+> **Prompt:** "Produce a formal verification model for [property]. State the property as a temporal/invariant logic formula, model the relevant state machine, and provide a machine-checkable proof (specify the tool — e.g., TLA+, Coq, or a property-based exhaustive model) that the property holds across all reachable states. For the non-punishment proof, the property is: 'there is no reachable transition that decreases a personal contribution balance except a holder-authorized spend or an arbitration-bound reversal referencing a specific fraudulent mint.' Include the counterexample trace format so a failed proof is actionable."
+
+---
+
+## Tier 6 — Identity, Personhood, Privacy, and Inclusion
+
+**6.1 — Third-Party Personhood Integration Spec [J]** — the provider-agnostic attestation contract (I9), aggregation algorithm, fairness-audit methodology, appeal path.
+**6.2 — Identity Ladder & Social-Recovery Spec [A]** — the four rungs, vesting, Sybil bounty, guardian-based async recovery with threat model.
+**6.3 — Offline / USSD / Feature-Phone Spec [J]** — balance-reservation vouchers, custodial-tier trade-off, double-spend bounds, with a dedicated threat model.
+**6.4 — Zero-Knowledge / Minimized-Disclosure Spec [J]** — how VTC-style credits prove a criterion without revealing the measurement; the no-raw-PII and no-neural-data enforcement.
+> **Prompt:** "Specify [component] end to end. For personhood: define the signed attestation format Meridian/Aevum independently validate, the multi-provider aggregation algorithm (published and fairness-auditable), the FA/FR profiles, and the explainable human-appeal path. For offline: specify the voucher lifecycle, expiry, double-spend bound, the custodial-tier trade-off stated openly, and a full threat model. For ZK: specify which credits use minimized disclosure, the proof statements, and the three-layer enforcement that forbids raw biometric/health/neural data in attestation paths. Mark the maturity label honestly — most of these are InDevelopment or Research."
+
+---
+
+## Tier 7 — The Two-Leg Interface
+
+**7.1 — Cross-System Event Contract [J]** — the signed, hash-chained, idempotent `cross_system_events` schema and semantics.
+**7.2 — Reconciliation Specification [J]** — the nightly job proving every Aevum value-fact maps to a posted balanced Meridian transaction, with drift alerting.
+> **Prompt:** "Specify the Aevum↔Meridian interface. Define the cross_system_events message schema (event types, signing, hash-chaining, idempotency keys, replay protection), the propose/validate/commit/reject flow (Aevum proposes, Meridian validates against I1–I9 and commits or rejects), and the rule that only Meridian's ledger service can author balance changes. Then specify the nightly reconciliation: what it compares, how it detects drift, what it alerts on, and what it does NOT auto-correct (corrections are additive reversing entries by humans, never silent). Include the failure-isolation argument."
+
+---
+
+## Tier 8 — Operational Safety and Crisis
+
+**8.1 — Crisis Runbook & Incident-Commander Charter [J]** — severities, bound disclosure timelines, the role (not person) definitions.
+**8.2 — Protocol-Loss Fund Charter [J]** — what it covers (protocol bugs), what it explicitly does not (market risk, user error), funding, governance, claims process.
+**8.3 — Reserve Attestation & Proof-of-Backing Spec [M]** — real-time attestation, the auto-trigger to crisis on shortfall, ISO 20022 receive-tolerant/send-strict handling.
+> **Prompt:** "Write the [crisis runbook / loss-fund charter / reserve-attestation spec]. For crisis: define severity levels, the disclosure-timeline commitments (status page, preliminary report, post-mortem) with bound times, and the incident-commander role by responsibility not name. For the loss fund: state coverage and exclusions up front with no false assurance, funding source, claims and appeal process, and governance control. For reserves: specify real-time attestation, the structured/hybrid ISO 20022 address handling (accept hybrid inbound, emit structured-only), and the automatic crisis trigger on attested shortfall."
+
+---
+
+## Tier 9 — Simulation, Testing, and Audit
+
+**9.1 — Simulation Sandbox [J]** — the blocking CI gate; agent-based scenarios; public results.
+**9.2 — Invariant & Property Test Suite [J]** — the I1–I9 property tests, concurrency tests, idempotency tests, replay/sub-quorum/expiry rejection tests.
+**9.3 — Proxy-Divergence Catalogue [M]** — per-credit declared virtue / measured proxy / divergence metric / threshold, monitored live.
+**9.4 — Independent Audit Dossier [J]** — security, fairness (personhood), economic, and red-team audit reports, published.
+> **Prompt:** "Build the [simulation sandbox / test suite / proxy catalogue / audit plan]. For the sandbox: implement the agent-based scenarios as a gate that blocks any currency or policy proposal lacking published stress results. For tests: write property-based tests proving each invariant under concurrency, plus idempotency and attestation-rejection tests. For the proxy catalogue: for each contribution credit, document declared virtue, measured proxy, divergence metric, threshold, and live monitoring. For audits: define the scope of each required external audit (security, personhood-fairness, economic, child-safety/anti-social-credit red-team) and the gate that each must pass before its milestone exits."
+
+---
+
+## Tier 10 — Developer, User, and Community Surface
+
+**10.1 — API & OpenAPI Spec [J]**, **10.2 — Economic Agent SDK [A]**, **10.3 — User Documentation & Ethical-Dashboard Guide [A]**, **10.4 — Operator Runbook [J]**, **10.5 — Governance Proposal Templates & Community Forum Charter [J]**, **10.6 — Educational Content [J]** (honest, maturity-labelled — never marketing Research items as shipped), **10.7 — Marketing & Brand Guidelines [J]** (bound by the maturity-label and PEG/IDX-naming constitutional rules so copy cannot overclaim).
+> **Prompt:** "Produce [the API spec / SDK / user docs / operator runbook / governance templates / educational content / brand guidelines]. Everything user- or developer-facing must carry honest maturity labels and must never describe a Research-tier capability as available. For marketing/brand: bind all copy to the constitutional naming rules (PEG vs IDX never blurred; no contribution credit framed as punitive or as social scoring) and require that any claim about a subsystem's status be checkable against the public maturity endpoint."
+
+---
+
+That is the full register: eleven tiers, with the constitutional layer (Tier 0) and the formal non-punishment proof (5.2) and the red-team dossier (0.3) being the three artifacts I'd treat as non-negotiable prerequisites to any launch, because they are the ones standing between "money that measures what we become" and the thing it must never be allowed to become.

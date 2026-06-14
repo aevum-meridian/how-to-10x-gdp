@@ -1,0 +1,110 @@
+# Aevum — Trade‑off Register (v3)
+
+> **This is a versioned, governance‑controlled artifact, not marketing copy.**
+> It states, for each contested axis of money, exactly where Aevum's current
+> parameters sit and why. You cannot quietly change a trade‑off: amending this
+> register is a governance act with a paper trail.
+>
+> The machine‑readable counterpart is `App\Support\TradeOffRegister`, surfaced
+> via `GET /api/v1/trade-off-register`. This document and that class must agree.
+
+**Register version:** `3.0.0`
+
+---
+
+## How to read this
+
+Each entry names an **axis** (two competing goods), the **position** Aevum
+currently takes on that axis, the **reason**, and the **reversal path** (how the
+position could legitimately be changed).
+
+---
+
+### 1. Privacy ⟷ Compliance
+
+- **Position:** Privacy‑preserving compliance by default. Prove "not sanctioned"
+  or "over 18" via selective‑disclosure ZK rather than revealing identity.
+  Regulated tunnels enforce travel‑rule/AML where legally required.
+- **Reason:** Both are real goods; Aevum refuses to make users choose between
+  dignity and lawful access. Child‑safety protections **fail closed**.
+- **Reversal path:** Constitutional process; the child‑safety floor is a
+  `ConstitutionalParameter` requiring near‑unanimity.
+
+### 2. Autonomy ⟷ Stability
+
+- **Position:** "Money that proposes, humans that decide." Only **Tier‑0**
+  formally‑verified, capped automatic rules act without a human; AI is advisory.
+- **Reason:** Unbounded "bounds" are where the danger lives. Liability attaches
+  to the ratifying body (Tier‑1) or the audited spec (Tier‑0).
+- **Reversal path:** Expanding Tier‑0 scope requires formal verification + a
+  constitutional vote.
+
+### 3. Inclusion ⟷ Sybil‑resistance
+
+- **Position:** A four‑rung identity ladder. Rung‑0 is open to everyone; full
+  `$UNA` and 1‑human‑1‑vote require Rung‑3 personhood. The Rung‑1 probationary
+  pool has a **hard constitutional issuance cap**.
+- **Reason:** Personhood at 8B does not exist. `$UNA`'s reach equals the reach of
+  the best personhood providers, and the hardest‑to‑verify people most need UBI.
+  We bound the loss instead of pretending the problem is solved.
+- **Reversal path:** Raising the Rung‑1 cap is a constitutional act.
+
+### 4. Speed/cost ⟷ Spam‑resistance & finality
+
+- **Position:** **Not feeless.** Fees are tiny on L2 and **sponsored/abstracted**
+  (protocol sponsors `$UNA` recipients, merchants sponsor payments). A small
+  irreducible cost always exists underneath.
+- **Reason:** Feeless systems get spammed; that is why durable ones charge
+  something. Speed/low cost is bought with explicit L2 trust assumptions.
+- **Reversal path:** Fee‑model parameters are governance‑controlled.
+
+### 5. Censorship‑resistance ⟷ Ethical filtering
+
+- **Position:** **User‑sovereign filtering by default.** The protocol provides
+  multi‑sourced, contestable labels; each wallet sets its own rules. A
+  *global* block is reserved for legally‑compelled cases and requires the full
+  constitutional process (high quorum, time delay, written justification,
+  appeal path).
+- **Reason:** A system that can blacklist a national currency exercises a
+  foreign‑policy power; Aevum makes that power expensive and impossible to
+  invoke secretly.
+- **Reversal path:** Global blocks are timelocked and appealable by design.
+
+### 6. Personhood accuracy ⟷ Fairness/accountability
+
+- **Position:** The aggregated personhood score is a **consequential algorithmic
+  decision**: published & versioned aggregation, explainable denials, mandatory
+  human appeal, independent fairness audits across demographics/regions.
+- **Reason:** Denying `$UNA` on a probabilistic score is financial exclusion and
+  will attract algorithmic‑accountability regulation. We treat it as such.
+- **Reversal path:** Aggregation changes are register amendments + audits.
+
+---
+
+## Currency scope statements (on the record)
+
+- **`$FLUX` is a community‑circulation experiment**, not a store of value and not
+  a mass‑market currency. Expected: high velocity, low savings demand, small
+  opt‑in user base. Holding `$FLUX` is *supposed* to be a losing trade vs.
+  `$AEV`/`$PEG`. Marketing may **not** describe it as general‑purpose.
+- **`$UNA`'s first stabiliser is an on‑chain velocity measure**, not a global
+  purchasing‑power index (which is harder than a national CPI). A price index is
+  earned later, with published methodology and governance over composition.
+- **`$PEG` (regulated) and `$PEG+` (experimental) are distinct products** with
+  distinct tickers. `$PEG+` is jurisdiction‑gated, requires risk acknowledgment,
+  and is **never** marketed as a stablecoin.
+- **`$MAKE` replaces the retired EEG `$FOCUS`.** It rewards verifiable output,
+  not measured cognition, and carries no biometric data.
+
+## Child‑safety floor (non‑negotiable)
+
+No Aevum feature ever profiles, measures, sexualises, or financially
+incentivises the bodies, attention, or appearance of minors. Personhood and age
+systems **fail closed** for under‑18 protection. This is a
+`ConstitutionalParameter` requiring near‑unanimity to alter.
+
+## `$AEV` value‑accrual (anti‑plutocracy)
+
+A portion of protocol fees (swaps, currency minting, tunnel usage) flows to a
+**public‑goods fund**. `$AEV` staking grants **fee discounts**, not direct
+revenue — aligning incentives without reinforcing whale dominance.

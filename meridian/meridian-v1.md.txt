@@ -1,0 +1,351 @@
+I have current, real-world anchors: Laravel 13 (March 2026, PHP 8.3+), Sanctum vs Passport guidance, double-entry ledger patterns, and the ISO 20022 SR2026 deadline (Nov 2026). Now I'll build the complete deliverable.
+
+---
+
+# MERIDIAN
+### The Meta-Macroeconomic Ledger for Humanity
+
+*"Money measured what we had. Meridian measures what we become."*
+
+---
+
+## 1. The Name and What It Means
+
+**Meridian** is the brand for this ecosystem. A meridian is the reference line from which all positions on Earth are measured — every coordinate on the planet is expressed relative to it. That is precisely the role this system plays: **the universal reference layer against which all value systems — fiat, crypto, and the new contribution credits — are measured, reconciled, and made interoperable.**
+
+The full system name is **Meridian: The Universal Value Ledger (UVL)**. Internally the protocol is **MVP — the Meridian Value Protocol**. I'll use *Meridian* throughout.
+
+It is not a new currency competing with the others. It is the layer *above* all macroeconomies — the one that, as you put it, **includes, develops, adjusts, fixes, and filters all known macroeconomies**, while introducing a new asset class the old systems structurally cannot represent: **value minted from verified human flourishing** (the 2030B credits, and the open-ended family that follows them).
+
+---
+
+## 2. The Three Currency Families
+
+Meridian unifies three families behind one ledger and one API. This is the core architectural insight: they are *not* three products, but three issuance models over one double-entry ledger.
+
+| Family | Examples | What backs it | Issuance model |
+|--------|----------|---------------|----------------|
+| **Reserve-backed** | USD, EUR, TND, gold tokens, CBDCs | Custodied real-world assets (1:1) | Mint-on-deposit, burn-on-redemption |
+| **Distributed / cryptographic** | BTC, ETH, project tokens | Cryptographic scarcity / consensus | External chains, bridged into Meridian |
+| **Contribution credits (new)** | CTC, TIC, VTC, INC, SCC, WPC, WDC, JEC, FLC, GRC, *…∞* | Verified human action | **Proof-of-Verified-Contribution (PoVC)** |
+
+The third family is the genuinely new invention. A **TIC** (Trust & Integrity Credit) only comes into existence when a human performs a verified honest act; a **VTC** (Vitality Credit) when verified health behavior occurs. These are not earned by buying, mining, or staking — they are **minted by living well, attested by independent verifiers.** Because the list is open-ended ("many will be added"), the architecture treats *currency type* as a first-class, pluggable, governed entity — not a hardcoded enum.
+
+---
+
+## 3. Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                        MERIDIAN ECOSYSTEM                          │
+│                                                                    │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌─────────────┐  │
+│  │  Identity  │  │  Currency  │  │   Ledger   │  │ Verification│  │
+│  │   & PoP    │  │  Registry  │  │   (Core)   │  │   Oracles   │  │
+│  │ (Sybil-    │  │ (pluggable │  │ double-    │  │ (PoVC       │  │
+│  │  resistant)│  │  types)    │  │ entry)     │  │  attesters) │  │
+│  └────────────┘  └────────────┘  └────────────┘  └─────────────┘  │
+│         │              │               │                 │         │
+│  ┌──────┴──────────────┴───────────────┴─────────────────┴──────┐ │
+│  │            MERIDIAN VALUE PROTOCOL (MVP) — API LAYER          │ │
+│  │   ISO 20022 messaging · REST + gRPC · event-sourced · signed │ │
+│  └──────┬──────────────┬───────────────┬─────────────────┬──────┘ │
+│         │              │               │                 │         │
+│  ┌──────┴─────┐ ┌──────┴─────┐ ┌───────┴──────┐ ┌────────┴──────┐ │
+│  │  Reserve   │ │  Crypto    │ │ Macroeconomy │ │  Governance & │ │
+│  │  Custody   │ │  Bridges   │ │  Policy      │ │  Transparency │ │
+│  │  Adapters  │ │  (chains)  │ │  Engine      │ │  Log          │ │
+│  └────────────┘ └────────────┘ └──────────────┘ └───────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+The **Macroeconomy Policy Engine** is what makes this "the one that includes, adjusts, fixes, and filters all known macroeconomies." It is a rules engine that can observe aggregate flows across all three families and apply governed policy (supply adjustment for credits, conversion-rate dampening, anti-fraud filters, circuit breakers) — the macro layer above the micro ledger.
+
+---
+
+## 4. Problems with the Old Ecosystems (and how Meridian addresses each)
+
+Because you asked specifically to document old-ecosystem failures and new-ecosystem risk scenarios so they can be solved in the security milestone, here is the full accounting. This is the foundation of the security work, written in prose so it reads as a threat-and-remedy register rather than a checklist.
+
+**Failures of fiat macroeconomies.** Centralized fiat suffers from opaque reserves (you cannot independently verify a central bank or stablecoin issuer holds what it claims), inflation and debasement driven by unaccountable issuance, transaction censorship and financial exclusion, settlement latency across borders, and the structural inability to represent non-monetary value (health, honesty, ecological contribution) at all. Meridian answers these with cryptographically attested reserve proofs (every reserve-backed mint is provable against custodied assets via published attestations), a governed and transparent issuance policy logged to an append-only transparency log, censorship-resistance through the distributed family, and ISO 20022 native messaging for low-friction cross-border settlement.
+
+**Failures of crypto macroeconomies.** Distributed systems brought their own pathologies: 51% / consensus attacks, double-spending, smart-contract exploits and reentrancy bugs, private-key loss and theft, wash trading and market manipulation, rug pulls and exit scams, MEV and front-running, extreme volatility unsuited to everyday value transfer, energy waste in proof-of-work, and pervasive regulatory non-compliance (AML/KYC gaps). Meridian treats external chains as *bridged* sources behind hardened, audited bridge adapters with rate limits and circuit breakers, never trusting a bridge as a source of truth without confirmation depth and reconciliation; it keeps the authoritative balance in its own audited double-entry ledger; and it layers compliance (travel-rule, sanctions screening) at the protocol edge rather than bolting it on.
+
+**The genuinely new risks introduced by contribution credits.** This is where the security milestone must concentrate, because no prior system has minted money from human behavior. The dominant threats are: **fake-action fraud** (claiming a TIC for an honest act never performed); **Sybil attacks** (one human operating thousands of identities to farm credits — catastrophic at 8B-user scale); **oracle/verifier compromise** (corrupting the attester that mints credits); **collusion** between claimant and verifier; **replay** (submitting the same verified action twice for double minting); **gamification drift** (people optimizing the measurable proxy instead of the real virtue — the source documents repeatedly forbid gamifying these credits); **biometric/data-privacy harm** (verifying health or honesty requires sensitive data that must never become a surveillance tool); and **coercion** (credits earned under duress, e.g., an employer forcing credit-earning behavior). 
+
+The remedies, which become the security milestone's backbone: **Proof-of-Personhood** for strong, privacy-preserving one-human-one-identity guarantees against Sybil; **multi-attester quorum minting** so no single verifier can mint (M-of-N independent oracles must agree); **nonce-bound, time-bound attestations** to defeat replay; **anti-collusion rotation and random verifier assignment**; **zero-knowledge attestations** so a credit can be proven valid without exposing the underlying sensitive data (you prove "this person met the vitality criterion" without revealing biometrics); **rate-limited, decaying issuance** with policy-engine circuit breakers to neutralize farming and gamification at the macro level; and **non-transferability or constrained transferability** for credits that should reward being rather than trading — directly honoring the source documents' insistence that these credits "are not gamified" and reward "documented disengagement, not louder engagement."
+
+Every one of these maps to a concrete deliverable in the prompt below.
+
+---
+
+## 5. Meridian's License — Derived from Maher's License
+
+Following your instruction to *base the license on Maher's License but adapt it to this project*, here is the derived license. Per Section 8.5 of Maher's License ("you may create derivative licenses provided you give them a different name and clearly state they are derived from Maher's License Version 1.0"), I have named it distinctly and declared its lineage.
+
+```
+# MERIDIAN VALUE LICENSE
+Version 1.0 — June 2026
+SPDX-License-Identifier: Meridian-1.0
+
+Copyright © 2026 The Meridian Universal Value Ledger Project and its Contributors.
+
+DERIVATION NOTICE: This License is derived from Maher's License, Version 1.0
+(SPDX: Maher-1.0), and is published under a distinct name in accordance with
+Section 8.5 of that License. It is not "Maher's License" and is not endorsed
+by the Maher's License Steward except as to its lawful derivation.
+
+────────────────────────────────────────────────────────────────────────────
+PREAMBLE
+
+The Meridian Value License governs the use, modification, and redistribution of
+the Meridian Universal Value Ledger ("the Software" / "the Protocol") — a
+security-first, privacy-preserving, transparent, and human-centric value ledger
+built to unify, adjust, and filter the world's macroeconomies and to mint a new
+class of value from verified human flourishing, for the good of humanity.
+
+It inherits the file-level copyleft, explicit patent grant, DCO inbound
+mechanics, and human-rights/anti-abuse architecture of Maher's License, and
+ADDS provisions specific to a system that holds custody of value and mints
+currency from human action.
+
+────────────────────────────────────────────────────────────────────────────
+SECTIONS 1–6, 8, 10–17  — Adopted from Maher's License 1.0 with "Software"
+read to include "the Protocol," and "2030B WebBrowser Project" read as "The
+Meridian UVL Project." (Definitions, Copyright Grant, Patent Grant, Conditions
+of Redistribution, File-Level Copyleft & Source Availability, Contributions/DCO,
+Trademark, License Compatibility, Warranty Disclaimer, Liability, Termination,
+Versioning/Stewardship, Governing Law, Acceptance.)
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 7 — SECURITY, PRIVACY, AND LEDGER-INTEGRITY OBLIGATIONS  (EXTENDED)
+
+In addition to all anti-surveillance, no-backdoor, privacy-default, update-
+integrity, coordinated-disclosure, and audited-cryptography obligations of
+Maher's License §7, every Distributor of the Software MUST:
+
+  7.8  LEDGER IMMUTABILITY. Not Distribute Modifications that allow silent
+       mutation or deletion of committed ledger entries. All corrections must
+       be additive (reversing entries), never destructive.
+
+  7.9  CONSERVATION OF VALUE. Not Distribute Modifications that permit minting
+       or burning of any currency outside the published, governed issuance
+       rules of its currency type. Every mint and burn MUST be attributable,
+       logged, and balanced (double-entry).
+
+  7.10 PROOF-OF-VERIFIED-CONTRIBUTION INTEGRITY. Not weaken the multi-attester
+       quorum, replay protection, or Sybil resistance governing contribution-
+       credit issuance. Single-attester minting in product paths is unlicensed.
+
+  7.11 ZERO-KNOWLEDGE OF SENSITIVE PROOF. Not Distribute Modifications that
+       cause underlying sensitive verification data (biometric, health,
+       behavioral) to be stored or transmitted in identifiable form where a
+       zero-knowledge or minimized-disclosure path exists.
+
+  7.12 NON-COERCION & ANTI-GAMIFICATION. Not deploy the Software in a manner
+       designed to compel Users to earn contribution credits, nor to convert
+       them into addictive engagement mechanics contrary to their purpose.
+
+  7.13 REGULATORY COMPLIANCE FLOORS. Not disable AML/KYC, sanctions-screening,
+       or travel-rule controls at the protocol edge where applicable law
+       requires them.
+
+────────────────────────────────────────────────────────────────────────────
+SECTION 9 — USER & ECONOMIC RIGHTS  (EXTENDED)
+
+In addition to the Maher's License User Bill of Rights, every User is entitled
+to: (a) a complete, exportable, cryptographically verifiable history of their
+own balances and transactions; (b) proof, on demand, that reserve-backed
+holdings are fully backed; (c) the right to never have contribution credits
+earned, spent, or transferred without their consent; (d) protection from
+having sensitive verification data repurposed for surveillance, profiling, or
+sale — such repurposing is UNLICENSED USE.
+
+ETHICAL-USE FLOOR (inherited §9.2): The Software may not be used to operate a
+social-credit system that penalizes Users for lawful expression, association,
+or dissent. Contribution credits reward; they MUST NOT be architected to punish.
+
+────────────────────────────────────────────────────────────────────────────
+Where ambiguity exists, the interpretation that most strongly protects the
+User's autonomy, privacy, and economic dignity shall prevail.
+
+End of Meridian Value License, Version 1.0.
+Derived from Maher's License 1.0 · Document ID: MERIDIAN-LICENSE-1.0-2026-06
+```
+
+The two most important additions over Maher's License are §7.9 (Conservation of Value — you cannot create money outside governed rules) and §9 (the anti–social-credit floor — credits *reward*, they must never be architected to *punish*, which is the single most important ethical guardrail for a behavior-based currency).
+
+---
+
+## 6. The Complete Development Prompt
+
+Here is the self-contained prompt you can hand to an AI coding agent (or engineering team) to build the system on current Laravel.
+
+````markdown
+# BUILD PROMPT — MERIDIAN: The Universal Value Ledger (UVL)
+
+## ROLE
+You are the lead engineer building **Meridian**, a meta-macroeconomic value
+ledger that unifies three currency families — reserve-backed (fiat/CBDC/gold),
+distributed (crypto), and contribution credits (a new asset class minted from
+verified human action, e.g. CTC, TIC, VTC, …, with an OPEN-ENDED type list) —
+behind one double-entry ledger and one API. Target scale: 8 billion unique
+users per year. License every file under `Meridian-1.0`.
+
+## NON-NEGOTIABLE PRINCIPLES
+1. Double-entry, append-only, event-sourced ledger. Entries are immutable;
+   corrections are reversing entries, never deletions.
+2. Conservation of value: every balance change is a balanced transaction.
+   No mint/burn outside governed, logged issuance rules.
+3. Currency TYPE is a pluggable, governed entity — never a hardcoded enum.
+4. Privacy by default; zero-knowledge / minimized disclosure for sensitive
+   verification data. Credits REWARD; they must NEVER punish (no social credit).
+5. Sybil resistance and multi-attester quorum minting for contribution credits.
+6. Every state change emits a signed event to an append-only transparency log.
+
+## TECH STACK
+- **Laravel 13** (PHP 8.3+), or Laravel 12 LTS if 13 unavailable in your env.
+- **PostgreSQL** primary store (use `numeric` for all money; NEVER float).
+  Use integer minor-units (bigint) in code; serialize as decimal strings.
+- **Redis** for queues, rate limiting, idempotency keys, hot balances cache.
+- **Laravel Octane (Swoole/FrankenPHP)** for throughput at scale.
+- **Laravel Sanctum** for first-party/SPA tokens; **Laravel Passport** for
+  third-party OAuth2 server (external institutions, exchanges, CBDC adapters).
+- **Laravel Horizon** (queue monitoring), **Pulse** (app metrics).
+- **Spatie packages**: laravel-permission (RBAC), laravel-data (DTOs),
+  laravel-query-builder (API filtering), laravel-activitylog (audit),
+  laravel-medialibrary (attestation evidence), laravel-multitenancy
+  (per-region/jurisdiction isolation).
+- **brick/money** for currency arithmetic; **moneyphp/money** acceptable.
+- gRPC (via spiral/roadrunner-grpc) for high-throughput internal services.
+- ISO 20022 message support for reserve-backed settlement (pain/pacs/camt).
+
+## DOMAIN MODEL (core tables)
+
+### currencies        -- the pluggable type registry
+  id, code (CTC, USD, BTC...), name, family (reserve|distributed|contribution),
+  decimals, issuance_policy_id, is_transferable (bool), is_active,
+  governance_metadata (jsonb), created_at
+
+### accounts          -- one party can hold many accounts (one per currency)
+  id, owner_id (ulid), owner_type, currency_id, type (asset|liability|equity|
+  income|expense), status, created_at
+  -- system accounts: ISSUANCE, RESERVE_CUSTODY, FEE, BURN per currency
+
+### transactions      -- the atomic balanced unit
+  id (ulid), reference, status (pending|posted|reversed), idempotency_key,
+  reverses_transaction_id (nullable), metadata (jsonb), posted_at, created_at
+
+### entries           -- double-entry lines; SUM(amount) per txn MUST = 0
+  id, transaction_id, account_id, currency_id,
+  amount (bigint minor units, signed: debit<0 credit>0 by convention),
+  balance_after (bigint), created_at
+  -- DB CONSTRAINT/trigger: a transaction is invalid unless its entries
+  -- balance to zero PER currency_id.
+
+### issuance_policies -- governs mint/burn per currency
+  id, currency_id, type (reserve_1to1|bridge|povc), params (jsonb),
+  max_supply (nullable), rate_limit (jsonb), decay_rule (jsonb)
+
+### attestations      -- PoVC: signed proofs that mint contribution credits
+  id, currency_id, subject_proof (ZK or hashed personhood ref, NEVER raw PII),
+  nonce, expires_at, attester_set (jsonb of N verifier ids),
+  signatures (jsonb of M collected sigs), quorum_met (bool),
+  minted_transaction_id (nullable), status
+
+### verifiers / oracles
+  id, name, pubkey, family_scope, reputation, status, rotation_group
+
+### transparency_log  -- append-only, hash-chained
+  id, prev_hash, payload (signed event), entry_hash, created_at
+
+### identities (Proof-of-Personhood)
+  id, personhood_commitment (ZK), liveness_status, sybil_risk_score,
+  jurisdiction, created_at  -- store commitments, never raw biometrics
+
+## CRITICAL INVARIANTS (enforce in DB + service layer + tests)
+- I1: For every posted transaction, Σ entries.amount per currency_id == 0.
+- I2: account.balance == Σ of its entries.amount (reconcilable nightly job).
+- I3: Σ of all balances per currency == net issued (mints − burns). Daily proof.
+- I4: A contribution credit mints ONLY when attestation.quorum_met == true,
+      nonce unused, and expires_at not passed. (Replay + single-attester guard.)
+- I5: No entry, once created, is ever updated or deleted.
+
+## API SURFACE (REST, versioned /api/v1, also expose gRPC for internal)
+- POST /accounts                         create account (currency-scoped)
+- GET  /accounts/{id}/balance            signed balance + proof
+- POST /transfers                        idempotent (Idempotency-Key header)
+- POST /mint/reserve                     reserve adapter only; requires deposit proof
+- POST /mint/contribution                requires valid quorum attestation
+- POST /burn/redeem                      reserve redemption
+- POST /attestations                     verifiers submit signatures (M-of-N)
+- GET  /currencies                       list/registry
+- POST /currencies                       governance-gated (new pluggable type)
+- GET  /transparency-log                 public, verifiable
+- POST /bridges/{chain}/deposit|withdraw crypto family adapters
+- GET  /me/history                       user's exportable, verifiable history
+
+All money in/out as decimal STRINGS. All writes idempotent. All mutating
+endpoints rate-limited and authorized via Sanctum/Passport + Spatie permissions.
+
+## SECURITY MILESTONE (build these as first-class, not afterthoughts)
+Implement mitigations for every documented threat:
+  - SYBIL: Proof-of-Personhood gate before any contribution mint; per-identity
+    issuance rate limits + decay; sybil_risk_score throttling.
+  - FAKE-ACTION / COLLUSION: M-of-N quorum, random verifier assignment from
+    rotation_group, verifier reputation slashing, anomaly detection job.
+  - REPLAY: nonce + expires_at on every attestation; unique constraint on nonce.
+  - ORACLE COMPROMISE: signature verification against pubkeys; quorum > any
+    single compromised set; emergency policy-engine circuit breaker.
+  - PRIVACY: ZK/commitment storage only; brick of code to FORBID raw PII in
+    attestations (validation + DB check); GDPR/CCPA export & erase; GPC honored.
+  - GAMIFICATION/COERCION: non-transferable flag honored at transfer layer;
+    issuance decay; macro Policy Engine circuit breakers; NO punitive deductions.
+  - LEDGER ATTACK: append-only enforced by triggers; hash-chained transparency
+    log; nightly reconciliation (I2,I3) with alerting on drift.
+  - SUPPLY CHAIN (per license §4.6/4.7): generate SPDX SBOM each build, SLSA-3
+    provenance, Sigstore manifest, reproducible builds.
+  - CRYPTO: use audited libs only (libsodium/sodium_compat, BoringSSL via FFI);
+    no custom crypto in product paths.
+  - COMPLIANCE EDGE: pluggable AML/KYC, sanctions screening, travel-rule on
+    reserve & bridge flows.
+
+## MACROECONOMY POLICY ENGINE (the "meta" layer)
+A rules service that observes aggregate flows across all currencies and applies
+GOVERNED policy: supply adjustment for credits, conversion-rate dampening,
+fraud filters, and CIRCUIT BREAKERS (halt mint/transfer on anomaly). Policies
+are versioned, logged to the transparency log, and changeable only via the
+governance process. This is how Meridian "includes, adjusts, fixes, filters"
+all known macroeconomies.
+
+## TESTING
+- Pest/PHPUnit. Property-based tests for invariants I1–I5.
+- Concurrency tests: parallel transfers must never violate conservation.
+- Idempotency tests: duplicate Idempotency-Key returns same result, no double post.
+- Attestation tests: replay rejected, sub-quorum rejected, expired rejected.
+- Load test plan to 8B-users/yr scale (sharding by jurisdiction via
+  multitenancy; partition entries by currency_id + time).
+
+## DELIVERABLES
+1. Migrations, models, DB constraints/triggers enforcing I1–I5.
+2. Ledger service (post/reverse), Issuance service, Attestation/PoVC service,
+   Bridge adapters (interface + one reference chain), Reserve adapter (ISO 20022),
+   Policy Engine, Transparency Log service.
+3. REST + gRPC API with auth, RBAC, rate limits, idempotency.
+4. Security milestone implementations above, each with tests.
+5. SBOM + provenance pipeline. Every file headed `SPDX-License-Identifier: Meridian-1.0`.
+6. OpenAPI spec, README, threat model doc, and operator runbook.
+
+Begin with: (a) the migrations + invariant-enforcing DB layer, (b) the Ledger
+service with property tests proving conservation of value, then (c) the PoVC
+attestation pipeline. Build incrementally; prove each invariant before moving on.
+````
+
+---
+
+## 7. Where to Go Next
+
+I'd suggest the natural next steps are, in order: nail down the **Proof-of-Personhood** approach (this is the hardest single problem at 8B scale and gates the whole contribution-credit family); define the **first concrete contribution-credit spec** end-to-end (pick TIC or VTC and specify exactly what action, what verifier, what ZK proof, what issuance rate) as a reference implementation the other ∞ credits will follow; and decide the **governance model** for who can register new currency types and change policy (the license assigns this to a Steward/committee — that body needs definition).
+
+A few honest caveats worth stating plainly: a currency minted from *verified human behavior* is powerful precisely because it can shade into a social-credit system, which is why I made the anti-punishment floor a hard license condition rather than a guideline — that line is the ethical spine of the whole project and deserves the most scrutiny. And at genuine planetary scale, the proof-of-personhood and privacy layers are research-grade problems, not solved engineering; the architecture above is sound, but those two components warrant dedicated design review before any launch.
+

@@ -1,0 +1,80 @@
+# Aevum — Staged Rollout with Measurable Exit Criteria (v3)
+
+> The sequence is deliberately *unglamorous first*: the path to global scale
+> runs through trust and inclusion infrastructure, not new currencies. Each
+> stage has a **definition of done** so the staging is an accountable plan, not
+> a narrative. Stages map to `App\Support\RolloutStage`.
+
+---
+
+## Stage 1 — Trustworthy core (the wallet people don't abandon)
+
+**Scope:** ledger with enforced integer‑minor‑unit invariants; seven‑currency
+registry (`$FOCUS` already replaced by `$MAKE`, `$PEG` split into
+`$PEG`/`$PEG+`); pseudonymous Rung‑0 wallets; **social recovery**; scam/risk
+scoring with sign‑time simulation; reversibility windows & escrow primitives;
+offline / feature‑phone access (USSD/SMS, offline‑signed deferred settlement),
+low‑literacy multi‑language voice UX.
+
+**Exit criteria (definition of done):**
+
+- Social recovery tested by ≥ 10,000 users across ≥ 3 continents.
+- Offline transactions used in ≥ 2 pilot communities with ≥ 95% settlement
+  success.
+- Independent security audit of the MintEngine invariants completed and
+  **published**.
+- 100% of money mutations covered by total‑supply‑conservation and
+  no‑negative‑balance invariant tests.
+
+## Stage 2 — Truth and money‑in
+
+**Scope:** Oracle domain (multi‑source, slashing, dispute games); Compliance
+domain; first **licensed** fiat tunnel in one jurisdiction with real‑time
+reserve attestation; `$OXY` bound to retirable registry serials; the
+macro‑simulation sandbox as a **blocking** gate for any new currency or policy
+change.
+
+**Exit criteria:**
+
+- ≥ N independent providers per high‑value feed, with slashing live.
+- Carbon‑oracle dispute window ≥ the real‑world verification delay (months) with
+  multi‑round escalation to human arbitration.
+- One fiat tunnel licensed and attesting reserves in real time.
+- No currency/policy change merges without an attached, public simulation report.
+
+## Stage 3 — Governance and personhood
+
+**Scope:** constitutional layer (immutable tier, timelocks, appeal paths);
+anti‑plutocratic voting (personhood‑weighted for constitutional matters,
+conviction/quadratic for parameters, delegation for the apathetic);
+user‑sovereign ethical filter with contestable labels; Rung‑1→Rung‑3 identity
+ladder with pluralistic providers; `$UNA` Rung‑1 probationary dividend pool —
+partial coverage, honestly labelled.
+
+**Exit criteria:**
+
+- ConstitutionalParameter changes provably require high quorum + timelock.
+- ≥ 2 independent personhood providers integrated, each with published
+  false‑accept/false‑reject profiles and a slashing bond.
+- Personhood denials produce explanations and an appeal with a bound turnaround.
+- Rung‑1 issuance demonstrably capped at the constitutional fraction.
+
+## Stage 4 — Scale and intelligence
+
+**Scope:** L2 topology (app‑specific rollups, DA layer, sponsored/abstracted
+fees); cross‑chain bridge mesh with light‑client verification and the ethical
+filter applied at ingress; the AI **proposer** (Tier‑1 advisory only) with its
+full public audit trail; tunnels expanded jurisdiction by jurisdiction.
+
+**Exit criteria:**
+
+- Sustained throughput target met on L2 with periodic settlement proofs.
+- Every Tier‑1 proposal records its input vector, model hash, and rationale,
+  publicly queryable.
+- Bridge ingress runs every asset through the ethical filter before minting.
+
+---
+
+At every stage the **Trade‑off Register** and the **maturity labels** are
+updated, and every automatic action and governance decision leaves an immutable,
+queryable record.

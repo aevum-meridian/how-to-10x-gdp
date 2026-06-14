@@ -1,0 +1,155 @@
+# Aevum
+
+## Short Description
+**Aevum** is an adaptive monetary operating system that unifies fiat, crypto, and entirely new *symbiotic currencies* into a single, programmable network — where money can think, self‑adjust, and serve both human and planetary well‑being, not just extract value.
+
+---
+
+## Long Description
+Aevum is not a single coin. It is a **meta‑currency layer** — a decentralized, AI‑governed platform where any asset (dollars, Bitcoin, carbon credits, or attention itself) can be hosted, filtered, converted, and most importantly, evolved. It acts as a financial kernel that can hold existing fiat and cryptocurrencies in wrapped form, apply ethical filters (blacklisting assets tied to environmental harm or human exploitation), and — crucially — spawn new currencies with properties that traditional money could never achieve.
+
+At its heart, Aevum is built on a triple conviction:
+1. **Money must be alive.** Supply, velocity, and incentives should respond in real time to the state of the economy, the biosphere, and human dignity.
+2. **No single currency can solve everything.** A portfolio of purpose‑built currencies — each optimized for a specific function — can outperform any monolithic unit of account.
+3. **The boundary between fiat, crypto, and real‑world value should dissolve.** Aevum provides secure *tunnels* into the existing financial world (banking APIs, CBDC bridges, stablecoin networks) and into the crypto multiverse (cross‑chain communication, wrapped assets), making every form of value seamlessly exchangeable within a unified governance framework.
+
+Governance is not human‑only. Aevum employs a council of specialized AI agents — transparent, auditable, and bound by constitutional parameters — that continuously propose parameter adjustments (interest rates, issuance rates, demurrage slopes, basket rebalancing) based on oracle feeds. These proposals are ratified by a decentralized community of token holders, ensuring the system remains adaptive yet accountable.
+
+The result: a currency ecosystem that can heal the planet, fund universal dividends, reward deep work, and give rivers their own legal purse — all within a single interoperable network.
+
+---
+
+## The First Seven Aevum‑Native Currencies
+*(All are natively issued inside Aevum; each can interact with fiat and crypto via tunnels.)*
+
+| # | Currency | Ticker | Description |
+|---|----------|--------|-------------|
+| 1 | **Carbon‑Backed Currency** | $OXY | Each token represents one verified tonne of CO₂ removed or avoided. Supply expands with planetary regeneration, checked by satellite/IoT oracles. Holding OXY earns a regeneration dividend. It creates a self‑reinforcing green economy where doing good for the planet literally mints money. |
+| 2 | **Demurrage Time Currency** | $FLUX | Loses value at a preset rate (e.g., 1% monthly) unless circulated, automatically deducted by the wallet. Deductions flow into a Universal Dividend Pool. Designed to end hoarding, boost local exchange, and represent the true holding cost of idle capital. |
+| 3 | **Proof‑of‑Personhood UBI Coin** | $UNA | Every unique human verified via privacy‑preserving identity (zero‑knowledge proof‑of‑personhood) receives a small, equal daily issuance. Inflation is tied to population growth, not debt. It’s a borderless, non‑surveillant universal basic income. |
+| 4 | **Conditional Purpose Money** | $TASK | Programmable tokens that can only be spent when specific, ZK‑proven conditions are met — e.g., “only for educational materials,” “only after a github issue is closed,” or “only within a disaster zone.” Enables uncheatable humanitarian aid, grants, and parental controls without bureaucratic overhead. |
+| 5 | **Attention‑Backed Token** | $FOCUS | Minted by verifiable deep‑work sessions (via on‑device EEG/eye‑tracking with full user consent). It turns focused human cognition into a scarce asset, rewarding creation over passive consumption. Builds a fair attention economy where users own their cognitive output. |
+| 6 | **Nature’s Rights Legal Tender** | $GAIA | Represents the financial standing of non‑human entities (rivers, forests, species) that have been granted legal personhood. Held in on‑chain trusts, spent only on ecosystem‑benefitting actions, governed by guardians via quadratic voting. Introduces an ecocentric monetary layer. |
+| 7 | **Multi‑Dimensional Value Stablecoin** | $PEG | A stabilized unit of account backed by a dynamic basket of real‑world and digital assets (fiat, carbon credits, land tokens, computing power, human well‑being indices). An AI governor continuously rebalances the basket to maintain a constant purchasing power over a holistic “Cost of Living and Planet” index. |
+
+---
+
+## Technical Architecture: Building Aevum from Scratch
+
+Aevum can be conceptualized as a **4‑layer stack** with integrated interoperability tunnels to fiat and crypto ecosystems.
+
+### Layer 1 – Consensus & Identity Substrate
+- **Base ledger:** A high‑throughput, carbon‑negative blockchain (likely a delegated proof‑of‑stake or DAG variant) optimized for complex, stateful currency definitions.
+- **Decentralized Identity (DID):** Every user, institution, and even natural entity (for GAIA) gets a self‑sovereign identity anchored on‑chain. Proof‑of‑personhood (for UNA) is implemented via zero‑knowledge biometrics or social‑graph attestations, never exposing raw data.
+- **AI Oracle Cluster:** A set of specialized, stake‑slashed oracle nodes that feed real‑world data (CO₂ levels, attention indices, legal personhood registries, consumer price baskets) into the currency governors.
+
+### Layer 2 – Currency Fabric (The “Mint Engine”)
+This is the core innovation. It consists of:
+- **Currency Definition Schemas:** A universal template for creating new currencies with parameters: supply logic, demurrage rate, spending conditions (for TASK), backing assets (for PEG/OXY), and eligibility rules.
+- **Autonomous Currency Governorship (ACG):** Each currency runs inside its own AI‑driven governor smart contract. The governor can adjust parameters (e.g., PEG’s basket weights) within pre‑ratified bounds, subject to community veto.
+- **Multi‑Asset Ledger:** A UTXO/account hybrid that tracks all currency balances simultaneously, enabling atomic swaps between any two Aevum‑native currencies instantly and feelessly.
+
+### Layer 3 – Interoperability Hub & Tunnels
+This is where the “tunnel‑like” integration with fiat and crypto occurs. Think of each tunnel as a **secure, two‑way vault‑and‑mint bridge** that brings external value into Aevum’s unified fabric.
+
+- **Fiat Tunnels:**
+  - *Regulated On/Off‑ramps:* Integration with licensed payment institutions and banking APIs to tokenize fiat into Aevum‑wrapped stable‑representations (e‑USD, e‑EUR, e‑JPY). These are fully collateralized, with reserves held in regulated trust accounts and attested via real‑time oracles.
+  - *CBDC Connectors:* A standardized plug‑in that interfaces with central bank digital currency systems (e.g., digital euro, digital yuan), allowing Aevum to directly hold and program CBDCs using its conditional logic.
+  - *Atomic Settlement Rails:* Use of existing real‑time gross settlement networks (like TIPS, FedNow) through participating banks to finalize large fiat transfers atomically against on‑chain asset movements.
+
+- **Crypto Tunnels:**
+  - *Cross‑Chain Bridge Mesh:* A network of light‑client based bridges (similar to IBC or CCIP) that allow Aevum to lock Bitcoin, Ethereum, and other assets on their native chains and mint 1:1 representative tokens (xBTC, xETH) inside Aevum. These representatives gain superpowers: they can be used as collateral for PEG, converted into OXY via carbon markets, or even blacklisted if the source address is sanctioned.
+  - *Hashed TimeLock Tunnels (HTLT):* For assets without smart contract support, Aevum uses trustless atomic swap tunnels, enabling direct cross‑chain value transfer without wrapping. Aevum becomes a liquidity router.
+
+### Layer 4 – Wallet & Agent Interface
+- **User Wallet:** A non‑custodial client that manages DIDs, holds all Aevum‑native and tunnelled assets, and automates tasks like demurrage deduction (FLUX) or focus‑based minting (FOCUS). It also provides an “ethical dashboard” where users can set personal filtering rules (e.g., “block currencies tied to deforestation”).
+- **Economic Agent SDK:** A developer toolkit that allows third parties to build bots, DApps, and AI agents that interact with Aevum’s currencies — for automated treasury management, carbon‑adjusted invoicing, or UNA‑based conditional cash transfers.
+
+### Bringing It All Together
+Aevum is bootstrapped by deploying the base ledger, the Currency Fabric, and the first set of tunnels. The initial native currency, **$AEV** (Aevum’s governance and gas token), is used to pay for minting new currencies and running tunnels. Over time, the community can propose, vote, and spin up any number of symbiotic currencies using the templates — turning the platform into a forever‑evolving monetary ecology.
+
+The tunnels ensure that Aevum doesn’t require a revolution; it can grow inside the existing financial world and the crypto multiverse, absorbing their liquidity while adding layers of intelligence and ethics they currently lack.
+
+---
+
+## 1. Legacy Monetary Ecosystems: Problems and Harms
+
+### The Fiat System (State‑Issued, Debt‑Based)
+- **Inflationary theft and Cantillon effects**: New money enters through privileged financial institutions and government contractors long before reaching ordinary people. This built‑in inequality erodes purchasing power and transfers wealth upward.
+- **Centralized control and financial surveillance**: Central banks and governments can freeze accounts, print money without consent, and track all transactions, stripping citizens of financial autonomy.
+- **Debt‑based issuance**: Almost all fiat is created as interest‑bearing debt, mandating perpetual economic growth and systematically indebting nations and households. This fuels boom‑bust cycles, moral hazard, and taxpayer bailouts.
+- **Border gatekeeping**: Remittances and cross‑border trade incur high fees and delays, excluding billions from the global economy. No nation can issue a true universal basic income because fiat is tied to citizenship.
+- **Environmental blindness**: Fiat pricing does not internalize carbon, biodiversity loss, or pollution costs. Economic “growth” measured in GDP encourages destruction of natural capital.
+
+**Harm to humanity** – Endemic inequality, recurring financial crises, erosion of civil liberties, and a global economy structurally opposed to planetary health.
+
+### The Crypto Ecosystem (Decentralized but Unanchored)
+- **Proof‑of‑Work energy waste**: Bitcoin alone rivals mid‑sized countries in energy consumption, directly accelerating climate change while securing a speculative asset.
+- **Fixed supply and hoarding**: Deflationary tokens reward passive holders and discourage spending, creating a rentier class and concentrating wealth even more aggressively than fiat.
+- **Rampant speculation and volatility**: The lack of intrinsic value anchors turns most cryptocurrencies into casino instruments, destroying retail savings and enabling market manipulation.
+- **Scams, hacks, and no recourse**: Anonymity and immutable ledgers make fraud, rug pulls, and smart‑contract exploits irreversible. There is no consumer protection.
+- **Illicit finance**: While privacy is a human right, the current pseudonymous landscape facilitates ransomware, sanctions evasion, and dark‑net markets without tools to distinguish between legitimate privacy and criminal activity.
+- **Plutocratic governance**: Proof‑of‑stake and token‑voting concentrate power in whale hands, recreating oligarchies under a decentralized banner.
+- **No direct public goods funding**: Crypto ecosystems typically lack native mechanisms for UBI, healthcare, or environmental protection.
+
+**Harm to humanity** – A speculative bubble economy detached from real value creation, massive carbon emissions, financial predation on the uneducated, and a failure to deliver on the promise of equitable, global money.
+
+---
+
+## 2. How to Create a New Currency in Aevum
+
+Aevum’s **Currency Fabric** provides a formal template that turns currency creation into a governed, transparent process. It can be used by developers, communities, or organizations.
+
+### Step‑by‑Step Process
+
+1. **Define the Currency Proposal** using the Aevum Currency Definition Schema. This requires specifying:
+   - **Ticker and metadata** (name, icon, description).
+   - **Supply logic**: Elastic rule (e.g., mint when an oracle meets a condition, demurrage formula), fixed cap, or basket‑backed (for $PEG‑like stablecoins).
+   - **Backing or backing‑less**: If backed, define the reserve assets (carbon credits, fiat‑tunnel tokens, attention data, other Aevum currencies) and vault mechanics.
+   - **Conditional programming** (for $TASK‑type currencies): ZK‑circuits that must be satisfied for a transfer to be valid (e.g., “recipient has a verified teacher credential”, “GPS is within a disaster zone”).
+   - **Governor parameters**: Bounds within which the Autonomous Currency Governor (ACG) can dynamically adjust supply, demurrage, basket weights, etc. The governor is a bounded AI agent.
+   - **Oracle dependencies**: Which oracle feeds are required (CO₂ registry, proof‑of‑personhood attestations, EEG data API, price indices) and how they are aggregated.
+
+2. **Simulate & Audit**: The proposer runs an on‑chain simulation environment (sandboxed) to show the currency’s behavior over a range of economic scenarios. Community auditors review the code, oracles, and economic model.
+
+3. **Submit Governance Proposal**: The proposal is submitted to the Aevum DAO, accompanied by a bond in $AEV (the platform’s governance/gas token) to prevent spam. Proposals include a clear statement of the currency’s purpose and the specific benefit it brings to humanity or the ecosystem.
+
+4. **Community Vote**: $AEV holders vote on the proposal. Approval requires a quorum and supermajority defined by the DAO constitution. Voting power may be augmented with conviction voting or quadratic weighting to avoid plutocracy.
+
+5. **Deploy Currency Contract**: If approved, the Currency Fabric mints a new currency contract. The ACG is instantiated and linked to the specified oracles. A genesis issuance event occurs according to the supply logic (e.g., initial OXY mint based on pre‑registered carbon credits, or $UNA airdrop to all verified DIDs).
+
+6. **Activate Tunnels and Listings**: The new currency automatically integrates with Aevum’s Interoperability Hub. It becomes available for atomic swaps against all other Aevum‑native currencies. If the proposal requested fiat/crypto tunnels (e.g., $PEG pegged to a basket that includes xBTC), those tunnels are configured by the bridge mesh.
+
+7. **Ongoing Governance**: The currency’s ACG can propose parameter adjustments within the pre‑ratified bounds. These micro‑adjustments are executed automatically but can be frozen or overridden by a new DAO vote if needed. The currency lives as a self‑sustaining, adaptive monetary organism.
+
+**Technical note**: The mint engine is a virtual machine that interprets the currency schema. It uses zero‑knowledge proofs for conditional transfers so that sensitive conditions (e.g., a medical expense) can be verified without revealing the underlying data.
+
+---
+
+## 3. Filtering and Blacklisting Criteria (Ethical Tunnels)
+
+Aevum’s tunnels (fiat on‑ramps and crypto bridges) include a programmable **Ethical Filter** that can prevent assets from entering the ecosystem. The filter can be applied at the governance level (global defaults) and also customized by individual wallet users according to their own values. The following is the comprehensive list of criteria that can be used to blacklist or filter out legacy fiat instruments or crypto tokens.
+
+| Category | Criterion / Term | Description |
+|----------|------------------|-------------|
+| **Environmental** | High carbon footprint | Assets on networks where average transaction energy use exceeds a set threshold (e.g., > 50 g CO₂/tx) without a verifiable offset program. Proof‑of‑Work chains relying on fossil fuels are flagged. |
+|  | Non‑renewable energy mix | Networks where less than 50% of mining/validation is from renewable sources (verified by energy mix oracles). |
+|  | No decarbonization plan | Projects without a public, timelined commitment to carbon neutrality or negative emissions. |
+| **Human Rights & Social** | Sanctioned entities (UN/OFAC) | Addresses or fiat bank accounts directly listed on international sanctions registries (UN, FATF grey/blacklists, etc.). |
+|  | Tied to forced labor or human trafficking | Assets linked to supply chains known for forced labor (validated by accredited NGOs, Chainalysis, TRM Labs). |
+|  | Proceeds of crime / ransomware | Wallets flagged by multiple reputable blockchain forensics firms as involved in ransomware, terrorism financing, or major thefts. |
+|  | Financing of authoritarian oppression | Fiat currencies or tokens issued by regimes that use financial surveillance for mass human rights violations (determined by human rights watch indices). |
+| **Economic Toxicity** | Algorithmic stablecoin without proven stability | Tokens that promise a peg but have a history of catastrophic de‑pegs or rely on purely reflexive mechanisms without external collateral. |
+|  | Ponzi or hyperinflationary tokenomics | Tokens with no productive backing, rebase mechanics that dilute holders, or explicit referral pyramid structures. |
+|  | Excessive pre‑mine or VC concentration | More than 50% of supply held by insiders with unlock cliffs shorter than 2 years, indicating an extractive intent. |
+|  | Extreme volatility | Assets that routinely exhibit >50% daily price swings and are used primarily for gambling, flagged by volatility oracles. |
+| **Governance & Centralization** | Centralized control of freezable assets | Fiat currencies or tokens where a single administrator can arbitrarily freeze/confiscate funds without due process (e.g., centralized stablecoins with unchecked freeze functions). |
+|  | Opaque reserve backing | Stablecoins that cannot provide real‑time audit attestations of full 1:1 reserves, or fiat from countries with hidden central bank balance sheets. |
+|  | No transparent governance | Crypto projects where decision‑making is closed, unauditable, and controlled by an anonymous team that could unilaterally change the protocol. |
+| **Transparency & Legality** | Unverifiable supply or unauditable code | Tokens whose smart contracts are not verified, or where supply cannot be independently tracked. |
+|  | Compliance with global financial integrity standards | Fiat rails that do not comply with FATF travel rule (for regulated tunnels) or lack basic AML/KYC where legally required. However, Aevum defaults to privacy‑preserving compliance through ZK‑proofs; assets from fully anonymous mixers are not automatically banned but may be filtered if they come from illicit sources. |
+| **Value Alignment** | Detrimental to public goods | Currencies that demonstrably defund public goods, actively damage the biosphere, or incentivize social harms (e.g., a token that rewards deforestation) without counterbalancing mechanisms. |
+
+These filter terms are implemented as **smart oracle policies**. Before a tunnel transaction is finalized, the Aevum Interoperability Hub queries the filter registry. If any blacklist condition is met, the transaction is either rejected or (in a user‑customized model) flagged with a warning. Community governance can add, remove, or modify criteria over time, ensuring the system remains adaptive and democratically managed.
+
+The result is a monetary ecosystem where old, harmful assets are cordoned off, and only value‑aligned instruments can flow into the new economy — while still offering bridges that let users exit the legacy systems under their own terms.

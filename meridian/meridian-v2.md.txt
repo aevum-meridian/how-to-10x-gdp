@@ -1,0 +1,159 @@
+Good — your anchors hold, with two corrections worth folding in. Laravel 13 shipped March 17, 2026 (PHP 8.3 min). And the ISO 20022 picture is sharper than "Nov 2026 deadline": the coexistence period for cross-border payments *ended 22 November 2025* (so MX is already mandatory), and the live November 2026 milestone is the removal of unstructured postal addresses (structured/hybrid only) plus the RMA bootstrap. That changes how Meridian should frame its ISO 20022 work — it's not "racing to a deadline," it's "born post-coexistence, structured-address-native." I'll bake that in.
+
+Here is the level-up.
+
+---
+
+# MERIDIAN v2 — The Hardened Universal Value Ledger
+
+> **What changes at the top.** v1 is an excellent *engineering* deliverable: the double-entry core, the invariants I1–I5, the PoVC pipeline, the license. v2 does to Meridian what v3 did to Aevum — it hardens the places where the design is still making a promise it can't yet keep, and it draws the front/back boundary with Aevum cleanly enough that the two systems can be partners without contaminating each other's trust models. The single most important sentence in this whole document is one v1 already wrote and v2 makes structural: **a currency minted from verified human behavior can shade into a social-credit system, and the entire architecture must be bent away from that gravity well at every layer, not just in the license.**
+
+I'll organize this as: (0) the corrected real-world anchors, (1) the seven hardening areas, (2) the Aevum↔Meridian front/back interface, (3) the consolidated schema and prompt deltas, and (4) staged milestones with exit criteria.
+
+---
+
+## 0. Corrected anchors (fold these into the build)
+
+Three factual adjustments, because the v1 prompt rests on them. First, **Laravel 13 is live** (shipped 17 March 2026, PHP 8.3 minimum) — so the "or Laravel 12 LTS if 13 unavailable" hedge can be dropped; build on 13 directly, and note that PHP 8.4/8.5 are supported runtimes. Second, **ISO 20022 is not a deadline you're racing** — the cross-border coexistence window already closed on 22 November 2025, so Meridian is *born after* the MT-sunset and should be **structured-address-native from line one**; the real Nov 2026 item is that unstructured postal addresses get rejected, which means your reserve adapter must emit fully structured (or hybrid) party addresses or settlements will bounce. Third, FrankenPHP worker-mode Octane is production-validated at the hundreds-of-RPS-per-node range, which matters for the sharding math in Milestone 4 — single-node throughput is real but you reach 8B-users/yr through horizontal sharding, not a magic node.
+
+---
+
+## 1. The seven hardening areas
+
+### 1.1 The anti-social-credit floor moves from license text into ledger mechanics
+
+v1's instinct to make non-punishment a *hard license condition* is right but insufficient — a license is enforced in court, after harm, by people with lawyers. v2 makes non-punishment **architecturally impossible to violate**, so a deployer cannot build a social-credit system on Meridian even if they ignore the license.
+
+Concretely: contribution-credit accounts are constrained at the ledger layer so that a credit balance **can never go negative and can never be debited by anyone other than the holder's own authenticated spend**. There is no protocol path — no admin endpoint, no policy-engine action, no governance vote — that can deduct a person's earned TIC/VTC as a penalty. The Policy Engine (the "meta" layer) is given **asymmetric powers by design**: it may slow or pause *future issuance* (a macro lever), but it is structurally forbidden from reaching into existing personal balances. This asymmetry is enforced by an invariant:
+
+> **I6 (No Punitive Debit).** For any contribution-family currency, the only valid debit against a personal account is one authorized by that account's own holder. System-initiated debits of personal contribution balances are rejected at the ledger service and forbidden by DB policy.
+
+And a second:
+
+> **I7 (Issuance-only macro control).** Policy Engine actions may modify `issuance_policies` (future minting) but may never author `entries` against personal accounts.
+
+This is the spine. Everything else is hygiene; this is the thing that makes Meridian *not China's social credit system with better cryptography.* I'd put it at the very top of the threat model and the very top of the test suite.
+
+### 1.2 Proof-of-Personhood: pluralistic, probabilistic, appealable — and gating
+
+v1 correctly flags PoP as "the hardest single problem at 8B scale" and "research-grade." v2 stops treating it as a binary gate and adopts the tiered, pluralistic, appealable model (the same discipline Aevum v3 landed on, which is part of why the two can interoperate).
+
+Meridian consumes personhood **attestations from multiple independent, competing providers**, never one biometric monopoly. A `personhood_commitment` is never raw biometric data — it's a ZK commitment or a federated attestation reference. Each provider publishes false-accept/false-reject profiles and posts a slashing bond. A user's effective personhood is an **aggregate score with a published, fairness-audited algorithm**, and — because a denied personhood check means denied access to the contribution economy, which is a consequential algorithmic decision under AI-Act-style regimes — **every denial is explainable and carries a human appeal path with a bound turnaround.** The `identities` table gains `aggregation_version`, `appeal_status`, and `provider_attestations (jsonb)`. The Trade-off Register entry reads: *personhood is probabilistic; the hardest-to-verify people (stateless, deviceless) are the ones who most need contribution credits, so we ship graceful partial coverage with a probationary tier and never pretend the problem is solved.*
+
+Critically for child safety: personhood and any age-gating fail **closed** for under-18 protection, and no contribution credit may ever be designed to measure, reward, or incentivize the body, appearance, or attention of a minor.
+
+### 1.3 The PoVC oracle layer gets dispute mechanics matched to real-world verification latency
+
+v1's quorum + nonce + expiry defeats replay and single-attester minting — good. But it doesn't yet address the case v1's own threat register names: **verification that is slow, contested, and retroactively invalidatable** (a VTC minted on a health attestation later found fraudulent; a TIC on an "honest act" later disputed). v2 adds a **dispute profile per credit type**:
+
+Fast-verifiable credits settle quickly. Slow- or contestable-verifiable credits **mint provisionally against a clawback bond**, with a dispute window sized to the real verification latency; if the attestation is invalidated within the window, the clawback fires against the *attesters' and (where applicable) issuer's* bonds — never against the recipient's balance (that would violate I6). Disputes escalate in rounds with rising bonds to filter frivolous challenges, and a **final human arbitration panel** rules in public for cases mechanism can't settle. This is the same optimistic-with-human-backstop pattern that works for high-value oracles generally, applied to the specific cruelty of behavior-based money: *you must be able to undo a fraudulent mint without ever punishing an innocent holder.*
+
+New tables: `dispute_profiles` (per currency: window, bond schedule, settlement mode), `attestation_disputes` (rounds, bonds, status), `clawbacks` (target: attester/issuer bond, never personal balance).
+
+### 1.4 Anti-gamification becomes measurable, not aspirational
+
+v1 repeatedly invokes the source documents' insistence that credits "are not gamified" and reward "documented disengagement, not louder engagement" — but an instruction not to gamify is not a mechanism. v2 operationalizes it: every contribution credit must ship with a **declared proxy-divergence metric** — an explicit statement of the real virtue, the measured proxy, and a monitored gap between them. The Policy Engine watches for **Goodhart drift** (the proxy rising while independent signals of the real virtue don't) and can throttle *future issuance* (never existing balances) when divergence exceeds a governed threshold. Issuance carries **decay and per-identity rate limits** by default. And the non-transferability flag is honored at the transfer layer with teeth: credits meant to reward *being* rather than *trading* are minted non-transferable, and changing that flag is a governance act, logged.
+
+### 1.5 Privacy: forbid raw PII structurally, and honor the neural/biometric red lines
+
+v1 says "ZK/commitment storage only" and "FORBID raw PII." v2 makes the forbiddance a **defense in depth**: a validation layer rejects raw PII in attestation payloads; a DB-level check constraint rejects it again; and a CI test asserts no migration can introduce a column that stores identifiable biometric/health data in the attestation path. Given the 2025–26 neural-data-privacy laws treating brain data as protected sensitive data, v2 states plainly that **no contribution credit may be minted from neural/EEG data** — the same line Aevum drew in retiring its EEG-FOCUS. Vitality (VTC) verification uses minimized-disclosure proofs (prove "met the criterion" without revealing the measurement) and consent is per-attestation, revocable, and never a precondition for non-credit ledger access.
+
+### 1.6 Crisis response and value-loss accountability become first-class
+
+v1 has technical circuit breakers but no human counterpart. A ledger holding planetary value needs **institutional safety**: a `CrisisResponse` domain with bound disclosure timelines (status page on breaker trip, preliminary incident report within hours, full post-mortem within days), a named accountable role (incident commander, defined by role not person), and a pre-funded, governance-controlled **Protocol-Loss Fund** that compensates users for losses caused by *protocol-level bugs* — explicitly not market risk or user error, stated up front so no false assurance is given. For reserve-backed currencies this dovetails with the §9 right to proof-of-backing: if an attestation reveals a reserve shortfall, the crisis path and the disclosure timeline trigger automatically.
+
+### 1.7 Governance and the Steward get defined, not deferred
+
+v1 honestly notes the license "assigns this to a Steward/committee — that body needs definition." v2 defines its *shape* (the membership is yours to choose): currency-type registration and policy changes use **anti-plutocratic governance** — personhood-weighted (1-human-1-vote) for constitutional matters (the I6/I7 invariants, the anti-social-credit floor, child-safety, maturity labels), and conviction/quadratic voting for parameters. Constitutional invariants (I1–I7, the non-punishment floor, no-neural-data, no-raw-PII) are placed behind a **timelocked, publicly-justified amendment process** and are the *hardest* things in the system to change — which is exactly backwards from most systems, and exactly right for this one.
+
+---
+
+## 2. The front/back interface with Aevum
+
+You said: in front, Aevum and Meridian look different; in back, they're partners, each completing the other. Here's a clean way to make that real without either system's trust model leaking into the other — which matters, because if a flaw in one can silently mint or move value in the other, you've built one fragile system wearing two masks.
+
+The natural division of labor, given how the two designs have evolved: **Meridian is the authoritative double-entry ledger and issuance engine** (it knows balances, enforces conservation, mints from PoVC). **Aevum is the meta-currency *experience and governance fabric*** (user-sovereign ethical filtering, the Trade-off Register, pluggable currency *experiences*, the wallet/agent interface). In other words, Meridian is the *system of record*; Aevum is the *system of engagement and governed policy*. They share two things and nothing else: a **common identity/personhood layer** (so a verified human is the same human in both) and a **typed, signed, append-only event contract** between them.
+
+The interface should be **asynchronous, event-sourced, and reconciling** — never a synchronous trust handoff. Aevum proposes (a filter verdict, a policy change, a new currency-type experience); Meridian, as system of record, validates against its invariants and either commits a balanced transaction or rejects it. Neither system can author the other's truth directly. Concretely:
+
+A shared `cross_system_events` contract (signed, hash-chained, idempotent by event id) carries proposals one way and committed-fact confirmations the other. Aevum's ethical filter runs at the *experience* edge and can refuse to *surface or route* a transfer, but it cannot itself debit a Meridian balance — only Meridian's ledger service can, and only as a balanced, invariant-checked transaction. Aevum's governance can *propose* a new currency type or policy; Meridian's `currencies`/`issuance_policies` registry is where it becomes real, behind the same governance gate. A **nightly cross-system reconciliation** proves that every value-moving fact Aevum believes happened corresponds to a posted, balanced Meridian transaction, and alerts on any drift — the two systems keep each other honest.
+
+This gives you the front/back story you want: a user in Aevum experiences a rich, filtered, governed, multi-currency wallet; underneath, every cent and every credit is a balanced entry in Meridian's immutable ledger. And because the boundary is an event contract with reconciliation rather than shared mutable state, a compromise of one system's *experience* layer cannot silently corrupt the other's *ledger* truth. (We can deep-detail this contract — message schemas, signing, replay protection, and the reconciliation job — in the future session you mentioned.)
+
+---
+
+## 3. Schema and prompt deltas (drop-in additions to v1)
+
+New invariants to add to the I1–I5 block:
+
+```
+- I6: For contribution-family currencies, the ONLY valid debit against a
+      personal account is one authorized by that account's holder. System-
+      initiated punitive debits are rejected (ledger service + DB policy).
+- I7: Policy Engine may modify issuance_policies (future mint) but may NEVER
+      author entries against personal accounts.
+- I8: No attestation payload stores raw biometric/health/neural PII (validation
+      + DB CHECK + CI test). No contribution credit mints from neural/EEG data.
+```
+
+New / extended tables:
+
+```
+identities         + aggregation_version, provider_attestations(jsonb),
+                     appeal_status, sybil_risk_score
+dispute_profiles     id, currency_id, window, bond_schedule(jsonb),
+                     settlement_mode(immediate|provisional)
+attestation_disputes id, attestation_id, round, bond, status, resolution
+clawbacks            id, dispute_id, target(attester|issuer), amount,
+                     -- CONSTRAINT: target ∈ {attester,issuer}, NEVER personal
+proxy_metrics        id, currency_id, declared_virtue, measured_proxy,
+                     divergence, threshold, last_evaluated
+cross_system_events  id(ulid), source(aevum|meridian), kind, payload(signed),
+                     prev_hash, entry_hash, idempotency_key, status
+crisis_incidents     id, severity, disclosure_stage, commander_role,
+                     opened_at, postmortem_url
+protocol_loss_claims id, incident_id, claimant_id, amount, status
+```
+
+Prompt additions (append to the SECURITY MILESTONE and PRINCIPLES blocks):
+
+```
+PRINCIPLE 7: Credits REWARD and are structurally incapable of punishing.
+  No protocol path debits a personal contribution balance except the holder's
+  own spend (enforce I6/I7 in DB + service + tests). This is the #1 invariant.
+PRINCIPLE 8: Personhood is pluralistic, probabilistic, explainable, appealable.
+PRINCIPLE 9: No raw biometric/health/neural PII in attestation paths; no credit
+  minted from neural data; minimized-disclosure proofs only (I8).
+
+SECURITY MILESTONE additions:
+  - RETROACTIVE FRAUD: provisional minting + clawback-against-bond for slow/
+    contestable credits; clawback NEVER touches recipient balance.
+  - GOODHART DRIFT: proxy_metrics monitoring; issuance-only throttling on drift.
+  - CRISIS: bound disclosure timelines; Protocol-Loss Fund (bug losses only).
+  - INTEROP: cross_system_events as signed, hash-chained, idempotent contract
+    with Aevum; nightly cross-system reconciliation with drift alerting.
+  - ISO 20022: structured/hybrid party addresses ONLY (post-coexistence native;
+    unstructured rejected per Nov 2026 SWIFT rule).
+```
+
+---
+
+## 4. Staged milestones with exit criteria
+
+v1's "where to go next" becomes accountable gates, each independently auditable.
+
+**Milestone 1 — Immutable core + the non-punishment spine.** Exits when migrations enforce I1–I8 at the DB layer; the ledger service passes property-based tests proving conservation (I1–I3) and the non-punitive-debit invariants (I6/I7) under concurrency; and an independent audit confirms no protocol path can debit a personal contribution balance.
+
+**Milestone 2 — PoVC + personhood (partial coverage).** Exits when contribution minting requires M-of-N quorum with nonce/expiry replay protection (I4); at least two independent personhood providers are integrated with published FA/FR profiles; the aggregation algorithm passes a fairness audit with published demographic false-reject rates; and the human appeal path has a measured turnaround within its committed bound.
+
+**Milestone 3 — Dispute, decay, and reserve integrity.** Exits when at least one provisional-mint clawback has resolved end-to-end (including the human arbitration tier) without touching any recipient balance; proxy-divergence monitoring has throttled at least one test issuance; and a reserve adapter settles a structured-address ISO 20022 message with independently verified proof-of-backing.
+
+**Milestone 4 — Scale + Aevum interop.** Exits when the ledger sustains a published throughput target under adversarial concurrent load via jurisdiction sharding; the `cross_system_events` contract round-trips with Aevum and the nightly reconciliation proves zero drift across a defined period; and the crisis-response timelines and Protocol-Loss Fund have been exercised in a drill.
+
+---
+
+## What v2 is, honestly
+
+v1 was a buildable ledger with the right bones. v2 is built so that the one thing that could make Meridian genuinely harmful — money that can be *taken away* to punish people for how they live — is **impossible by construction, not merely prohibited by license.** That single inversion (issuance is a macro lever; personal balances are sacrosanct) is what separates "a new asset class minted from human flourishing" from "a surveillance instrument with good PR," and it's why I gave it invariant numbers and put it at the top of every list.
+
+The honest caveats remain the ones v1 already named, now sharpened: planetary proof-of-personhood is an open research problem the whole field shares, so Meridian must ship graceful partial coverage rather than claim a clean global rollout; and behavior-based currency lives one design mistake away from social credit, so the I6/I7 floor, the no-neural-data line, and the child-safety fail-closed rule deserve more adversarial review than anything else in the system before any launch.

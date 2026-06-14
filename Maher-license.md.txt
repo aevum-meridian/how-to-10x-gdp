@@ -1,0 +1,426 @@
+# MAHER'S LICENSE
+**Version 1.0 — June 2026**
+
+**Copyright © 2026 The 2030B WebBrowser Project and its Contributors. All rights reserved where not expressly granted herein.**
+
+**SPDX-License-Identifier: Maher-1.0**
+
+---
+
+## PREAMBLE
+
+This License — hereinafter referred to as **"Maher's License"** — governs the use, modification, and redistribution of the **2030B WebBrowser** ("the Software"), a security-first, privacy-preserving, open, and human-centric web browser developed in fulfillment of the 24 Implementation Protocols enumerated in the *Security & LICENSE Milestone* dated 2026-06-05.
+
+Maher's License is authored in the spirit of the project's mission: **to build a browser that is safer, more private, and more open — for the good of humanity.** It synthesizes the file-level copyleft of the Mozilla Public License 2.0, the explicit patent grant of the Apache License 2.0, the contributor-friendly inbound mechanics of the Developer Certificate of Origin, and the human-rights, privacy-protective, and anti-abuse provisions required by a modern browser entrusted with the digital lives of billions of people.
+
+This License is intended to be:
+- **Permissive enough** to enable broad adoption, commercial deployment, and downstream innovation.
+- **Copyleft enough** at the file level to ensure that security and privacy improvements flow back to the public.
+- **Strict enough** to prohibit weaponization, mass surveillance, deceptive forks, and erosion of the trust users place in the Software.
+- **Compatible** with the major Free and Open Source Software ecosystems (MPL 2.0, Apache 2.0, BSD, MIT) where this License's additional terms are not contravened.
+
+By exercising any right granted under this License, You accept and agree to be bound by its terms in their entirety.
+
+---
+
+## TABLE OF CONTENTS
+
+1. Definitions
+2. Grant of Copyright License
+3. Grant of Patent License
+4. Conditions of Redistribution
+5. File-Level Copyleft and Source Availability
+6. Contributions and Inbound Licensing
+7. Security, Privacy, and Integrity Obligations
+8. Trademark, Brand, and Naming Provisions
+9. User Rights and Ethical Use Clauses
+10. Compatibility With Other Licenses
+11. Disclaimer of Warranty
+12. Limitation of Liability
+13. Termination
+14. Versioning and Stewardship
+15. Governing Law and Severability
+16. Acceptance
+17. Appendix A — How to Apply Maher's License to a File
+18. Appendix B — SPDX and Attribution
+19. Appendix C — Compatibility Matrix
+20. Appendix D — Mapping to the 24 Protocols
+
+---
+
+## 1. DEFINITIONS
+
+**1.1 "License"** means this document, *Maher's License, Version 1.0*.
+
+**1.2 "Software"** means the 2030B WebBrowser, including its source code, object code, build scripts, documentation, configuration files, cryptographic manifests, brand assets governed herein, and all associated files distributed under this License.
+
+**1.3 "You"** (or **"Your"**) means an individual or legal entity exercising rights under this License. For legal entities, "You" includes any entity that controls, is controlled by, or is under common control with You. "Control" means (a) the power, direct or indirect, to direct or manage such entity, or (b) ownership of fifty percent (50%) or more of the outstanding shares or beneficial ownership.
+
+**1.4 "Contributor"** means any natural person or legal entity that creates, contributes to, or modifies the Software and submits such Contribution under the terms of this License.
+
+**1.5 "Contribution"** means any work of authorship — including source code, documentation, designs, configurations, threat models, test corpora, translations, accessibility metadata, and cryptographic signatures — that is intentionally submitted for inclusion in the Software.
+
+**1.6 "Covered File"** means a source file, in any form, that is governed by this License, whether by explicit SPDX header, inclusion in the Software's source tree, or by virtue of being a Modification of an existing Covered File.
+
+**1.7 "Modification"** means any addition to, deletion from, or change to the substance or structure of a Covered File, including translation into another programming language and incorporation into a larger work.
+
+**1.8 "Larger Work"** means a work that combines the Software or any portion thereof with other material in separate files that are not themselves Covered Files.
+
+**1.9 "Distribute"** means to make available to the public or to any third party, by any means now known or later developed, including online distribution, embedding within hardware, or providing access as a hosted service ("Software as a Service").
+
+**1.10 "Patent Claims"** means any patent claim, in any jurisdiction, that is owned or controlled by a Contributor and that would be infringed, but for the grant in Section 3, by the making, using, selling, offering for sale, importation, or other transfer of the Contribution alone or in combination with the Software.
+
+**1.11 "Source Code Form"** means the preferred form for making modifications, including all module definitions, scripts used to control compilation, and installation of an executable, but excluding system libraries of the execution environment.
+
+**1.12 "Executable Form"** means any form of the work other than Source Code Form.
+
+**1.13 "Sigstore Manifest"** means the cryptographically signed inclusion proof published to a public transparency log pursuant to Protocol #9 (Secure Supply Chain & Updates).
+
+**1.14 "User"** means any natural person who installs, runs, or interacts with the Software as an end-user, including a person browsing the Web through a User Agent built upon the Software.
+
+**1.15 "Protocols"** means the 24 Implementation Protocols enumerated in the *Security & LICENSE Milestone* dated 2026-06-05, attached as Appendix D and incorporated by reference.
+
+---
+
+## 2. GRANT OF COPYRIGHT LICENSE
+
+Subject to the terms and conditions of this License, each Contributor hereby grants You a **worldwide, royalty-free, non-exclusive, perpetual (subject to Section 13), irrevocable (subject to Section 13)** copyright license to:
+
+**(a)** reproduce the Software in whole or in part;
+**(b)** prepare Modifications and derivative works of the Software;
+**(c)** publicly display, publicly perform, sublicense, and Distribute the Software and Modifications thereof in Source Code Form or Executable Form;
+**(d)** use the Software for any lawful purpose, subject to Sections 7 and 9.
+
+This grant is conditioned upon Your compliance with the obligations stated in Sections 4 through 9 of this License.
+
+---
+
+## 3. GRANT OF PATENT LICENSE
+
+**3.1 Patent Grant.** Subject to the terms of this License, each Contributor hereby grants You a **worldwide, royalty-free, non-exclusive, perpetual (subject to Section 3.2 and Section 13), irrevocable (subject to Section 3.2 and Section 13)** license under such Contributor's Patent Claims to make, have made, use, offer to sell, sell, import, and otherwise transfer the Software, where such license applies only to those Patent Claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Software to which such Contribution(s) was submitted.
+
+**3.2 Patent Termination.** If You initiate patent litigation (including a cross-claim or counterclaim in a lawsuit) alleging that the Software, a Contribution, or any combination thereof constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License **for that particular Software shall terminate as of the date such litigation is filed**.
+
+**3.3 Defensive Termination.** A patent license shall not terminate under Section 3.2 where the litigation is a good-faith defensive response to patent litigation first initiated against You by a third party.
+
+---
+
+## 4. CONDITIONS OF REDISTRIBUTION
+
+You may Distribute the Software, with or without Modifications, in Source Code Form or Executable Form, **provided that You satisfy all of the following conditions**:
+
+**4.1 Notice Preservation.** You must retain, in every copy You Distribute, all copyright, patent, trademark, and attribution notices that appear in the original Software, including this License in full or by clear and conspicuous reference.
+
+**4.2 License Inclusion.** You must include a complete, unmodified copy of this License with every distribution of the Software.
+
+**4.3 SPDX Headers.** Every Covered File You Distribute must declare its license at the top of the file using the SPDX identifier:
+
+```
+// SPDX-License-Identifier: Maher-1.0
+```
+
+or the language-appropriate comment equivalent.
+
+**4.4 NOTICE File.** If the Software contains a `NOTICE` text file, You must include a readable copy of the attribution notices contained within that `NOTICE` file in any distribution You make, excluding those notices that do not pertain to any part of the derivative works.
+
+**4.5 Statement of Changes.** If You Modify any Covered File, You must cause the modified file to carry **prominent notices** stating that You changed the file, the date of the change, and a brief description of the nature of the change.
+
+**4.6 SBOM Requirement.** If You Distribute the Software in Executable Form to the public, You must accompany the distribution with a **Software Bill of Materials (SBOM) in SPDX or CycloneDX format**, enumerating every dependency and its license, in accordance with Protocol #9.
+
+**4.7 Reproducibility.** If You Distribute the Software in Executable Form to more than one thousand (1,000) Users, You must publish, within thirty (30) days of distribution, the build provenance attestations (SLSA Level 3 or higher) and a Sigstore Manifest that enables independent reproduction of the binaries.
+
+---
+
+## 5. FILE-LEVEL COPYLEFT AND SOURCE AVAILABILITY
+
+**5.1 File-Level Copyleft.** Any Modification You make to a Covered File must itself be licensed under this License, in its entirety, on a **file-by-file basis**. This obligation extends only to the Covered Files You Modify and to any new file that incorporates substantial portions of a Covered File. **Files in a Larger Work that do not themselves incorporate Covered File material may be licensed under terms of Your choosing**, provided that the Larger Work as a whole does not impose restrictions on the Covered Files that contradict this License.
+
+**5.2 Source Availability.** If You Distribute the Software in Executable Form, You must make the corresponding Source Code Form available, at no charge beyond reasonable distribution costs, to every recipient, either:
+
+**(a)** by including the Source Code Form with the Executable distribution; or
+**(b)** by providing a written offer, valid for at least three (3) years, to supply the Source Code Form; or
+**(c)** by publishing the Source Code Form on a publicly accessible repository with a permanent URL referenced in the Executable distribution.
+
+**5.3 Build Instructions.** Source Code Form must include all build scripts, configuration files, cryptographic manifests, and documentation reasonably required to produce a functionally equivalent Executable Form.
+
+**5.4 Hosted Service Distribution.** Where You provide the functionality of the Software to third parties as a hosted service (Software as a Service, network service, or remotely accessed user agent) — and where such service materially exposes Covered File functionality to end users — You must make available the corresponding Source Code Form of the Modifications used to provide that service, under the same conditions as Section 5.2. This is a **narrow network-use clause** intended to preserve user freedoms in the era of cloud browsers and remote rendering services.
+
+---
+
+## 6. CONTRIBUTIONS AND INBOUND LICENSING
+
+**6.1 Inbound Equals Outbound.** Any Contribution intentionally submitted for inclusion in the Software shall be licensed under the terms of this License, without any additional terms or conditions, and shall constitute the Contributor's representation that:
+
+**(a)** the Contribution is the Contributor's original work, or the Contributor has the right to submit it under this License;
+**(b)** the Contributor grants the copyright and patent licenses set forth in Sections 2 and 3 with respect to the Contribution.
+
+**6.2 Developer Certificate of Origin (DCO).** Every Contribution must be accompanied by a `Signed-off-by` line in the commit message, attesting to the Contributor's right to submit under the DCO version 1.1, in accordance with Protocol #20.
+
+**6.3 No CLA Required.** No separate Contributor License Agreement (CLA) is required. The combination of this License's inbound-equals-outbound clause, the DCO sign-off, and the explicit patent grant in Section 3 fulfills the function of a CLA without imposing administrative burden on Contributors.
+
+**6.4 Patent Grant by Contributors.** Each Contribution carries the patent grant described in Section 3, irrevocable except as provided in Section 3.2.
+
+---
+
+## 7. SECURITY, PRIVACY, AND INTEGRITY OBLIGATIONS
+
+This Section codifies the security and privacy commitments of the Software as binding License conditions. Violation of any provision of this Section by a Distributor constitutes a material breach of this License.
+
+**7.1 Anti-Surveillance Clause.** You may not Distribute Modifications of the Software that:
+
+**(a)** disable, weaken, or bypass any cryptographic protection (including but not limited to TLS 1.3 enforcement, certificate validation, HSTS, certificate pinning, or Encrypted Client Hello), as established under Protocols #1 and #15, without conspicuous and informed user consent;
+**(b)** introduce mass-surveillance capabilities, silent telemetry, covert data exfiltration, or undisclosed remote-control facilities;
+**(c)** weaken the sandbox architecture (Protocol #4), the Same-Origin Policy (Protocol #2), or the Content Security Policy engine (Protocol #3);
+**(d)** bypass the Permissions and User Consent framework (Protocol #12) or expire-after-60-days revocation default.
+
+**7.2 Privacy-Preserving Defaults.** Any Distribution of Modifications must preserve, or replace with equivalent or stronger mechanisms, the privacy defaults required by Protocol #6 (fingerprinting resistance), Protocol #7 (partitioned storage), Protocol #15 (DoH/ECH), and Protocol #22 (GDPR, CCPA, GPC, default-off telemetry).
+
+**7.3 No Backdoors.** You expressly warrant that any Distribution You make is free of intentional backdoors, undisclosed cryptographic weakening, hidden key escrow, and any covert mechanism enabling unauthorized third-party access to user data or device resources. This warranty survives termination of this License.
+
+**7.4 Update Integrity.** Distributions that include or replace the auto-update mechanism must enforce dual-signature verification and transparency-log inclusion proofs as required by Protocol #9. Distributions that disable update integrity verification are not licensed under this License.
+
+**7.5 Coordinated Disclosure.** Distributors who discover security vulnerabilities in Covered Files agree to act in accordance with the coordinated-disclosure policy referenced in Protocol #10, including a maximum 90-day embargo and good-faith engagement with the upstream maintainers.
+
+**7.6 Cryptographic Integrity.** Distributions must not replace audited cryptographic libraries (BoringSSL, ring, RustCrypto, or equivalents as designated by the Steward) with unaudited or custom cryptographic code in product paths, as required by Protocol #16.
+
+**7.7 Accessibility Preservation.** Distributions may not remove, disable, or materially degrade the accessibility features required by Protocol #23 (WCAG 2.2 Level AA conformance, ARIA support, accessibility tree exposure).
+
+---
+
+## 8. TRADEMARK, BRAND, AND NAMING PROVISIONS
+
+**8.1 No Trademark License.** This License does not grant any rights in the trademarks, service marks, trade names, logos, or product names of the 2030B WebBrowser project, including but not limited to "2030B", "2030B WebBrowser", and "Maher's License", except as expressly stated in this Section 8 or in the separately published Trademark Policy referenced in Protocol #19.
+
+**8.2 Unbranded Redistribution Permitted.** You may Distribute the Software in Source Code Form or Executable Form **without the official brand assets** under the terms of this License with no additional trademark restrictions.
+
+**8.3 Material Modifications Require Rebranding.** If You Distribute a materially modified Executable Form — where "materially modified" includes any change to security, privacy, cryptography, sandboxing, networking, or update behavior — You must:
+
+**(a)** remove the official "2030B" trademarks and logos from the user-visible chrome, application identifier, and installer;
+**(b)** select a distinct product name that is not confusingly similar to the official trademarks;
+**(c)** clearly state, in the About dialog and any public marketing, that the Distribution is "derived from 2030B WebBrowser but is not endorsed by or affiliated with the 2030B Project."
+
+**8.4 Logo Licensing.** Official logos and brand assets are licensed separately under **Creative Commons Attribution-NoDerivatives 4.0 International (CC-BY-ND 4.0)** and are not subject to the modification rights of this License.
+
+**8.5 License Name.** The name "Maher's License" is reserved. You may not call a modified version of this License "Maher's License" without express written permission of the Steward. You may, however, create derivative licenses provided You give them a different name and clearly state they are derived from Maher's License Version 1.0.
+
+---
+
+## 9. USER RIGHTS AND ETHICAL USE CLAUSES
+
+**9.1 User Bill of Rights.** Every User of a Distribution licensed under Maher's License is entitled to:
+
+**(a)** know what data the Software collects, transmits, and stores, in plain language, in accordance with Protocol #24;
+**(b)** export and delete their personal data on request, in accordance with Protocol #22;
+**(c)** revoke any granted permission at any time, in accordance with Protocol #12;
+**(d)** receive timely security updates for the full publicly stated support window of the Distribution;
+**(e)** access the Source Code Form of the Distribution they are running, in accordance with Section 5;
+**(f)** report bugs, vulnerabilities, and concerns through a public bug tracker, except for active embargoed security issues, in accordance with Protocol #24.
+
+**9.2 Ethical Use — Human Rights Clause.** You may not use, Distribute, or operate the Software, or any Modification thereof, in a manner that:
+
+**(a)** materially facilitates mass surveillance of a civilian population by any state or non-state actor;
+**(b)** systematically violates the Universal Declaration of Human Rights;
+**(c)** is designed primarily to suppress journalism, dissent, lawful assembly, or freedom of expression;
+**(d)** is integrated into autonomous weapons systems intended to select or engage human targets without meaningful human control.
+
+This Section 9.2 is a **condition of the License**. Use of the Software in violation of this Section is unlicensed use.
+
+**9.3 No Discrimination.** This License does not, and shall not be construed to, discriminate against any person, group, or field of endeavor, except as narrowly stated in Section 9.2.
+
+**9.4 Good Faith Interpretation.** Sections 7 and 9 shall be interpreted in good faith, in favor of user safety, privacy, and dignity, consistent with the mission to build a browser **for the good of humanity**.
+
+---
+
+## 10. COMPATIBILITY WITH OTHER LICENSES
+
+**10.1 Compatible Inbound Licenses.** Code originally licensed under the following may be incorporated into the Software, provided that the incorporating Covered File carries the SPDX identifier `Maher-1.0` and the original notices are preserved as required by Section 4.1:
+
+- Mozilla Public License 2.0 (MPL-2.0)
+- Apache License 2.0 (Apache-2.0)
+- BSD 2-Clause and BSD 3-Clause
+- MIT License (Expat)
+- ISC License
+- Public Domain dedications (CC0-1.0, Unlicense)
+
+**10.2 Incompatible Inbound Licenses.** The following may **not** be incorporated into Covered Files without an explicit exception granted by the Steward:
+
+- GNU General Public License (any version)
+- GNU Affero General Public License (any version)
+- Server Side Public License (SSPL)
+- Commons Clause–restricted code
+- Business Source License (BSL) code prior to its change-date conversion
+
+This restriction exists to preserve the file-level copyleft model and to avoid imposing whole-program copyleft on Larger Works.
+
+**10.3 Outbound Distribution.** Covered Files may be combined in a Larger Work with code under any of the licenses in Section 10.1. The Larger Work as a whole may be licensed under terms of Your choosing, **provided** that:
+
+**(a)** the Covered Files retain their license under Maher's License;
+**(b)** the Larger Work does not impose restrictions on the Covered Files that contradict this License;
+**(c)** the security, privacy, and integrity obligations of Section 7 are honored throughout the Larger Work where the Larger Work materially incorporates Covered File functionality.
+
+**10.4 Dependency Audit.** Distributors must, in accordance with Protocol #18, run automated license scanners on every release build and refuse ingestion of any GPL or AGPL dependency into Covered File code paths unless a written exception has been granted by the Steward.
+
+---
+
+## 11. DISCLAIMER OF WARRANTY
+
+**THE SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.**
+
+The entire risk as to the quality and performance of the Software is with You. Should any Covered File prove defective in any respect, You (not any Contributor) assume the cost of any necessary servicing, repair, or correction.
+
+No oral or written information or advice given by a Contributor or by the 2030B Project shall create a warranty. This disclaimer of warranty constitutes an essential part of this License.
+
+The warranty against intentional backdoors set forth in Section 7.3 is an express condition of this License and is not disclaimed by this Section.
+
+---
+
+## 12. LIMITATION OF LIABILITY
+
+**IN NO EVENT AND UNDER NO LEGAL THEORY**, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, **shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Software** (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
+
+This limitation of liability shall not apply to liability that cannot be excluded under applicable law.
+
+---
+
+## 13. TERMINATION
+
+**13.1 Automatic Termination on Breach.** This License and the rights granted hereunder shall terminate automatically and without notice if You fail to comply with any term of this License. However, if the breach is curable, Your rights shall be reinstated if You cure the breach within thirty (30) days of becoming aware of it, **provided** that such cure is the first cure within any twelve (12) month period.
+
+**13.2 Patent Litigation Termination.** Patent license rights granted in Section 3 terminate as provided in Section 3.2.
+
+**13.3 Survival.** Sections 1 (Definitions), 7.3 (No Backdoors), 8 (Trademark), 11 (Warranty Disclaimer), 12 (Limitation of Liability), 13 (Termination), and 15 (Governing Law and Severability) survive termination.
+
+**13.4 Downstream Recipients.** Termination of Your rights under this License does not terminate the rights of any third party who has received Covered Files from You under this License, **provided** that such third party remains in compliance with this License.
+
+---
+
+## 14. VERSIONING AND STEWARDSHIP
+
+**14.1 Steward.** The 2030B WebBrowser Project, acting through its Technical Steering Committee as established under Protocol #21, is the **Steward** of Maher's License.
+
+**14.2 New Versions.** The Steward may publish revised or new versions of this License. Each version will be given a distinguishing version number. Once a version has been published, it shall not be modified.
+
+**14.3 Choice of Version.** Unless the Covered File states otherwise, the recipient may choose to use the Covered File under the terms of the version of this License under which it was originally received, **or** under the terms of any later version published by the Steward.
+
+**14.4 No Surrogate Authority.** No one other than the Steward has the right to modify or publish new versions of Maher's License.
+
+---
+
+## 15. GOVERNING LAW AND SEVERABILITY
+
+**15.1 Governing Law.** This License shall be governed by the laws of the jurisdiction in which the Steward is principally located, excluding its conflict-of-law provisions. The United Nations Convention on Contracts for the International Sale of Goods is expressly excluded.
+
+**15.2 Severability.** If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable. The remainder of this License shall continue in full force and effect.
+
+**15.3 No Waiver.** Failure by the Steward or any Contributor to enforce any provision of this License shall not constitute a waiver of future enforcement of that or any other provision.
+
+**15.4 Entire Agreement.** This License constitutes the entire agreement between the parties with respect to the Software licensed hereunder. There are no understandings, agreements, or representations with respect to the Software not specified herein.
+
+---
+
+## 16. ACCEPTANCE
+
+You are not required to accept this License in order to receive or run a copy of the Software. However, **nothing other than this License grants You permission to Distribute or Modify the Software**. These actions are prohibited by law if You do not accept this License. Therefore, by Distributing or Modifying the Software (or any work based on the Software), You indicate Your acceptance of this License to do so, and all its terms and conditions for Distributing or Modifying the Software or works based on it.
+
+---
+
+## 17. APPENDIX A — HOW TO APPLY MAHER'S LICENSE TO A FILE
+
+To apply Maher's License to a new file, attach the following notice at the top of the file, replacing the bracketed fields:
+
+```
+// SPDX-License-Identifier: Maher-1.0
+// Copyright (c) [YEAR] [COPYRIGHT HOLDER]
+//
+// This file is part of the 2030B WebBrowser Project and is licensed
+// under Maher's License, Version 1.0. You may obtain a copy of the
+// License at the root of the source repository in the file LICENSE
+// or at https://2030b.example/licenses/maher-1.0.
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+// either express or implied. See the License for the specific
+// language governing permissions and limitations under the License.
+```
+
+For markup, configuration, or data files, use the comment syntax appropriate to the file format. For files where no comment syntax is possible, place the notice in a sibling file with the same base name and the suffix `.LICENSE`.
+
+---
+
+## 18. APPENDIX B — SPDX AND ATTRIBUTION
+
+**SPDX Identifier:** `Maher-1.0`
+
+**Suggested attribution string in user-visible "About" dialogs:**
+
+> *Includes software from the 2030B WebBrowser Project, licensed under Maher's License, Version 1.0. Source code is available at [REPOSITORY URL]. Built for the good of humanity.*
+
+**Attribution in academic or technical publications:**
+
+> *The 2030B WebBrowser Project. (2026). 2030B WebBrowser, licensed under Maher's License Version 1.0. Retrieved from [REPOSITORY URL].*
+
+---
+
+## 19. APPENDIX C — COMPATIBILITY MATRIX
+
+| Source License | Inbound into Covered Files | Outbound in Larger Work | Notes |
+|---|---|---|---|
+| MPL-2.0 | ✅ Permitted | ✅ Permitted | Recommended for security-critical modules |
+| Apache-2.0 | ✅ Permitted | ✅ Permitted | Patent grant aligned with Section 3 |
+| BSD-2-Clause, BSD-3-Clause | ✅ Permitted | ✅ Permitted | Preserve original notices |
+| MIT (Expat) | ✅ Permitted | ✅ Permitted | Preserve original notices |
+| ISC | ✅ Permitted | ✅ Permitted | Preserve original notices |
+| CC0-1.0, Unlicense | ✅ Permitted | ✅ Permitted | Public-domain or equivalent |
+| LGPL-2.1, LGPL-3.0 | ⚠️ Steward exception required | ⚠️ With dynamic linking only | Case-by-case |
+| GPL-2.0, GPL-3.0 | ❌ Prohibited | ❌ Prohibited | Whole-program copyleft incompatible |
+| AGPL-3.0 | ❌ Prohibited | ❌ Prohibited | Network-copyleft scope incompatible |
+| SSPL, Commons Clause, BSL | ❌ Prohibited | ❌ Prohibited | Not OSI-approved or imposes field-of-use restrictions |
+| Proprietary / Closed | ❌ Prohibited | ⚠️ Only in non-Covered files of Larger Work | Subject to Section 10.3 |
+
+---
+
+## 20. APPENDIX D — MAPPING TO THE 24 PROTOCOLS
+
+This Appendix is informational and is incorporated by reference into the operative provisions of this License where expressly cited.
+
+| # | Protocol Title | License Section(s) |
+|---|---|---|
+| 1 | Secure Network Communication | §7.1, §7.4 |
+| 2 | Same-Origin Policy Enforcement | §7.1 |
+| 3 | Content Security Policy | §7.1 |
+| 4 | Browser Sandbox Architecture | §7.1 |
+| 5 | Authentication & Credential Management | §7.2 |
+| 6 | Privacy-Preserving Browsing | §7.2 |
+| 7 | Cookie & Storage Security | §7.2 |
+| 8 | Extension & Add-on Security Model | §7.4 |
+| 9 | Secure Supply Chain & Updates | §4.6, §4.7, §7.4 |
+| 10 | Vulnerability Handling & Disclosure | §7.5 |
+| 11 | Threat Modeling & Risk Assessment | §7 (general) |
+| 12 | Permissions & User Consent Management | §7.1, §9.1(c) |
+| 13 | Web Platform APIs Security Review | §7 (general) |
+| 14 | Secure Rendering Engine Design | §7.6 |
+| 15 | Network Traffic Anonymization & Integrity | §7.1, §7.2 |
+| 16 | Cryptography Implementation & Audit | §7.6 |
+| 17 | Licensing Strategy & IP Compliance | §2, §3, §5, §10 |
+| 18 | Third-Party Library License Audit | §10.4 |
+| 19 | Trademark & Brand Protection Policy | §8 |
+| 20 | Contributor License Agreements & DCO | §6.2, §6.3 |
+| 21 | Open Source Community Governance | §14.1 |
+| 22 | Compliance with Global Privacy Regulations | §7.2, §9.1(a)(b) |
+| 23 | Accessibility Standards Integration | §7.7 |
+| 24 | Transparency & User Empowerment | §9.1, §4.6, §4.7 |
+
+---
+
+## CLOSING DECLARATION
+
+Maher's License is dedicated to the proposition that the Web should remain **safer, more private, and more open — for the good of humanity**. Every clause herein is to be read as an instrument in service of that mission. Where ambiguity exists, the interpretation that most strongly protects the User shall prevail.
+
+**End of Maher's License, Version 1.0.**
+
+---
+
+*Published under the stewardship of the 2030B WebBrowser Project.*
+*Document ID: MAHER-LICENSE-1.0-2026-06-05*
+*SPDX-License-Identifier: Maher-1.0*
