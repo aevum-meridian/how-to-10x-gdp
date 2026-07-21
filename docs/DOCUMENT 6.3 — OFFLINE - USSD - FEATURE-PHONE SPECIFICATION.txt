@@ -1,0 +1,32 @@
+# DOCUMENT 6.3 — OFFLINE / USSD / FEATURE-PHONE SPECIFICATION
+### Reaching the Deviceless Without Betraying the Ledger
+
+**System:** Aevum (experience) + Meridian (settlement) · **Licenses:** both · **Tier:** 6 · **Maturity:** Research · **© Maher**
+
+## 0. Why this document exists
+
+A monetary body that claims to serve humanity but works only on smartphones with reliable connectivity excludes most of the people who most need it. Offline and feature-phone access is therefore not a nice-to-have; it is a precondition of the inclusion thesis. But offline value transfer is genuinely hard — it must bound double-spend without a live ledger — and the honest posture is to state the trade-off openly rather than pretend offline can be as safe as online.
+
+## 1. Responsibilities
+
+Enable balance-reservation vouchers and offline-signed deferred settlement so that a person with a feature phone (USSD/SMS) or a temporarily-offline smartphone can transact, with the transactions settling to Meridian's authoritative ledger when connectivity returns — with an explicitly-bounded double-spend window and a clearly-stated custodial trade-off.
+
+## 2. The voucher lifecycle
+
+A user reserves a portion of their balance into an **offline voucher**: Meridian posts a reservation (the reserved amount is moved to a reservation account, so it cannot be double-spent online while reserved — conservation preserved, I1). The voucher is offline-signed by the holder. Offline transfers between parties are **offline-signed deferred settlement** records, exchanged over USSD/SMS or local channels. On reconnection, the deferred records are submitted to Meridian, which validates signatures and settles them against the reservation — within the voucher's bound. Vouchers carry an **expiry** (unspent reservations return to the holder's main balance after the window) and a **per-voucher double-spend bound** (the maximum exposure if an offline holder cheats, capped by the reserved amount — you cannot offline-spend more than you reserved).
+
+## 3. The custodial trade-off, stated openly
+
+Pure non-custodial offline transfer cannot fully eliminate double-spend without a live ledger. The honest design therefore offers a **custodial tier** for the offline/feature-phone context, *clearly labelled as such*: a licensed local agent or tunnel may custody small balances to enable instant offline settlement, with the trade-off stated plainly — the user gains offline usability and accepts the custodial party's involvement for the offline portion. This is the privacy/sovereignty cost of offline access, and *Sidq* requires it be disclosed, not buried. A user who wants full self-custody stays online; a user who needs offline access makes an informed trade.
+
+## 4. Low-literacy, multi-language voice UX
+
+Feature-phone access includes a **low-literacy, multi-language voice UX** (IVR-style), so that the deviceless and non-literate are not excluded by interface alone. The voice UX surfaces the same honest information — including the custodial trade-off and the voucher bound — in the user's language and in plain terms.
+
+## 5. Threat model (dedicated)
+
+The offline threat model addresses: double-spend (bounded by the reservation — an offline cheater can lose at most the reserved amount, and is detectable on reconnection); voucher theft (mitigated by holder signature and expiry); custodial-agent malfeasance (mitigated by licensing, small balance limits, and the user's informed consent to the custodial tier); USSD/SMS interception (mitigated by the offline signature — an intercepted record cannot be replayed beyond the reservation); and exclusion-by-interface (mitigated by the voice UX). The threat model is dedicated because offline is the one context where some of the body's online structural guarantees (real-time conservation checks) are necessarily relaxed, so the relaxation must be bounded and disclosed.
+
+## 6. Honest caveats
+
+Offline is Research-tier and is the context where the body's guarantees are *weakest*, by physical necessity — no system can fully prevent offline double-spend without a live ledger, so the design bounds it (to the reserved amount) rather than eliminating it. The custodial tier is a genuine privacy/sovereignty compromise, accepted only with informed consent and only for the offline portion, and the project must keep working toward stronger non-custodial offline primitives rather than treating the custodial tier as the permanent answer. Exit criterion (maturity ledger): offline transactions used in ≥2 pilot communities with ≥95% settlement success before promotion from Research.

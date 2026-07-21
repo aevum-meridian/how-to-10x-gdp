@@ -1,0 +1,46 @@
+# DOCUMENT 2.2 — THE AGENT-BASED MACROECONOMIC MODEL
+### A Failure-Finder, Not a Success-Predictor
+
+**System:** Joint (the model behind the blocking simulation gate) · **Tier:** 2 · **Maturity:** Research · **© Maher**
+
+## 0. Stated purpose and its honest limit
+
+This model exists to **find where the body breaks**, not to promise it won't. That framing is not modesty; it is the correct epistemology for agent-based macroeconomics, which is notoriously assumption-sensitive and cannot predict real economies. A model used to *predict success* manufactures false confidence; a model used to *find failure* earns its keep by surfacing the scenarios under which conservation holds but the *economy* still collapses (a bank run that is fully conservation-valid yet ruinous; a Goodhart spiral that is fully I6-compliant yet corrupts a credit's meaning). The simulation gate (artifact 9.1) blocks any new currency or policy change that lacks a published stress result from this model — so the model's value is precisely its pessimism.
+
+## 1. Agent types and their utility functions
+
+The model populates a synthetic economy with heterogeneous agents, each with an explicit utility function so its behavior is interpretable (not a black box).
+
+**Households** maximize a utility over consumption smoothing and precautionary saving: `U_h = Σ_t β^t [ ln(consumption_t) − λ·shortfall_t ]`, where β is patience and λ penalizes liquidity shortfall. Households hold a portfolio across families (stable units for saving, $FLUX for local exchange, contribution credits as non-tradeable records) and respond to demurrage by circulating $FLUX and to velocity signals by adjusting saving.
+
+**Savers / whales** maximize wealth preservation and yield: `U_w = E[wealth_T] − γ·Var(wealth_T)`, γ being risk aversion. They are the agents who would *seek* Core Riba if it existed — so the model uses them to verify that the I11 refusal redirects them toward permitted risk-bearing yield rather than leaving an exploitable gap.
+
+**Speculators** maximize short-horizon return and are momentum-driven: they amplify volatility and are the stress agents for the stable unit's basket cap κ.
+
+**Attackers** maximize successful exploitation: a Sybil attacker maximizes credits farmed per real identity (stress for the per-identity rate limit ρ and the personhood layer); an oracle-corruption attacker maximizes mints from a controlled quorum (stress for I4 and the dispute engine); a run-inducer maximizes panic propagation (stress for reserve attestation and circuit breakers).
+
+**Verifiers / oracles** have a utility balancing honest-reward against collusion-payoff-minus-slashing-risk — used to find the slashing level at which collusion stops being profitable.
+
+## 2. The scenarios (each a failure to hunt for)
+
+**Recession.** A sustained demand contraction: do households' precautionary saving and the velocity stabiliser interact to deepen the contraction (a deflationary spiral) or dampen it? Pass/fail metric: the system reaches a stable lower equilibrium without the stable unit losing its peg beyond a governed band.
+
+**Hyperinflation (of a tunnelled fiat).** A bridged fiat hyperinflates: does the membrane and the basket rebalancer isolate the body from the imported inflation, or does it propagate? Pass/fail: $PEG holds purchasing power within band; contribution credits (non-monetary) are unaffected.
+
+**Bank run.** Mass simultaneous redemption of a reserve-backed currency: does real-time reserve attestation plus the circuit breaker halt the run before reserves are exhausted, and does the crisis path trigger correctly? Pass/fail: no redemption is honored beyond attested reserves (the engine refuses), the crisis path fires, and no holder is told a false assurance.
+
+**Velocity shock.** A sudden spike or collapse in transaction velocity: does the $UNA velocity stabiliser overshoot (causing oscillation) or settle? Pass/fail: issuance adjusts monotonically toward a stable per-capita level without oscillation.
+
+**Adversarial (Sybil + oracle + run, combined).** The hardest scenario: coordinated attackers farm credits, corrupt a quorum, and induce a run simultaneously. Pass/fail: the per-identity rate limit and personhood layer bound farming; the dispute engine reverses corrupt mints against attester bonds *without touching innocent balances* (I6); the run is halted by reserves+breaker. The combined scenario is where the model most earns its keep, because real attacks are combined.
+
+## 3. The conservation-valid-but-ruinous class (the model's most important output)
+
+The model's deepest job is to find scenarios that are **fully invariant-compliant yet economically harmful** — because the invariants guarantee *integrity*, not *prosperity*. Examples the model hunts: a Goodhart spiral where a credit's proxy is gamed within the rules until the credit is meaningless (caught by document 2.3's monitor, but the model finds how fast the spiral runs and whether the throttle reacts in time); a demurrage-induced flight from $FLUX so rapid it destabilizes the dividend pool; a velocity stabiliser oscillation that is conservation-valid but makes $UNA unusable. These are the failures a conservation-only analysis would miss, and finding them is the whole point.
+
+## 4. Pass/fail at the gate
+
+For a proposed currency or policy change to pass the simulation gate, the proposer must publish results showing the change does not, across the scenario suite, (a) break any invariant (it cannot, by construction, but the model confirms), (b) push any stabilised quantity outside its governed band, (c) create a new exploitable gap for the attacker agents, or (d) produce a conservation-valid-but-ruinous trajectory. A change that fails any is blocked from merge until redesigned. The results are published (Trade-off Register / transparency log), so the gate is accountable, not a rubber stamp.
+
+## 5. Honest caveats
+
+This model's outputs are *only as good as its agents and parameters*, and it cannot represent the full reflexivity of a real economy of eight billion people. It will miss failure modes its designers did not imagine — which is why the simulation gate is *necessary but not sufficient* and is paired with the red-team dossier, external audits, and staged rollout with abandonment criteria. The gravest honest limit: a model tuned (even unconsciously) to let favored proposals pass becomes a rubber stamp, so the proxy-divergence catalogue (live, post-deployment) is the antidote — the model gates *before*, the monitor watches *after*, and neither alone is trusted.

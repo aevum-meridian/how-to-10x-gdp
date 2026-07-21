@@ -1,0 +1,28 @@
+# DOCUMENT 8.1 — CRISIS RUNBOOK & INCIDENT-COMMANDER CHARTER
+### Institutional Safety for a Body Holding Planetary Value
+
+**System:** Joint · **Licenses:** both · **Tier:** 8 · **Maturity:** Research · **Enforces (operationally):** M-§C.15 (crisis-disclosure and loss honesty) · **© Maher**
+
+## 0. Why technical breakers are not enough
+
+The system has technical circuit breakers (document 4.5). But a ledger holding planetary value needs *institutional* safety too — a human counterpart to the automatic halt, with bound disclosure timelines and a named accountable role. Technical safety stops the machine; institutional safety governs how humans respond, communicate, and are held accountable when something goes wrong. *Amanah* and *Sidq* demand that when the body fails, it fails *honestly and openly*, not by silence.
+
+## 1. Severity levels
+
+A graded scale: **S1 (catastrophic)** — confirmed loss of custodied value, reserve shortfall, or a breach of a constitutional invariant (e.g., a punitive-debit path discovered). **S2 (severe)** — a circuit breaker fired on real anomaly, a reconciliation drift indicating possible loss, a personhood-layer compromise. **S3 (significant)** — a contained vulnerability, a non-loss anomaly. **S4 (minor)** — degraded service without value risk. Each severity binds different disclosure timelines and escalation.
+
+## 2. Bound disclosure timelines
+
+The defining commitment, by severity: on a breaker trip or confirmed S1/S2, a **status page update** within a bound time (so the public is not left in silence); a **preliminary incident report within hours**; a **full public post-mortem within days**. The timelines are *commitments*, published in advance, so that disclosure is not at the discretion of those who would prefer silence. This is the institutional expression of *Sidq*: the body commits to telling the truth about its failures on a clock it set before any failure occurred.
+
+## 3. The incident-commander role (by role, not person)
+
+Crisis response is led by an **incident commander**, defined **by role and responsibility, not by named person** — so the role survives personnel change and so accountability attaches to a function, not a personality. The incident commander coordinates the technical response, owns the disclosure timeline, and is accountable for honesty of communication. The role operates within the constitutional constraints: the incident commander **cannot**, even in a crisis, cross a constitutional invariant — cannot punitively debit, cannot mint outside rules, cannot deanonymize. "Emergency" is never a license to violate the spine; the Coercion-Resistance Spec's "temporary emergency" attack path (a compeller invoking crisis to justify a constitutional breach) is specifically denied — the emergency powers are *halt* and *disclose*, never *override the protections for persons*.
+
+## 4. The automatic crisis trigger
+
+A reserve-shortfall attestation (document 8.3) **automatically triggers** the crisis path — the disclosure clock starts without waiting for human discovery, honoring the user's right to proof-of-backing (M-§C.15). This auto-trigger is itself a protection against the temptation to delay disclosure of a shortfall.
+
+## 5. Honest caveats
+
+A crisis runbook is only as good as its rehearsal — the maturity ledger's exit criterion is that the timelines and roles are *exercised in a drill* before the relevant milestone. The bound disclosure timelines are commitments the project must be willing to keep even when keeping them is embarrassing or legally fraught; an undisclosed-but-bound timeline that is quietly missed is worse than no commitment, so the commitment must be realistic. And the incident-commander-cannot-cross-the-spine rule is the most important and most tested commitment here, because crisis is exactly when the pressure to "just this once" override a protection is greatest — the runbook must make clear that there is no such override, by design.

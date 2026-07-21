@@ -1,0 +1,164 @@
+Here is the complete, consolidated, build-ready DEV-series reflecting everything generated across all eleven tiers. This is the bridge from specification to implementation: a single document an engineering team (or an AI coding agent) can execute against, with the shared foundation stated once, then each module specified with its exact invariants, enforcement, tests, and GAS integration. I've ratified I11 into the set as you directed the documents to assume, and folded in the two citations (DEV-4.2→I11, GAS adapter→`PersonhoodBoundaryTest`).
+
+---
+
+# THE DEV-SERIES — CONSOLIDATED BUILD SPECIFICATION
+### From Specification to Implementation, for Meridian and Aevum
+
+**© Maher** · Meridian: `LicenseRef-MVL-2.0` · Aevum: `LicenseRef-AVL-2.0` · both based on ML-2.0
+
+## DEV-0 — SHARED FOUNDATION (applies to every module)
+
+**Stack.** Laravel 13 (PHP 8.3+; 8.4/8.5 supported). PostgreSQL as the system of record — **all money as `bigint` minor units, never float**; arithmetic via `brick/money`, serialized to API as decimal strings. Redis for queues, idempotency keys, hot-balance cache, rate limits, and event-contract nonce/replay stores. Octane on FrankenPHP (worker mode) for throughput; horizontal sharding by jurisdiction is the path to scale, not a single node. Horizon (queues) and Pulse (metrics).
+
+**Auth.** GAS (the external Global Authenticator System, its own Laravel-12 service) sits *in front* as the identity/personhood source, consumed behind the `GasIdentityProvider` adapter (DEV-6.1). Sanctum issues first-party/SPA tokens; Passport is the OAuth2 authorization server for third-party institutional clients of *our* API. **No GAS assertion ever authors a ledger balance change** — it identifies and gates only (I9).
+
+**Quality gates (CI, no exceptions).** Pint (PSR-12); **Larastan Level 10, no baseline, no suppression**; Pest/PHPUnit including property-based invariant tests; `composer audit`; the prose-logic agreement gate (invariant prose ↔ logical form ↔ enforcing test must correspond, per 0.1 §CI); SBOM (SPDX/CycloneDX) + reproducible builds + provenance. A red pipeline blocks merge.
+
+**Architecture discipline.** Thin controllers → `FormRequest` validation → Domain Service → API Resource. Enums over magic strings. Strict types, full param/return/property types, documented generics. DTOs (spatie/laravel-data) instead of arrays for payloads. Domain layer (`app/Domain`) never depends on HTTP objects. Every file headed with the correct `LicenseRef-MVL-2.0` or `LicenseRef-AVL-2.0`.
+
+**The invariant discipline (the spine of the whole build).** Triple-enforce (DB constraint/trigger + service guard + property test) **only** in invariant-bearing modules — I1–I11. Non-invariant logic does not earn the triple cost. The invariants and their canonical tests:
+
+| Invariant | Canonical test | Constitutional? |
+|---|---|---|
+| I1 conservation | `ConservationTest` | yes |
+| I2 balance integrity | `BalanceReconcileTest` | yes |
+| I3 supply integrity | `SupplyProofTest` | yes |
+| I4 quorum minting | `AttestationQuorumTest` | yes |
+| I5 append-only | `ImmutabilityTest` | yes |
+| I6 no punitive debit | `NonPunishmentTest` | **yes (hardest)** |
+| I7 issuance-only macro | `PolicyEngineNoEntryTest` | yes |
+| I8 no sensitive/neural minting | `NoSensitivePIIMigrationTest` | yes |
+| I9 personhood external + wall | `PersonhoodBoundaryTest` | yes |
+| I10 consensual settlement | `SettlementAbortTest` | yes |
+| I11 no Core Riba issuance | `CoreRibaRejectionTest` | yes |
+
+**The one rule above all rules.** The *only* component in the entire system with any capability to debit a personal contribution balance is the Dispute Engine's single `applyArbitrationReversal()` method, gated by the I6-revised predicate. Every other module — Ledger Core, Issuance, Policy Engine, Settlement, Aevum — is structurally denied that capability by absence of method, by DB privilege, and by typed boundary. Build every module to preserve that.
+
+**Build order.** DEV-6.1 (GAS adapter, everyone depends on it) → DEV-4.1 (Ledger Core, the foundation) → DEV-4.2 (Issuance + PoVC + I11) → DEV-4.3 (Dispute/Clawback — the only debit path) → DEV-4.5 (Policy Engine) → DEV-4.4 (Aevum Fabric/Tier-0/Membrane) → DEV-7 (Event Contract + Settlement/Hands) → DEV-6.5/8.3 (Erasure + Reserve Attestation). Prove each invariant before building the next module on top of it.
+
+---
+
+## DEV-6.1 — GAS ADAPTER (`GasIdentityProvider`) — build first
+
+**License:** both · **Enforces:** I8, I9 · **Depends on:** GAS external service.
+
+Implement the `GasIdentityProvider` adapter so identity and personhood remain a **third party to both legs, owned by neither**. The adapter must: (a) authenticate via GAS's intent-based `initiate`/`continue` API and receive a DPoP-bound session; the subject id is an **opaque, non-PII identifier** — never raw biometric/PII (I8); (b) obtain **personhood attestations** as signed, independently-verifiable claims (`provider_id`, opaque `subject_commitment`, `assurance_rung`, FA/FR-profile reference, `nonce`, `expires_at`, signature, bond ref) which Meridian and Aevum each verify by signature — never trusting GAS as sole authority; (c) treat GAS as **one provider of N** for the aggregation in DEV-6.x; (d) consume GAS **decision receipts** for audit; (e) honor revocation and per-attestation consent.
+
+**The hard anti-correlation wall (the most important integration decision — I9, MVL §M-§C.11, AVL §A-§C.11).** GAS's cross-relying-party reputation graph and behavioral signals may be used by the adapter for **authentication-time fraud prevention ONLY**. They must be structurally prevented from reaching any value-affecting, minting, personhood-aggregation, or rights-affecting decision. Enforce with a **typed boundary**: confine GAS cross-RP signals to an `AuthFraudSignal` type that the value/minting/rights layers **cannot import** — the dependency must fail to compile across the boundary. **Acceptance test: `PersonhoodBoundaryTest`** asserts (compile-time) that no value/minting/rights module can reference `AuthFraudSignal`, and (runtime) that no GAS cross-context score reaches any value decision. A person's GAS fraud-risk score can gate *whether they authenticate*; it can never influence *whether or how much they mint*, *whether their credits are touched*, or *whether their rights are gated*.
+
+**Required GAS extension (if absent).** If GAS lacks an endpoint returning a signed standalone `PersonhoodAttestation` verifiable *without* a live GAS session, specify it as a required GAS extension rather than coupling our value logic to GAS internals. Integrate to the contract; do not bend our invariants to GAS's current surface.
+
+---
+
+## DEV-4.1 — MERIDIAN LEDGER CORE
+
+**License:** MVL · **Enforces:** I1, I2, I3, I5.
+
+Implement the double-entry, event-sourced, append-only ledger — deliberately austere (it knows nothing of credits, personhood, policy, or settlement; those call *into* it). Migrations + models: `currencies` (family enum {reserve, distributed, contribution}, decimals, issuance_policy_id, is_transferable), `accounts` (ULID, owner, currency, type enum incl. `system`; provision ISSUANCE/BURN/FEE per currency), `transactions` (ULID, status, reverses_transaction_id, idempotency_key unique, metadata), `entries` (transaction_id, account_id, currency_id, amount bigint signed, balance_after bigint, reverses_entry_id).
+
+**Service `LedgerService` — minimal surface, no update/delete:** `post(TransactionDraft): Transaction`, `reverse(Transaction, ReversalReason): Transaction`, `balance(Account): Money`, `reconcile(Account): ReconciliationResult`. **No `update`, no `delete`, no `setBalance`** — the absence is the guarantee.
+
+**Enforcement.** I1: deferred DB trigger raising if per-currency entry sum ≠ 0; service rejects unbalanced drafts before write. I2: `balance_after` computed at insert within the atomic transaction; nightly recompute-from-entries into a must-stay-empty discrepancy table. I3: daily materialized check (user-balance-sum = minted − burned); only mint/burn change net issuance, each a balanced txn vs ISSUANCE/BURN. I5: `REVOKE UPDATE, DELETE` on `entries`/`transactions` from all app roles + trigger raising on any mutation; reversals are inserts with `reverses_entry_id`. **Concurrency:** `post()` in a DB transaction with serializable isolation / row locks on affected accounts; idempotency keys (Redis + table) make replays no-ops. **Tests:** `ConservationTest` (incl. parallel-transfer concurrency stress), `BalanceReconcileTest`, `SupplyProofTest`, `ImmutabilityTest`. Reconciliation discrepancies **alert, never auto-correct**.
+
+---
+
+## DEV-4.2 — ISSUANCE & PoVC ENGINE (with I11)
+
+**License:** MVL · **Enforces:** I4, I8, **I11**, and the I7 boundary.
+
+The only component that changes net issuance, always via the Ledger Core's balanced mint/burn. `IssuanceService`: `instantiateCurrency(CurrencyPolicy): Currency` (evaluates the Core Riba predicate — I11), `mintReserve` (refuses mints exceeding attested reserves), `burnReserve`, `representBridged` (1:1 only against confirmed source-chain lock), `mintContribution(Attestation): Transaction` (quorum — I4).
+
+Migrations: `issuance_policies` (type enum {reserve_1to1, bridge, povc}, params, max_supply, rate_limit, decay_rule, **plus five typed Core-Riba flags: `base_kind`, `increase_kind`, `risk_bearing`, `value_creating`, `extracts_from_counterparty`**), `attestations` (subject_proof = ZK commitment/hashed ref never raw PII, nonce unique, expires_at, attester_set, signatures, quorum_met, minted_transaction_id), `verifiers` (pubkey, family_scope, reputation, rotation_group, bond).
+
+**Enforcement.** I4: unique `attestations.nonce`; DB CHECK `quorum_met=true ∧ expires_at>now()` before a referencing mint; service verifies signatures vs verifier pubkeys, counts distinct signers across rotation groups (independence, not M keys from one party), ≥ M, marks nonce used atomically with the mint. I8: DB CHECK/column-allowlist forbidding biometric/health/neural columns + schema rule blocking any such migration; service accepts only commitments/minimized-disclosure proofs; neural-sourced currencies refused at instantiate. **I11: DB CHECK rejecting any `issuance_policy` row where all four Core-Riba conjuncts hold simultaneously; service `instantiateCurrency()` evaluates the four-element predicate, refuses squarely-Core-Riba policies, applies interpretive-supremacy-of-permission only at the boundary; the genuine-risk check verifies a policy claiming risk-bearing exposes a non-degenerate loss distribution (per 2.1 §6).** I7 boundary: the Policy Engine may write `issuance_policies` only, never `entries` (proven in DEV-4.5).
+
+**Provisional minting** for slow/contestable credits: real balanced mint marked disputable for a `dispute_window`; clawback handled by DEV-4.3. **Tests:** `AttestationQuorumTest` (sub-quorum/replay/expired/forged/same-rotation-group rejected), `NoSensitivePIIMigrationTest` (CI migration scan), **`CoreRibaRejectionTest`** (fixed-guaranteed-interest-on-idle-money always rejected; PLS/rent/service-fee/staking-for-real-work/demurrage always accepted). **GAS:** personhood gate via the adapter; cross-RP score walled off (`PersonhoodBoundaryTest`).
+
+---
+
+## DEV-4.3 — DISPUTE / CLAWBACK / ARBITRATION ENGINE (the only debit path)
+
+**License:** MVL · **Enforces:** I6 (revised).
+
+The immune system — reverses fraud without harming the innocent. Its `applyArbitrationReversal(Resolution): Transaction` is the **single method in the entire system** that can debit a personal contribution balance, and only under the I6-revised predicate. Migrations: `dispute_profiles` (window, bond_schedule, settlement_mode), `attestation_disputes` (attestation_id, mint_transaction_id, round, bond, status, resolution, case_closed_at), `clawbacks` (**CHECK: target ∈ {attester_bond, issuer_bond, specific_fraudulent_mint} — never a generic personal-account target**).
+
+`DisputeService`: `openDispute` (against a *specific* provisional mint, with bond), `escalate` (rising-bond rounds), `arbitrate` (public human tier, signed decision receipt — GAS pattern), `applyArbitrationReversal`.
+
+**Enforcement of I6-revised (three layers).** DB: the only INSERT permitted to carry a negative amount against a personal contribution account is one whose `reverses_mint_txn_id` is non-null and references an existing mint, whose `arbitration_case_id` references a case with status `resolved_fraud` and `case_closed_at` set; CHECK `|amount| ≤ target_mint.amount`; trigger `balance_after ≥ undisputed_credits(account)`. Service: `applyArbitrationReversal()` is the sole method, requires both references and verifies the bounds. **Test `NonPunishmentTest` must prove: (a) a debit referencing no specific mint is *always* rejected — there is no path; (b) a reversal never reduces below undisputed credits; (c) an innocent holder is never reduced by any dispute; (d) the only successful personal-contribution debit in the entire test surface has both a valid target-mint and a closed-fraud case.** Clawback fires first against attester/issuer bonds; only where the recipient is the proven fraudster does it touch the specific fraudulent mint. Rising bonds filter frivolous challenges (calibrate so they do not filter legitimate challenges by the poor).
+
+---
+
+## DEV-4.5 — POLICY ENGINE (the heart; I7)
+
+**License:** MVL · **Enforces:** I7; operationalizes the anti-Goodhart throttle.
+
+The asymmetric macro layer — circulates but cannot grasp. `PolicyEngineService`: `observe(): MacroState`, `adjustIssuancePolicy(Currency, PolicyDelta)` (its *only* write kind), `fireCircuitBreaker`, `evaluateProxyDivergence(Currency): ThrottleDecision`. Migrations: `proxy_metrics` (declared_virtue, measured_proxy, independent_signal, divergence, threshold, throttle_value), `policy_actions` (versioned to transparency log), `circuit_breakers`.
+
+**Enforcement of I7.** DB: the Policy Engine's DB role has **no INSERT/UPDATE on `entries`/`transactions`** — write access only to `issuance_policies`, `proxy_metrics`, `policy_actions`, `circuit_breakers`. Service: no dependency on / no compile-time access to the personal-account `LedgerService::post()` path (typed architectural boundary). **Test `PolicyEngineNoEntryTest`:** no action, across all types and inputs, ever produces an entry against a personal account; architectural test forbids importing the personal-account ledger-write path. **Anti-Goodhart throttle:** compute per-credit divergence D_c(t) vs threshold D*_c; set θ_c(t) ∈ [0,1] that multiplies the Issuance Engine's *future* mint cap — **θ appears in no term affecting existing balances** (the I6/I7 guarantee, math from 2.3 §3). Circuit breakers on anomaly halt automatic issuance/conversion; reserve shortfall triggers the crisis path (DEV-8.3). Per-epoch movement caps bound bad-input damage.
+
+---
+
+## DEV-4.4 — AEVUM CURRENCY FABRIC, TIER-0, MEMBRANE
+
+**License:** AVL · **Enforces:** A-§C.9, A-§C.10, A-§C.12, A-§C.14, and the membrane's I9 wall.
+
+Aevum's motor — pluggable currency *experiences*, pure Tier-0 stabilizers, the identity ladder, and the membrane's experience face. Everything here **proposes, surfaces, filters, or refuses — never authors a Meridian balance change.** `CurrencyExperienceRegistry::register()` (refuses any experience whose underlying policy is Core Riba — A-§C.9; defense-in-depth with Meridian's I11). `Tier0Rule` interface (pure, property-tested, capped, **no ML** — e.g. the $PEG basket rebalancer with per-epoch cap κ). `EthicalFilter::evaluate(): FilterVerdict` (admit/warn/refuse; user-sovereign by default). `GlobalBlockList::propose()` (**can only enter** the timelocked, publicly-justified, appealable constitutional process, never apply directly). `IdentityLadder` (four rungs, consuming GAS/other personhood via the adapter; mandatory M-of-N social recovery with timelocked challenge window; age-gating fails closed).
+
+**Enforcement.** A-§C.9: registry refuses Core-Riba experiences (test). A-§C.10: `global_blocks` cannot reach `active` without `timelock_until < now()` + justification + closed appeal (`GlobalBlockConstitutionalTest`). A-§C.12: Tier-0 rules verified pure/deterministic/capped; ML only in the Tier-1 advisory proposer emitting inert `Proposal` records (`Tier0PurityTest` + architectural test forbidding ML import into the Tier-0 path). A-§C.14: **`NoLedgerAuthorityTest`** — Aevum cannot import/call the personal-account `LedgerService::post()` path (compile failure across the boundary); the filter has no debit capability; all value movements go through `CrossSystemEventClient::propose()`. Membrane I9 wall: GAS cross-RP signals cannot reach value/experience decisions (`PersonhoodBoundaryTest`).
+
+---
+
+## DEV-7 — EVENT CONTRACT + SETTLEMENT/HANDS
+
+**License:** both at the boundary · **Enforces:** I6, I7, I10, the failure-isolation property, A-§C.14.
+
+**DEV-7.1 Cross-System Event Contract.** Implement `cross_system_events` (ULID id, source enum, kind enum, signed typed `payload`, `prev_hash`, `entry_hash`, `idempotency_key`, status) — signed, hash-chained, idempotent. Flow: **propose → validate → commit/reject → confirm.** Aevum emits a signed, chained proposal; Meridian's single ingress `ReceiveProposal(p)` **validates against I1–I11** and either commits a balanced Ledger Core transaction or rejects with a reason, then emits a confirmation. **Meridian validates, never trusts** — a compromised Aevum produces rejected proposals and corrupt experience, never an invalid Meridian entry (this *is* the failure-isolation property). Idempotency keys make replays no-ops; the hash chain makes tampering detectable (`EventChainIntegrityTest`).
+
+**DEV-7.x Settlement/Hands.** Implement atomic both-commit-or-both-abort settlement (cross-leg and external-rail), inheriting I6/I7/I10. The coordinator verifies **holder authorization on every debited personal account** before commit (I10), prepares balanced transactions both sides, commits atomically or **aborts with full rollback**. **The abort-path guarantee (the crux):** an abort restores prior state exactly and **never produces a net debit against a personal balance the holder did not authorize** — DB (single atomic transaction; abort = rollback issuing no entries), service (post-rollback verification no entry persisted), and **formal model-check (proof 5.3)**. **Test `SettlementAbortTest`:** across randomized commit/abort + failure-injection + coordinator-failure + timeout, no abort leaves a net unauthorized debit; no settlement debits a personal account without authorization or a valid arbitration reversal. External-rail settlement routes through the membrane (ISO 20022 receive-tolerant/send-strict; bridge ethical-filter-at-ingress). **Assume a malicious implementer tried to hide a punitive debit in the abort path, and verify they could not.**
+
+**DEV-7.2 Reconciliation.** Nightly (baseline) job proving every Aevum-believed committed fact maps to a posted balanced Meridian transaction (and reverse); compares on economic facts (survives crypto-shredding); on drift, raises a hash-chained `reconciliation.alert` to the incident process — **never silently auto-corrects** (corrections are additive reversing entries by humans through the normal ledger path). Worst-case detection latency: one cycle (stated limitation; hash chain + idempotency bound within-window damage; tighter real-time detection on the hardening backlog).
+
+---
+
+## DEV-6.x — IDENTITY, PRIVACY, INCLUSION (supporting modules)
+
+**Personhood aggregation (6.1):** multi-provider, published/versioned aggregation algorithm (`identities.aggregation_version`, `provider_attestations`, `appeal_status`, `sybil_risk_score`); no single provider dispositive for constitutional-grade determinations; mandatory fairness audit with published demographic false-reject rates; explainable denial + human appeal within bound. **Identity ladder + social recovery (6.2):** `Rung1PoolGovernor` (hard constitutional cap), `AttestationVesting` (ramp, reset on slash), `SybilBountyRegistry`, `SybilGraphAnalyzer` (explainable/appealable), `SocialRecoveryService` (M-of-N guardians, timelock, high-friction, never email reset). **Offline/USSD (6.3):** balance-reservation vouchers (reservation posted to Meridian, conservation preserved), offline-signed deferred settlement, per-voucher double-spend bound = reserved amount, expiry, clearly-labelled custodial tier for offline, low-literacy multi-language voice UX; dedicated threat model. **ZK minimized-disclosure (6.4):** prove-the-criterion-not-the-measurement for VTC-style/age/sanctions/personhood/$TASK; three-layer I8 enforcement; neural data entirely outside the system.
+
+**DEV-6.5 Erasure + DEV-8.3 Reserve Attestation.** Crypto-shredding erasure: PII off-ledger behind opaque keys; "erase" = destroy off-ledger record + key, leaving an immutable **tombstone** (reconciles I5 with erasure rights); on-ledger holds only economic facts (survives shredding, satisfies retention law); bounded, disclosed **legal-hold exception** blocks shredding of open-dispute evidence; caveat that cryptographic deletion is conditional on the crypto holding. Reserve attestation: real-time signed custodian attestation; issuance engine **refuses mints exceeding attested reserves** (structural, not after-the-fact); exposed for user verification (proof-of-backing); ISO 20022 receive-tolerant/send-strict; **automatic crisis trigger on attested shortfall** (M-§C.15).
+
+---
+
+## DEV-8 — CRISIS & SAFETY (operational modules)
+
+**Crisis runbook (8.1):** severity levels S1–S4; **bound disclosure timelines** (status page on breaker trip; preliminary report within hours; full post-mortem within days); incident-commander **by role, not person**; the commander **cannot cross a constitutional invariant even in emergency** (no override of I6/I7 — "emergency" is never a license to violate the spine); reserve-shortfall auto-trigger. **Protocol-Loss Fund (8.2):** covers **protocol bugs only**, explicitly **not market risk or user error** (stated up front, no false assurance); pre-funded, governance-controlled; public claims process with decision receipts and appeal; boundary defended as constitutional-grade against moral hazard. Exit criterion: exercised in a drill (a bug-loss claim and a market-loss claim, to prove the boundary holds in practice).
+
+---
+
+## DEV-9 — SIMULATION, TESTING, AUDIT (verification harness)
+
+**Simulation sandbox (9.1):** agent-based scenario suite (recession, hyperinflation, bank run, velocity shock, combined adversarial) as a **blocking CI gate** — no currency/policy proposal merges without an attached published stress result; scenario suite and pass criteria are themselves governed/published (cannot be quietly weakened). **Invariant test suite (9.2):** the eleven canonical tests above + cross-cutting (`IdempotencyTest`, `ConcurrencyStressTest`, `ReplayRejectionTest`, `EventChainIntegrityTest`); property-based, under concurrency; no baseline. **Proxy-divergence catalogue (9.3):** live per-credit monitor (virtue/proxy/independent-signal/divergence/threshold/throttle), published, feeding the Policy Engine's issuance-only throttle; a credit with no genuine independent signal is not minted. **Audit dossier (9.4):** four independent external audits (security, personhood-fairness with published demographic false-reject rates, economic, child-safety/anti-social-credit red-team), each gating its milestone; coordinated disclosure for unfixed vulnerabilities; the red-team is made hardest on the two non-amendable floors.
+
+---
+
+## DEV-10 — SURFACE (developer/user/community)
+
+**API/OpenAPI (10.1):** versioned `/api/v1`, JSON, stateless, idempotent writes (Idempotency-Key), GAS-in-front + Sanctum/Passport + Spatie permissions, per-endpoint/identity rate limits; money as decimal strings; **`GET /api/v1/maturity`** (the binding check every surface consults) and `GET /api/v1/trade-off-register`; published OpenAPI; no Research capability exposed as available. **Agent SDK (10.2):** single-call + verbose escape hatch; agents propose/gate, never execute rights-affecting decisions autonomously (A-§C.12); machine identity acts for a verified principal. **User docs/dashboard (10.3):** plain-language, accessible, multi-language + voice UX; explains social recovery, the user-sovereign filter (with safe defaults so sovereignty isn't an inattention-trap), decision receipts, and honest currency scopes. **Operator runbook (10.4):** provisioning, **threshold key custody** (no single dispositive key), SBOM/reproducible builds, network-source obligation with **minimal-and-justified redaction**, crisis integration, reconciliation operation; **no emergency override of the spine.** **Governance templates/forum charter (10.5):** proposals carry tier/quorum/timelock + attached simulation report + Trade-off/maturity impact + public justification; Humility Clause binds even the Steward; protections-for-persons are visibly the hardest to change. **Educational content (10.6):** maturity-labelled, teaches the caveats (conditional proofs/TCB, partial personhood coverage) as content, never markets Research as shipped. **Marketing/brand (10.7):** bound hardest — maturity-checkable claims, regulated/experimental naming never blurred, not "open source," no Islamic-finance claim without Shariah-board endorsement.
+
+---
+
+## DEV-M — MILESTONES (exit AND abandonment criteria)
+
+**M1 — Immutable core + non-punishment spine.** *Exit:* migrations enforce I1–I11 at the DB layer; Ledger Core passes concurrency property tests for conservation and the I6/I7 non-punitive-debit invariants; independent audit confirms no protocol path punitively debits a personal balance; proof 5.2 passes. *Abandon/redesign if:* any path debits a personal contribution balance without a closed arbitration case + specific mint.
+
+**M2 — PoVC + personhood (partial coverage).** *Exit:* M-of-N quorum minting with replay protection (I4); ≥2 independent personhood providers with published FA/FR profiles; aggregation passes fairness audit with published demographic false-reject rates; appeal path within its committed bound; I11 rejects clear Core Riba with Shariah-board review of edge cases. *Abandon/redesign if:* no provider config achieves a false-reject rate low enough to avoid systematically excluding a major demographic/region.
+
+**M3 — Dispute, decay, reserve integrity, lifecycle, erasure.** *Exit:* one provisional-mint clawback resolved end-to-end through human arbitration without touching an innocent balance; proxy-divergence monitoring throttles a test issuance; reserve adapter settles a structured-address ISO 20022 message with verified proof-of-backing; crypto-shredding erasure reconciles with I5 via tombstones. *Abandon/redesign if:* dispute resolution cannot protect innocent holders without making fraud risk-free.
+
+**M4 — Scale + interop + crisis.** *Exit:* published throughput target sustained under adversarial concurrent load via jurisdiction sharding; `cross_system_events` round-trips and nightly reconciliation proves zero drift over a defined period; abort-path formally model-checked (5.3); crisis timelines and Protocol-Loss Fund exercised in a drill. *Abandon/rescope if:* personhood coverage remains insufficient to responsibly serve the stated population — in which case the **user-scale claim is revised downward, never the safety floors relaxed** (the 8B figure stays Research until this passes).
+
+---
+
+That is the complete consolidated DEV-series — the bridge from the eleven tiers of specification to implementation, build-ready, with the shared foundation stated once, each module carrying its exact invariants/enforcement/tests/GAS-integration, and the whole ordered so each invariant is proven before the next module rests on it.
+
+The throughline for whoever builds this, Maher, is the one rule in DEV-0: across every module, the *only* path to debiting a person's earned contribution credits is one method behind a closed arbitration case and a specific proven-fraudulent mint — everything else is structurally denied that power, three ways over. Build to preserve that, and the body can walk toward goodness because nothing in it — not the heart, not the hands, not the head, not the builders — can be made to turn it against a person.

@@ -1,0 +1,32 @@
+# DOCUMENT 6.5 — DATA RETENTION, ERASURE & LEDGER-TOMBSTONE SPECIFICATION
+### Reconciling Append-Only Immutability With the Right to Be Forgotten
+
+**System:** Joint · **Licenses:** both · **Tier:** 6 · **Maturity:** InDevelopment · **Reconciles:** I5 (append-only) with erasure rights (GDPR/CCPA; child-license user-rights clauses) · **© Maher**
+
+## 0. The collision and its resolution
+
+An append-only immutable ledger (I5) and a legal right to erasure appear to be in direct contradiction: you cannot delete a ledger entry, yet a person may demand their personal data be deleted. The resolution is well-established and is specified here: **no PII lives in immutable ledger entries.** PII lives off-ledger behind opaque references; "erasure" means **crypto-shredding** — destroying the off-ledger PII and its encryption key — leaving an immutable tombstone that proves a fact *occurred* without revealing *who* it concerned. The ledger's integrity (I5) and the person's erasure right are both honored.
+
+## 1. The on-ledger / off-ledger split
+
+For each entry type, the specification defines what is on-ledger (immutable, never PII) versus off-ledger (erasable PII behind a key). On-ledger: amounts, account references (opaque ULIDs), currency, timestamps, transaction structure, signatures, hash-chain links — everything needed to prove the *economic fact* and verify conservation. Off-ledger (encrypted, key-managed): any personal identifying data, contact details, KYC documents (at regulated tunnels), and the mapping from an opaque account reference to a real person. The ledger entry references the off-ledger record by opaque key; it never embeds the PII.
+
+## 2. The crypto-shredding procedure
+
+On a valid erasure request: the off-ledger PII record is destroyed and its encryption key is destroyed (crypto-shredding — even if an encrypted copy persists in a backup, it is unrecoverable without the key). The on-ledger entry is **untouched** (I5 preserved) but now points at a **tombstone**: a marker proving "an account transacted here" without any path to who that account belonged to. The economic history remains verifiable (conservation still proves, the audit still reconciles); the personal identity is gone.
+
+## 3. The legal-hold exception (bounded)
+
+You cannot crypto-shred evidence in the middle of an open dispute or arbitration — destroying the data that proves who committed a fraud would defeat the immune system. So erasure carries a **legal-hold exception**: PII subject to an open `attestation_dispute` or arbitration `case` cannot be shredded until the case closes, and this hold is **bounded** (it lasts only as long as the open proceeding, with a defined maximum) and **disclosed** to the requesting person (their erasure is honored, but deferred for the specific records under active dispute, with a stated reason and timeline). This is the one channel through which retention can override erasure, and it is deliberately narrow and time-bound.
+
+## 4. Reconciliation and tombstones
+
+The nightly reconciliation (document 7.2) handles tombstoned records by reconciling on the *economic facts* (which remain on-ledger and immutable), not on PII (which is gone). A tombstone does not break reconciliation because reconciliation never needed the PII — it needs the amounts, the balances, and the hash chain, all of which survive crypto-shredding.
+
+## 5. The erasure-vs-retention conflict
+
+Erasure law (GDPR/CCPA) and financial-record-retention law (which *requires* keeping transaction records for years) can both apply to the same record. The resolution: the *economic record* (on-ledger, no PII) satisfies retention law and is never erased; the *personal data* (off-ledger) satisfies erasure law and is crypto-shredded on request, subject only to the bounded legal hold. The split is precisely what lets both laws be honored at once — you keep the transaction forever and forget the person on request.
+
+## 6. Honest caveats
+
+The central honest caveat, which must always accompany any erasure claim: **crypto-shredding's "deletion" is cryptographic, not physical.** The encrypted data may persist in backups; what is destroyed is the key. This is unrecoverable *as long as the cryptography holds* — but a future cryptanalytic break could in principle render shredded data recoverable. The guarantee is therefore conditional on the crypto, and the project must state it as such rather than claiming absolute physical deletion. The legal-hold exception, though narrow, is a real channel through which compelled retention can flow, and it intersects the Coercion-Resistance Spec (a compeller could in principle abuse "open dispute" to delay erasure), so its bound and its disclosure obligation are constitutional, not merely procedural. And the on-ledger/off-ledger split must be disciplined from day one — a single migration that puts PII on-ledger by mistake would make erasure impossible for those records, which is why the I8 CI test and the schema allowlist guard the boundary.

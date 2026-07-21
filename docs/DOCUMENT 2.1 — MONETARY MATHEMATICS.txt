@@ -1,0 +1,72 @@
+# DOCUMENT 2.1 — MONETARY MATHEMATICS
+### Supply, Stability, Yield-Without-Riba, and the Conservation Algebra
+
+**System:** Joint · **Tier:** 2 · **Licenses:** `LicenseRef-MVL-2.0` / `LicenseRef-AVL-2.0` · **Maturity:** the conservation algebra is Shipped-grade (it is just I1–I3 formalized); the stability and yield models are Research; labelled inline. · **© Maher**
+
+## 0. Conventions
+
+All amounts are integers in minor units (I-discipline: never floating point). Where this document writes real-valued formulas (rates, slopes, weights), the implementation evaluates them in fixed-point arithmetic and rounds deterministically toward a defined direction (always toward conservation — rounding never creates value). Time is discrete, indexed by epoch `t`. A currency is `c`; an account is `a`; `B_c(a,t)` is the balance of account `a` in currency `c` at epoch `t`.
+
+## 1. The conservation algebra (the foundation everything rests on)
+
+This section is the mathematical statement of invariants I1–I3, made precise so that every later model can be checked against it.
+
+**1.1 Transaction balance (I1).** A transaction `T` is a finite set of entries `{e_1,…,e_n}`, each with a currency and a signed integer amount. `T` is *valid* iff for every currency `c`: `Σ_{e ∈ T, e.currency = c} e.amount = 0`. Mint and burn are not exceptions to this — they are balanced against system accounts: a mint of `m` units of `c` is the transaction `{(+m, user_account, c), (−m, ISSUANCE_account, c)}`, which sums to zero; a burn is its mirror. Thus *all* value movement, including issuance, preserves the zero-sum property; the ISSUANCE and BURN system accounts carry the running net.
+
+**1.2 Net issuance.** Define `mintedTotal(c,t)` and `burnedTotal(c,t)` as the cumulative mints and burns of `c` through epoch `t`. Net issuance is `N_c(t) = mintedTotal(c,t) − burnedTotal(c,t)`. By 1.1 and induction over transactions, `N_c(t) = −B_c(ISSUANCE,t)` (the issuance account holds the negative of what it has issued).
+
+**1.3 Supply identity (I3).** The sum of all *non-system* account balances equals net issuance:
+`Σ_{a ∈ UserAccounts} B_c(a,t) = N_c(t)` for every `c, t`.
+*Proof.* The sum over *all* accounts (user + system) is invariant at 0 by I1 (every transaction preserves the total). The system accounts hold exactly `−N_c(t)` (ISSUANCE) plus the BURN account's holdings; rearranging gives the user-account sum equal to `N_c(t)`. ∎ This is the daily proof of artifact 8.3 and the materialized check in I3's enforcement.
+
+**1.4 Why this matters mathematically.** Every supply, stability, and yield model below is constrained to act *only through balanced transactions*. No model may set a balance directly; it may only emit transactions that the conservation algebra accepts. This is the mathematical expression of "structure first": the economics live *inside* conservation, never outside it.
+
+## 2. Supply functions per family
+
+**2.1 Reserve-backed supply (deterministic, exogenous).** For a reserve-backed currency, `N_c(t)` is not a model output — it is the running total of deposits minus redemptions, each a balanced mint/burn against attested custody. Supply is fully exogenous (driven by user deposit/redeem actions) and **bounded by attested reserves**: the issuance engine refuses a mint that would make `N_c(t) > attestedReserve_c(t)`. Maturity: InDevelopment.
+
+**2.2 Distributed (bridged) supply.** `N_c(t)` equals the amount locked on the source chain to required confirmation depth. The representation is 1:1; the engine refuses to mint representation exceeding confirmed locks. Maturity: Research.
+
+**2.3 Contribution-credit supply (endogenous, capped, decaying).** This is the interesting case. Contribution credits are minted by PoVC, so `N_c(t)` grows with verified human action. To resist farming and Goodhart drift (see 2.3 of the Anti-Goodhart document), issuance is governed by three composable controls, each acting only on *future* minting (I7 — never on existing balances):
+
+A **per-identity rate limit**: the maximum credits of type `c` an identity may have minted to it in epoch `t` is `ρ_c` (a governed parameter). A **decay-of-issuance-rate** (not decay of balances): the effective per-identity rate falls with recent issuance velocity, `ρ_c^eff(a,t) = ρ_c · g(v_a(t))` where `v_a(t)` is the identity's recent minting velocity and `g` is a monotone-decreasing dampening function with `g(0)=1` — so a sudden farming spike self-limits. A **Goodhart throttle** `θ_c(t) ∈ [0,1]` supplied by the proxy-divergence monitor (document 2.3): the cap becomes `ρ_c^eff(a,t) · θ_c(t)`, so when the measured proxy diverges from the real virtue, *future* issuance is throttled toward zero while every already-earned credit is untouched.
+
+Formally, the mint of credits to identity `a` in epoch `t` satisfies `mint_c(a,t) ≤ ρ_c · g(v_a(t)) · θ_c(t)`. **Crucially, this entire apparatus bounds only `mint_c`, never `B_c` — there is no term in any supply function that decreases an existing balance.** That is the mathematical face of I6/I7. Maturity: Research.
+
+## 3. Demurrage mathematics ($FLUX) — and why it is not a punitive debit
+
+Demurrage is the one place where a *balance* visibly shrinks over time, so it must be handled with mathematical care to stay inside the non-punishment floor. The resolution: demurrage is **not** a system debit of a person's balance as punishment; it is a **declared, consented property of holding that specific currency**, disclosed at acquisition (avoiding *Gharar*), and it is mathematically a **transfer to the dividend pool, not a destruction or a penalty**.
+
+Per epoch, a $FLUX holder's balance carries a demurrage transfer `d(a,t) = ⌊δ · B_FLUX(a,t)⌋` (integer floor; δ is the governed monthly rate, e.g. 0.01), executed as a **balanced transaction** `{(−d, a, FLUX), (+d, DIVIDEND_POOL, FLUX)}` — conservation preserved (I1), value moved not destroyed. This is licit because: (a) it is intrinsic to the currency the holder *chose* to hold, not imposed on credits they earned; (b) it is a holding/storage charge (explicitly *not Core Riba* per §C.9.3(vi) — a charge for holding, not an increase extracted on a loan); and (c) it never touches contribution credits, which are a different family entirely and are non-demurrage by construction. The scope statement (Trade-off Register) records that $FLUX is *supposed* to be a losing trade to hold idle — that is its design purpose (end hoarding, boost circulation), and the math makes that explicit and honest. Maturity: Research.
+
+The mathematical distinction to internalize: **demurrage debits a balance the holder chose to hold in a currency whose whole purpose is to decay; I6 forbids debiting credits a person earned, as punishment.** These are not the same operation, and the ledger can tell them apart: demurrage references the FLUX holding policy and moves to the dividend pool; a punitive debit references a judgment about a person and is rejected (I6).
+
+## 4. The $UNA dividend and its first stabiliser
+
+$UNA issues a small equal amount to each verified unique human per epoch: `mint_UNA(a,t) = u(t)` for each Rung-3 verified identity `a` (with a capped probationary fraction for Rung-1). The honest mathematical point (Trade-off Register): **the first stabiliser is an on-chain velocity measure, not a purchasing-power index.** A purchasing-power-stable UBI requires a robust price index, which is harder than a single national CPI and is *earned later* with published methodology. So v1's `u(t)` is stabilised against measured on-chain velocity `V(t)` — `u(t) = u_0 · h(V(t))` with `h` a governed dampening that reduces per-capita issuance when velocity signals inflationary pressure — and the document states openly that this is a *velocity* stabiliser, not a *cost-of-living* stabiliser. Reach equals the reach of the best personhood providers; the hardest-to-verify humans are the ones who most need it, so coverage is honestly partial. Maturity: Research.
+
+## 5. The multi-dimensional stable unit ($PEG) — basket rebalancing as a pure Tier-0 function
+
+$PEG targets constant purchasing power over a holistic basket (fiat, commodity, and — earned later — well-being indices). Rebalancing is a **pure, deterministic, formally-verified Tier-0 function** with hard per-epoch movement caps (no ML on the trusted path; the AI may only *propose* basket changes for Tier-2 ratification). Let the basket be weights `w_i(t)` on assets `i` with prices `p_i(t)`. The target is to hold the index `I(t) = Σ_i w_i(t) p_i(t)` constant. The Tier-0 rebalancer adjusts weights within a capped step: `|w_i(t+1) − w_i(t)| ≤ κ` (governed cap κ), and the function is pure (same inputs → same outputs, no side effects, fully testable). The cap κ is the safety bound: it means a corrupted oracle or an extreme price shock can move the basket by at most κ per epoch, bounding the damage of bad input. $PEG (regulated) and $PEG+ (experimental, jurisdiction-gated, never marketed as a stablecoin) are distinct products with distinct tickers (Trade-off Register). Maturity: $PEG InDevelopment as concept; $PEG+ Research.
+
+## 6. Yield without Riba — the Core-Riba-compliant yield model
+
+This is the section the prompt specifically requires: how yield is generated *without* Core Riba, and how the issuance engine's I11 refusal is expressed mathematically. The Islamic-finance distinction is precise and the math must honor it.
+
+**6.1 The forbidden form (Core Riba).** A yield is Core Riba iff it satisfies all four cumulative elements of §C.9.2. Mathematically, the forbidden pattern is: a provider lends principal `P` of money (or same-kind fungible) and is entitled to `P·(1+r)` at maturity with `r` **pre-fixed and guaranteed irrespective of any venture's outcome**, the provider **bearing no risk of loss of `P`** and **performing no real service or value-transfer** commensurate with `r`. Formally: `return = P·r` where `r` is constant, guaranteed, `Risk(P) = 0`, and `Service = ∅`. The issuance engine (I11) refuses any `issuance_policy` whose declared flags encode exactly this pattern: `base ∈ {money, same_kind_fungible} ∧ increase = prefixed_guaranteed ∧ ¬risk_bearing ∧ ¬value_creating ∧ extracts_from_counterparty`.
+
+**6.2 The permitted forms (each mathematically distinct from 6.1).** Yield is licit when at least one of the four Core-Riba elements is absent. The model provides four permitted yield generators:
+
+*Profit-and-loss sharing (the canonical alternative).* The provider supplies capital `P` to a venture and receives a *share* `σ` of the venture's *actual* profit `π(t)` — `return = σ · π(t)` — and **bears loss**: if the venture loses, the provider's capital is reduced. Here `return` is not pre-fixed (it depends on `π(t)`, which is uncertain) and risk is genuinely borne (`Risk(P) > 0`). Element (b) and (c) of Core Riba are both absent. The math: `E[return] = σ · E[π]`, `Var(return) = σ² · Var(π) > 0` — the variance being strictly positive is the mathematical signature of genuine risk-bearing, and the engine can check that a policy claiming risk-bearing actually exposes the provider to a non-degenerate loss distribution.
+
+*Asset rent / lease.* The provider owns a real asset, bears its risk (depreciation, loss), and receives rent `R` for its use. Element (a) fails (the base is a real asset, not money/same-kind-fungible) and (c) fails (real value — use of the asset — is transferred). Permitted.
+
+*Genuine service fee.* The provider performs real work (custody, validation, processing) and charges a fee `F` priced *for the service*, not as a function of `P·time` (which would be a disguised time-value-of-money charge). The engine checks that `F` is not structurally proportional to `principal × duration` in the manner of interest; a flat or work-proportional fee passes, a `P·r·t` fee does not. Element (c) fails (real service rendered). Permitted.
+
+*Staking / validation reward.* The reward compensates genuine effort, service, or risk (securing the network, doing validation work), not the mere lending of value. Element (c) fails. Permitted — and this is how a contribution-adjacent or network-securing yield is generated licitly.
+
+**6.3 The decision procedure (what the engine computes).** Given a declared yield policy, the engine evaluates the four-element predicate. The interpretive supremacy of permission (§C.9.3) applies *only at the boundary*: if a policy is ambiguous and a genuine risk-bearing or value-creating construction is available, that construction is presumed and the policy is permitted; but if a policy *squarely* encodes all four Core-Riba elements (e.g., it literally declares a fixed guaranteed rate on idle money with a zero-loss guarantee and no service), no presumption can rescue it — it is refused (I11). The mathematical test for "genuine risk-bearing" is the non-degenerate loss distribution (`Var(return) > 0` with real downside); the test for "genuine service" is that the fee is not structurally `principal × rate × time`. Maturity: the predicate is InDevelopment; edge-case classification warrants Shariah-board review (honest caveat).
+
+## 7. Honest caveats
+
+The conservation algebra (§1) is solid and is just I1–I3 made precise. Everything from §2 onward rests on **empirical parameters that must be calibrated against real behavior**: the dampening functions `g`, `h`, the demurrage rate δ, the basket cap κ, the per-identity rate ρ — none of these can be set correctly from theory alone; they must be tuned in the simulation sandbox (document 2.2) and adjusted by governance with published rationale. The $UNA velocity stabiliser is honestly weaker than a purchasing-power stabiliser and is labelled so. And the Core-Riba yield predicate (§6) encodes an ethical-legal judgment into a mathematical test; the four-element decision procedure is faithful to the principle, but its application to novel financial structures is a matter for human Shariah-board review, not for the engine to decide alone — the engine refuses the clear cases and flags the ambiguous ones for human judgment.

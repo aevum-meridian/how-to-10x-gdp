@@ -1,0 +1,34 @@
+# DOCUMENT 6.2 — IDENTITY LADDER & SOCIAL-RECOVERY SPECIFICATION
+### Four Rungs, Mandatory Recovery, and Sybil Containment Without Exclusion
+
+**System:** Aevum (consuming external personhood) · **License:** `LicenseRef-AVL-2.0` · **Tier:** 6 · **Maturity:** Rung-0/1 InDevelopment, Rung-2/3 Research · **© Maher**
+
+## 0. The inclusion-vs-Sybil trade-off, on the record
+
+The ladder embodies a deliberate trade-off (Trade-off Register, inclusion-vs-Sybil axis): full participation requires personhood, which does not exist at scale, *and* the hardest-to-verify humans (stateless, deviceless) most need access. The resolution is not to pretend the problem is solved but to **bound the loss**: Rung-0 is open to everyone instantly; higher rungs unlock more, gated by progressively stronger (and honestly imperfect) verification; and the Rung-1 probationary pool has a *hard constitutional issuance cap* so that even a successful Sybil attack on Rung-1 is bounded in damage.
+
+## 1. The four rungs
+
+**Rung 0 — Pseudonymous wallet.** Unlocks: hold assets, swap, basic transfers. Verification: none (instant). Anyone, anywhere, immediately.
+
+**Rung 1 — Social attestation.** Unlocks: the probationary $UNA dividend pool (capped). Verification: web-of-trust and staked social attestations, defended by Sybil-graph analysis. This is the rung for those without documents or devices.
+
+**Rung 2 — Document / institutional.** Unlocks: regulated features where law requires (e.g., regulated tunnels). Verification: licensed partners.
+
+**Rung 3 — Full personhood.** Unlocks: full $UNA, one-human-one-vote in constitutional governance. Verification: pluralistic ZK personhood providers (document 6.1).
+
+## 2. Sybil containment (v3 discipline)
+
+A `Rung1PoolGovernor` enforces the **hard constitutional issuance cap** on the Rung-1 pool — the cap is a `ConstitutionalParameter`, amendable only by the constitutional process, so the maximum exposure to Sybil farming at Rung-1 is fixed and known. `AttestationVesting` ramps a new identity toward full value over time and **resets on slash**, so a freshly-created Sybil identity cannot immediately extract full value. A `SybilBountyRegistry` runs a standing public bounty for discovering Sybil clusters. `SybilGraphAnalyzer` scores identities on graph structure, with the score being *explainable and appealable* (not a black-box exclusion). Critically, every Sybil-containment measure is designed to *bound damage*, not to *exclude the genuinely hard-to-verify* — the bounty and graph analysis target clusters, while the vesting and cap bound exposure, so a real but unusual person is throttled, not denied.
+
+## 3. Mandatory social recovery
+
+Self-custody's catastrophic failure mode — lose your key, lose everything — is bounded by **mandatory social recovery** (`SocialRecoveryService`): M-of-N guardians chosen by the user, a timelocked challenge window (so a malicious recovery attempt can be contested before it completes), and a deliberately high-friction path. Recovery is **never** a low-friction email reset (the top real-world breach vector), and a completed recovery produces a decision receipt and elevated monitoring on the recovered account. Personhood scoring underlying recovery is explainable and appealable (`PersonhoodScoreService`).
+
+## 4. Child-safety at the ladder
+
+Age-gating **fails closed**: where age is uncertain, the protective path is taken, and no rung unlocks any feature that would measure, profile, or incentivize a minor's body, appearance, attention, or behavior (the child-safety floor, overriding). The recovery and social features are reviewed feature-by-feature (per the Red-Team Dossier's hardening backlog) against grooming-adjacent harms — no recovery or social mechanism may facilitate secrecy between an adult and a child or isolation of a minor from trusted adults.
+
+## 5. Honest caveats
+
+The ladder is honest partial coverage by construction. Rung-1's web-of-trust is the most fragile rung (web-of-trust has known Sybil weaknesses), which is precisely why the hard constitutional cap and vesting exist — to bound what a Rung-1 compromise can cost. Social recovery trades the catastrophe of total loss for the smaller risk of a contested recovery, which the timelock and challenge window mitigate but do not eliminate. And the deepest caveat is the same as 6.1's: the hardest-to-verify humans are the ones the ladder serves least well, and the project must keep working the Rung-1 verification problem rather than treating partial coverage as acceptable forever.

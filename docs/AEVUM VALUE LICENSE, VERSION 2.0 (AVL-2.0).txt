@@ -1,0 +1,56 @@
+# AEVUM VALUE LICENSE, VERSION 2.0 (AVL-2.0)
+### A Derived License Based on Maher's License, Version 2.0 — Self-Contained — for Aevum, the System of Engagement
+
+**Identifier:** `LicenseRef-AVL-2.0` · **Base:** Maher's License 2.0 (ML-2.0) · **Designated:** Work of Foundational Character (Part G applies) · **Steward:** [STEWARD] · **Registry:** [URL] · **© Maher**
+
+> This License is deliberately self-contained and **not** cross-referenced to the Meridian license. The two legs of the body share a conscience in substance but not a text, so that a defect or compromise in one license cannot propagate to the other.
+
+## A0 — DERIVATION, CHARACTER, HONEST LABELING
+
+This License is **based on Maher's License, Version 2.0**; it is not ML-2.0 itself and carries no approval it lacks (ML-2.0 §E.6(e)). It governs **Aevum** — the system of engagement: the user-sovereign wallet, the ethical-filter membrane, the governed currency-experience fabric, the Tier-0/1/2 governance split, and the Trade-off Register surface. It is an **ethical-source, source-available, governing-charter license**, **not** an OSI/FSF "open source" license, because it conditions use on ethics and charter conformity; representing it otherwise violates *Sidq* (ML-2.0 §0.2). Per ML-2.0 §1.5 and §C.0, this License is a **reinforcing and remedial fallback**; Aevum's **primary** protections are structural — its Tier-0 verified rules, constitutional parameters, membrane enforcement, and the invariants I1–I10. No greater enforceability is claimed than the forum's law allows, **except** the Core Riba refusal of A-§C.9, asserted at charter level per ML-2.0 §C.9.5.
+
+## A1 — FOUNDATIONAL PRINCIPLES (ADOPTED IN FULL)
+
+This License adopts, as its interpretive key and operative foundation, the four Foundational Principles — **Amanah** (faithful stewardship of what is entrusted), **Sidq** (truthfulness), **Adl** (proportionate justice), **Shafafiyah** (transparency) — and the subsidiary norms **Darar** (no harm), **Zulm** (no oppression), **Gharar** (no deceptive uncertainty), and **Riba** (no usurious increase, elevated per ML-2.0 §1.3(iv) and bounded by A-§C.9). No belief is required; compliance is conduct (*lā ikrāha fī al-dīn*).
+
+## A2 — DEFINITIONS
+
+Adopts ML-2.0 §2 definitions in full. Aevum is, per deployment: a **Network-Facing Work** as to hosted wallet/filter/agent services; a **Conveyed-Copy Work** as to client software run by users. Aevum **provides Financial Functionality**. Aevum **is designated a Work of Foundational Character** (Part G applies). Added term: **"Engagement Function"** — any Aevum feature that surfaces, routes, filters, ranks, recommends, or governs value or currency experiences for a user.
+
+## A3 — DIRECT LICENSE GRANT
+
+Worldwide, royalty-free, non-exclusive, perpetual (subject to termination) license to use (including commercially), reproduce, study, modify, and Distribute Aevum in Source and Object Form, conditioned on compliance with this License. Patent grant with defensive termination (patent suit against the Work terminates the patent grant). No trademark license beyond descriptive attribution. Warranty disclaimed ("AS IS"). Liability limited to the maximum the law allows. Termination is automatic on material breach, with a 30-day first-breach cure for curable breaches (*Adl*); breaches that have already produced their prohibited effect are non-curable. (These mirror ML-2.0 Part A in substance; reproduced here so this License stands alone.)
+
+## A4 — RECIPROCITY AND NETWORK SOURCE
+
+Distribution of Aevum or Derivatives requires source availability under this License (accompany, written 3-year offer, or public repository). **File-level reciprocity:** modified files containing Aevum remain under this License. **Network use:** a modified hosted Aevum Engagement Function (a Network-Facing Work) must offer Corresponding Network Source to served users by a means no more burdensome than the service — determined by the objective test, no Steward ruling required. **Minimal-and-justified redaction (binding, not lowerable):** keys, user data, and genuine operational secrets may be redacted only to the minimal extent necessary, with the redaction's category and the harm avoided publicly stated, and never so as to defeat building and running an equivalent version; the burden of justification is on the redactor; over-redaction is a *Shafafiyah* breach. **Non-severability of ethics:** the ethical and charter conditions travel to every downstream recipient and cannot be stripped by any combination or relicensing.
+
+## A5 — ETHICAL-USE CONDITIONS
+
+Conditions of the grant (scope-of-grant limitations), reinforcing law per ML-2.0 §C.0; knowledge standard is **actual knowledge or willful blindness, never negligence** (this floor may not be lowered). Use of Aevum is prohibited where it: deceives or defrauds (*Sidq*); inflicts unlawful harm, including unlawful surveillance or stalking (*Darar*); is an instrument of oppression — forced labor, trafficking, unlawful discrimination, exploitation of the vulnerable (*Zulm*); or betrays a trust — misappropriating entrusted data, funds, or credentials, or inserting covert security-compromising mechanisms (*Amanah*).
+
+**A-§C.8 — Financial functionality permitted.** Aevum's provision and ordinary lawful use of currency-experience, wallet, swap, lending-experience, yield-display, demurrage, and fee functionality is **expressly permitted**, reached by the conditions only where it independently constitutes fraud, unlawful harm, exploitation of the vulnerable, or breach of trust; doubt resolves in favor of permission.
+
+**A-§C.9 — Absolute refusal of Core Riba (charter-level).** Aevum may not be operated or modified to issue, enforce, surface, or principally facilitate **Core Riba** — defined cumulatively (all four required): (a) money/fungible-of-same-kind base; (b) a pre-fixed, guaranteed increase over principal regardless of any real venture's outcome; (c) absence of genuine risk-bearing or value-creating counter-performance (increase accrues from mere deferral or lending, or unequal same-kind exchange); (d) extraction from a counterparty without commensurate risk or value given. **Not Core Riba** (expressly permitted): trade profit, asset rent, profit-and-loss-sharing returns, genuine service fees, staking/validation rewards for real effort/risk, and demurrage as a holding charge. Where a risk-bearing/value-creating construction is available, it is presumed and permitted. This refusal is non-severable and asserted at charter level regardless of forum (ML-2.0 §C.9.5). *Structural-first note:* wherever feasible, Aevum's currency-experience fabric must refuse to surface a currency experience whose declared policy is Core Riba, so the structure leads and this clause reinforces.
+
+**Aevum-specific stricter conditions (non-severable):**
+
+**A-§C.10 — User sovereignty.** No override of a user's own ethical-filter settings; no *global* asset block except via the timelocked, publicly-justified, appealable constitutional process. Silent or unilateral global blocking is a material breach.
+
+**A-§C.11 — No punitive or social-credit use.** Filter labels, governance data, wallet telemetry, and any Engagement Function may not rank, gate, reward, or penalize persons' access to rights, services, or freedoms on the basis of monitored behavior, expression, association, or belief. **This expressly includes any cross-relying-party or cross-context behavioral correlation, including any imported from an external identity provider:** such correlation may serve authentication-time fraud prevention only and may never feed a value-affecting, personhood-aggregation, or rights-affecting decision.
+
+**A-§C.12 — No ML on the trusted path.** No machine-learning/probabilistic model may *execute* a value-moving or rights-affecting action; such systems may only *propose* (for Tier-2 ratification) or *gate* (halt-only — refuse but never initiate).
+
+**A-§C.13 — Maturity honesty.** No user-facing surface or marketing may present a Research/InDevelopment capability as Shipped, describe a niche/experimental currency as general-purpose, or blur a regulated and an experimental product under one name; all claims must be checkable against the public maturity endpoint.
+
+**A-§C.14 — No authority over the system of record.** Aevum may not be modified to directly debit, mint, freeze, or author a balance change in the system of record (Meridian); it may only *propose* through the signed cross-system event contract for that system to validate. Bypassing that contract is a material breach.
+
+**A-§C.15 — Minor-harm floor (overriding, non-curable, non-amendable).** No feature may measure, profile, rank, sexualize, or financially incentivize the body, appearance, attention, or behavior of a person under 18. Age-gating fails closed. This overrides every other provision.
+
+## A6 — CHARTER LAYER (PART G APPLIES)
+
+As a Work of Foundational Character, Aevum must, in its own substance: establish its monetary-experience order truthfully (*Sidq*); order value justly, not to entrench advantage or oppression (*Adl/Zulm*); make the basis of its order available for study and good-faith critique (*Shafafiyah*, subject to minimal redaction); be stewarded as a trust for those it governs, not private capture (*Amanah*); and inflict no unlawful harm and never operate Core Riba (*Darar/§C.9*). The **Humility Clause governs Aevum's own governance**: any Aevum governance determination issued in bad faith, to suppress legitimate dissent, or to entrench the Steward's advantage against those it serves is void.
+
+## A7 — STEWARDSHIP, GENERAL PROVISIONS
+
+Registry is canonical; published versions are stable; stewardship is a trust passing only to those who will maintain these principles. Interpretation favors the reading most protective of the user and most consistent with the Principles. Mandatory law prevails where it compels otherwise-prohibited conduct, but conflict may not be used as a pretext to evade a condition where lawful compliance is possible. Reform-rather-than-strike severability; application-specific severability for ethical conditions. Part D (meta-license machinery) is **omitted** (Aevum evaluates no licenses) per ML-2.0 §D.6. **Exhibit notice:** "Licensed under Aevum Value License 2.0 (AVL-2.0), based on Maher's License 2.0. Work of Foundational Character. Not OSI/FSF open source. Network deployments: see A4. Lawful finance permitted; Core Riba refused (A-§C.9). Contribution data never used for cross-context scoring (A-§C.11). Structural safeguards are primary; this license is the fallback. © Maher. Canonical: [URL]." `LicenseRef-AVL-2.0`.

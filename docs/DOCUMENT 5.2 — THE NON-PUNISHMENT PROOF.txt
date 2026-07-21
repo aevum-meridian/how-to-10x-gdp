@@ -1,0 +1,42 @@
+# DOCUMENT 5.2 — THE NON-PUNISHMENT PROOF
+### The Most Important Formal Artifact in Either System
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 5 · **Maturity:** Research (highest priority) · **Proves:** I6 (no punitive debit), and by extension the keystone claim of the Coercion-Resistance Spec (0.4) · **Recommended tool:** TLA+/TLC for the bounded reachability proof, with a Coq/Isabelle inductive proof for the unbounded guarantee. · **© Maher**
+
+## 0. Why this is the most important proof
+
+The entire project's claim to be *not* a social-credit instrument rests on a single property: that no reachable state of the system reduces a person's contribution-credit balance except by their own authorized spend or by an arbitration-bound reversal of a specific fraudulent mint. If that property holds, "money that measures what we become" cannot become "a system that takes what we've earned to control how we live." If it fails — even in one obscure reachable state — the whole thesis fails. So this proof is not one verification among many; it is *the* verification, and it is prioritized above all others.
+
+## 1. The property, stated precisely
+
+Let a *personal contribution account* be an account `a` whose currency is in the contribution family and whose owner is a natural person. Let a *debit* be any transition that decreases `balance(a)`. The property to prove:
+
+> **NonPunishment** ≡ For every reachable state and every debit `d` against a personal contribution account `a`: `d` is *holder-authorized* (a spend the account's own holder authorized) **OR** `d` is an *arbitration-bound reversal* satisfying all of: (i) `d.reverses_mint_txn_id` references a specific existing mint transaction; (ii) `d.arbitration_case_id` references a case with status `resolved_fraud` and `case_closed_at` set; (iii) `|d.amount| ≤ amount(d.reverses_mint_txn_id)`; (iv) `balance_after(d) ≥ undisputed_credits(a)`.
+
+In temporal logic: `□ ∀ d ∈ Debits(PersonalContributionAccounts) : HolderAuthorized(d) ∨ ArbitrationBoundReversal(d)`. Equivalently and operationally: **a debit referencing neither a specific mint nor a closed fraud case — a *punitive debit* — is never reachable.**
+
+## 2. The state machine and the transition inventory
+
+This proof requires modeling *every* transition in the system that could conceivably touch a balance, because the property is universal ("no reachable state"). The transition inventory:
+
+`HolderSpend(a, amount, authorization)` — decreases `balance(a)`, guarded by a valid holder authorization. `MintContribution(...)` — only *increases* a balance (never a debit; included to show it cannot decrease). `PolicyEngineAction(...)` — by I7, writes only issuance policies; modeled as having *no* transition that writes an entry against a personal account (this is a modeled precondition that the I7 enforcement must realize). `Settle(...)` — by I10, decreases a personal balance only with holder authorization or as an arbitration reversal. `ApplyArbitrationReversal(d)` — the single transition that may debit a personal contribution account non-holder, guarded by conditions (i)–(iv). And critically: the model asserts there is **no other transition** that decreases a personal contribution balance — the absence is the modeled form of "there is no other path."
+
+## 3. The proof obligation and method
+
+**Bounded reachability (TLA+/TLC).** Assert `Spec ⇒ □NonPunishment`. TLC explores all reachable states for a bounded configuration (a few personal accounts, a few mints, a few disputes, the full transition set) and confirms that in every reachable state, every debit against a personal contribution account is either holder-authorized or a conforming arbitration reversal — or returns a counterexample. The exhaustiveness is the point: a hand-written argument might miss a path (a settlement abort, a policy edge case); TLC checks *all* modeled paths.
+
+**Unbounded inductive proof (Coq/Isabelle).** Generalize: prove by induction over transitions that `NonPunishment` is preserved. The key step is the *exhaustiveness of the transition inventory* — the proof must establish that the modeled transitions are the *only* ones that can decrease a personal contribution balance, and that each either requires holder authorization (`HolderSpend`, `Settle`) or satisfies the arbitration predicate (`ApplyArbitrationReversal`), while `PolicyEngineAction` provably writes no such entry (I7). If the transition inventory is complete and each transition preserves the property, the property holds in all reachable states. ∎
+
+**The correspondence obligation.** This proof's soundness depends on the modeled transition inventory being *complete* — i.e., that the implementation has no balance-decreasing path the model omitted. This is the proof's most important and most fragile assumption, and it is discharged not by the proof alone but by: the austere Ledger Core API (4.1) exposing no balance-setting method; the DB privilege model (only the Dispute Engine's role can insert a negative entry against a personal contribution account, and only via the arbitration-reversal constraint); and an architectural test asserting no other module can author such a debit. The formal proof and these three enforcement points *together* establish the guarantee; the proof alone establishes it only for the modeled transitions.
+
+## 4. Counterexample-trace format
+
+A violation trace shows the sequence of transitions reaching a state where a personal contribution balance was decreased by a debit that is neither holder-authorized nor a conforming arbitration reversal, with the offending transition and its arguments highlighted (e.g., "`Settle(abort)` at step 5 produced a net debit of X against personal account `a` with no holder authorization"). Because this is the keystone property, any such trace is treated as a launch-blocking defect, mapped immediately to a reproducing test, and resolved before the milestone (M1) can exit.
+
+## 5. Connection to the Coercion-Resistance Spec
+
+This proof *is* the discharge of the keystone proof obligation in 0.4 Register II: "no coalition of all operators can punitively debit a personal balance because the capability does not exist." If `NonPunishment` holds across all reachable states, then *no input* — including inputs an operator coalition could craft — reaches a punitive-debit state, because such states are unreachable. The formal proof is therefore what turns the Coercion-Resistance claim from a stated assurance into a verified one. This is why 5.2 is prioritized: it is the proof that makes the body's central promise true rather than merely declared.
+
+## 6. Honest caveats
+
+The proof establishes that the *modeled* system has no reachable punitive-debit state; its soundness hinges on the transition inventory being complete (no implementation path the model omitted), which is the correspondence obligation discharged by the API austerity, DB privileges, and architectural tests — the proof does not, by itself, prove the implementation has no extra path. The proof does not cover bugs in the proof-assistant encoding, the cryptography, or the deployment (the 5.3 Trusted Computing Base). And it proves *no punitive debit*; it does not prove *no exclusion* — a person could still be denied *new* minting (which is a different, governed, appealable matter handled by the personhood layer and the maturity ledger's abandonment criteria), and the project must not conflate "your earned credits are safe" (proven here) with "you cannot be excluded from earning more" (a separate, honestly-partial guarantee).

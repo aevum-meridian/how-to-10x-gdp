@@ -1,0 +1,66 @@
+# DOCUMENT 1.1 — THE AEVUM WHITEPAPER
+### A System of Engagement for a Just, Plural, Behavior-Aware Monetary Order
+
+**System:** Aevum (the system of engagement) · **Tier:** 1 · **License:** `LicenseRef-AVL-2.0` (based on ML-2.0; Work of Foundational Character) · **Maturity:** mixed — every capability claim below is bound to the public maturity endpoint `/api/v1/maturity`; this document marks each subsystem's label inline. · **© Maher**
+
+## Abstract
+
+Aevum is one of two legs of a meta-macroeconomic body. It is the **system of engagement**: the layer through which human beings actually experience money — a user-sovereign wallet, an ethical filter (the membrane's experience face), a fabric of pluggable currency *experiences*, an anti-plutocratic governance surface, and the public Trade-off Register. Aevum holds no authoritative balances; the system of record (Meridian) does. Aevum's job is to make a plural, behavior-aware, ethically-filtered monetary order *usable* by people without ever acquiring the power to turn that order against them. This whitepaper specifies Aevum at architectural depth, grounds it in the 2026 regulatory and ethical reality, and states plainly what Aevum is not.
+
+## 1. The problem Aevum addresses
+
+Conventional monetary experience forces a false choice. Centralized systems give a smooth experience but concentrate the power to surveil, freeze, and exclude. Decentralized systems distribute power but deliver an experience so hostile (key management, gas, irreversible error) that they exclude most of humanity by friction alone. Neither lets a person hold a *plurality* of value forms — fiat, crypto, and value earned from how they live — under *their own* ethical rules, with an experience that does not require them to become a cryptographer. And critically, both, in their behavior-aware variants (loyalty scores, social credit, engagement optimization), tend to convert "a system that knows how you live" into "a system that controls how you live."
+
+Aevum's premise is that the experience layer can be rich, plural, and ethical *precisely because* it is structurally denied the power to coerce. A wallet that cannot punish you is free to know you helpfully.
+
+## 2. Position in the body (the inversion, applied to engagement)
+
+Aevum is a leg, not the head. Per the anatomical inversion that governs the whole project, Aevum can propose, surface, filter, and refuse — but it can never *command the legs* or *reach the ledger*. Specifically (AVL-2.0 §A-§C.14, invariants I9/I10): Aevum may propose a value movement through the signed cross-system event contract, and the system of record validates and posts it; Aevum can never itself debit, mint, or freeze a balance. This is not a limitation to be engineered around; it is the source of Aevum's trustworthiness. A user can let Aevum see everything about their financial life because Aevum is structurally incapable of weaponizing what it sees.
+
+## 3. Architecture
+
+Aevum is a four-layer engagement stack sitting beside (never above) Meridian.
+
+**3.1 The Wallet (Maturity: Stage-1 core InDevelopment).** A non-custodial client managing the user's decentralized identifiers, surfacing all their value (Meridian-native currencies and tunnelled/bridged assets), and automating experience-level behaviors (e.g., displaying demurrage, surfacing contribution-credit activity). It holds keys and intent; it holds no authoritative balance — every balance it shows is the user's view of Meridian's ledger, reconciled (artifact 7.2). Critically, the wallet integrates **social recovery** (M-of-N guardians, timelocked challenge window) so that the catastrophic failure mode of self-custody — lose your key, lose everything — is bounded. Recovery is deliberately high-friction and never a low-friction email reset.
+
+**3.2 The Membrane's experience face (Maturity: InDevelopment).** Aevum hosts Face 1 of the membrane (document 0.5): the user-sovereign ethical filter. Each wallet sets its own rules about what assets it will hold, surface, or route; the protocol supplies multi-sourced, contestable labels rather than a single imposed verdict. The filter refuses to *surface or route*; it never authors a Meridian balance change. Global blocks (overriding individual sovereignty) are reserved for legally-compelled cases through the constitutional process — timelock, public justification, appeal — never silent or unilateral.
+
+**3.3 The Currency-Experience Fabric (Maturity: Research → InDevelopment).** Aevum lets currency *types* be plugged in as experiences. A currency is defined in Meridian (issuance, supply, conservation); Aevum defines how a human *encounters* it — how a demurrage currency shows its decay, how a contribution credit shows what it rewards, how a stable unit shows its basket. The fabric refuses to surface any experience whose underlying policy is Core Riba (AVL-2.0 §A-§C.9; structurally backed by Meridian's I11), so the experience layer cannot present an instrument the body refuses to issue.
+
+**3.4 The Governance & Trade-off Surface (Maturity: Research).** Aevum is where humans participate in governance: proposing, debating, voting (personhood-weighted for constitutional matters, conviction/quadratic for parameters), and reading the live Trade-off Register. The AI posture is strict and inherited from the body's law: the three-tier split (Tier-0 deterministic verified rules with hard caps and no ML; Tier-1 AI *advisory* proposer that emits inert proposals and executes nothing; Tier-2 human/DAO ratification). Per AVL-2.0 §A-§C.12, no ML model may *execute* a value-moving or rights-affecting action; it may only *propose* or *gate* (halt-only). The mind halts but never initiates.
+
+## 4. The currencies Aevum surfaces (experiences, not issuances)
+
+Aevum does not issue currency — Meridian does. But Aevum is where the project's currency *vision* is experienced, so this whitepaper records the currency set Aevum is designed to surface, each with its issuance model (defined in Meridian) and its Aevum experience, and each with an honest maturity label and a scope statement bound to the Trade-off Register. The set is open-ended; these are the founding examples.
+
+A **contribution-credit family** (CTC, TIC, VTC, INC, SCC, WPC, WDC, JEC, FLC, GRC, and more to come) is minted in Meridian via Proof-of-Verified-Contribution from verified human action. In Aevum these are surfaced as a record of how a person has lived — and, structurally, can never be shown as something that can be taken to punish them (I6). Default non-transferable per type; surfaced as *being*, not *trading*. Maturity: Research (the personhood and attestation layers they depend on are open research at scale).
+
+A **carbon-backed currency** ($OXY, each token one verified tonne removed/avoided, supply expanding with verified planetary regeneration) is surfaced with its regeneration dividend and its verification provenance. Its issuance uses a slow/contestable dispute profile (verification takes months); Aevum shows the provisional/confirmed state honestly. Maturity: Research.
+
+A **demurrage circulation currency** ($FLUX) loses value at a preset rate unless circulated, with deductions flowing to a dividend pool. Aevum surfaces the decay transparently. **Scope statement, on the record (Trade-off Register):** $FLUX is a community-circulation experiment, not a store of value and not general-purpose; holding it is *supposed* to be a losing trade versus stable units; Aevum's marketing may never describe it as general-purpose (AVL-2.0 §A-§C.13). Maturity: Research.
+
+A **proof-of-personhood dividend** ($UNA) issues a small equal amount to each verified unique human. Its first stabiliser is an on-chain velocity measure, **not** a global purchasing-power index (which is harder than a national CPI and is earned later with published methodology). Aevum surfaces partial coverage honestly — the hardest-to-verify humans are the ones who most need it, so Aevum shows the probationary tier and the honest fact that planetary personhood is unsolved. Maturity: Research.
+
+A **conditional-purpose money** ($TASK) is spendable only when ZK-proven conditions are met (educational use, disaster-zone geography, completed milestone). Aevum surfaces the conditions plainly so consent is informed (avoiding *Gharar*). Maturity: Research.
+
+A **multi-dimensional stable unit** ($PEG, regulated) and an **experimental variant** ($PEG+ / and a separate index unit) are **distinct products with distinct tickers**; $PEG+ is jurisdiction-gated, requires risk acknowledgment, and is **never** marketed as a stablecoin (Trade-off Register; AVL-2.0 §A-§C.13). The stable unit's basket rebalancing is a pure, verified Tier-0 function. Maturity: $PEG InDevelopment as a concept, $PEG+ Research.
+
+A **verifiable-output reward** ($MAKE) replaces the retired EEG-attention experiment ($FOCUS, kept as Deprecated in the maturity ledger for an honest historical record). $MAKE rewards verifiable output, carries **no biometric or neural data** (I8), and surfaces what it measures transparently. Maturity: Research.
+
+Every one of these claims is bound to `/api/v1/maturity`; Aevum's surfaces must read the label and must never present a Research item as Shipped.
+
+## 5. Grounding in 2026 reality
+
+Aevum is designed for the world as it is in 2026. **MiCA** governs crypto-asset services and stablecoins in the EU; Aevum's surfacing of bridged crypto and of $PEG-class units is built to operate behind MiCA-compliant tunnels (the regulated-entity doctrine). The **GENIUS Act** regime for payment stablecoins in the US shapes how reserve-backed units are surfaced and disclosed. **ISO 20022 post-coexistence** (the cross-border MT-sunset of 22 November 2025) means Aevum's experience of fiat settlement is structured-address-native; the user never sees an unstructured-address failure because the membrane normalizes inbound and emits structured outbound. The **EU AI Act** treats consequential algorithmic decisions (such as a personhood-based denial of access to the contribution economy) as high-risk; Aevum's governance surface therefore makes every such denial explainable and appealable, and keeps all ML advisory-only (Tier-1), never executive. **Neural-data privacy laws** (the 2025–26 wave treating brain data as protected sensitive data) are why $FOCUS was retired and why I8 forbids minting from neural data — Aevum will never surface a credit earned from a person's brain activity. And for the **Core Riba** distinction, Aevum's currency-experience fabric honors the Islamic-finance line between *genuine profit/risk-sharing* (permitted, surfaced) and *usurious guaranteed increase on money* (refused, never surfaced), per AVL-2.0 §A-§C.9.
+
+## 6. Governance and AI posture (restated for emphasis)
+
+Aevum's governance is anti-plutocratic by construction: constitutional matters (the floors, the child-safety rule, the anti-social-credit rule) use personhood-weighted one-human-one-vote; parameters use conviction or quadratic voting; the apathetic may delegate. The $AEV-equivalent governance token grants **fee discounts, not direct revenue**, so participation is aligned without reinforcing whale dominance, and a portion of fees flows to a public-goods fund. The AI posture bears repeating because it is where engagement systems usually fail: in Aevum, money proposes and humans decide. No model is on the trusted path. The mind can halt a harmful proposal at the gate; it can never initiate an action.
+
+## 7. What Aevum is NOT
+
+Aevum is **not** a bank or a custodian — it holds keys and intent, not authoritative balances. It is **not** the system of record — every balance it shows is a reconciled view of Meridian. It is **not** a social-credit system — it is structurally forbidden (A-§C.11, I9) from using filter labels, governance data, or wallet telemetry to rank or penalize anyone's access to rights, and it can never debit a contribution balance to punish (I6). It is **not** an AI that decides — all ML is advisory or halt-only (A-§C.12). It is **not** an OSI/FSF "open source" project — it is ethical-source under AVL-2.0, and saying otherwise violates *Sidq*. It is **not** a general-purpose home for every currency it surfaces — $FLUX, $PEG+, and the experimental units carry scope statements forbidding general-purpose marketing. And it is **not** a finished system — most of its currency experiences are Research-tier and labelled as such.
+
+## 8. Honest caveats
+
+Aevum's hardest unsolved problems are inherited from the body: planetary proof-of-personhood (which gates $UNA and the contribution family) is an open research problem the whole field shares, so Aevum ships graceful partial coverage rather than a clean global rollout. The user-sovereign filter places real responsibility on users; sensible defaults and contestable labels must keep sovereignty from becoming a burden that nudges users toward harm through inattention — an InDevelopment usability-meets-ethics problem. And behavior-aware money lives one design mistake from social credit, so the anti-social-credit floor, the no-neural-data line, and the child-safety fail-closed rule warrant more adversarial review than anything else in Aevum before any launch.

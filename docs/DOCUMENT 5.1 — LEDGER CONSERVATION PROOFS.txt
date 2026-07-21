@@ -1,0 +1,36 @@
+# DOCUMENT 5.1 — LEDGER CONSERVATION PROOFS
+### Machine-Checked Proofs of Conservation, Supply Integrity, and Append-Only
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 5 · **Maturity:** Research (the properties are stated and modelable now; the machine-checked proofs are a build deliverable) · **Proves:** I1 (conservation), I3 (supply integrity), I5 (append-only) · **Recommended tool:** TLA+ with TLC model checking for the bounded state machine, plus a Coq/Isabelle inductive proof for the unbounded conservation invariant. · **© Maher**
+
+## 0. What this document proves and what it does not
+
+This document specifies machine-checked proofs that the Ledger Core's *state machine* preserves conservation, supply integrity, and append-only across all reachable states. It proves the *protocol logic* is sound. It does **not** prove that the PostgreSQL implementation, the Laravel service code, or the deployment faithfully realize the state machine — that is the job of the property-based tests (Tier 9.2), the independent audit, and the Trusted Computing Base statement in 5.3. The value of the formal proof is that it removes an entire class of *design* errors (a conservation-violating transition that no test happened to generate) by exhausting the model's state space.
+
+## 1. The state machine model
+
+Model the ledger as a state machine `M = (S, s₀, →)` where a state `s ∈ S` is a finite map from accounts to integer balances per currency, plus the append-only entry log `L` (a sequence of entries). The initial state `s₀` has all balances zero and `L` empty. The only transitions are:
+
+**`Post(T)`** — given a transaction `T` (a finite set of signed entries), if `T` is balanced per currency, append `T`'s entries to `L` and update each affected balance; otherwise the transition is disabled (no state change). **`Reverse(e)`** — given an existing entry `e`, append a new entry `e'` with `e'.amount = −e.amount` and `e'.reverses = e`, updating balances; `e` itself is never removed or modified. There is **no** `Update` and **no** `Delete` transition in the model — their absence is the modeled form of I5.
+
+## 2. The invariants stated formally
+
+**I1 — Conservation (transition-level).** For every `Post(T)` transition: `∀ c : Σ_{e ∈ T, e.currency = c} e.amount = 0`. Stated as a TLA+ action precondition: `Post(T)` is only enabled when the per-currency sum is zero.
+
+**I3 — Supply integrity (state-level invariant).** For every reachable state `s` and currency `c`: `Σ_{a ∈ UserAccounts} balance(s, a, c) = mintedTotal(s, c) − burnedTotal(s, c)`. In TLA+: `SupplyInv == ∀ c ∈ Currencies : SumUserBalances(c) = Minted(c) − Burned(c)`.
+
+**I5 — Append-only (trace-level invariant).** For every transition `s → s'`: `L(s)` is a prefix of `L(s')` (the log only grows; no element is changed or removed). In TLA+: `AppendOnly == ∀ i ∈ DOMAIN L : L'[i] = L[i] ∧ Len(L') ≥ Len(L)`.
+
+## 3. The proof obligations and method
+
+**Bounded model checking (TLA+/TLC).** Define the spec `Spec == Init ∧ □[Next]_vars` where `Next` is the disjunction of `Post` and `Reverse`. Assert `Spec ⇒ □(SupplyInv ∧ AppendOnly)`. TLC exhaustively explores the reachable state space for a bounded configuration (a small fixed number of accounts, currencies, and a bounded transaction count) and confirms the invariants hold in every reachable state, or returns a counterexample trace. Bounded checking catches the overwhelming majority of design errors because conservation violations, if they exist, manifest in small configurations.
+
+**Unbounded inductive proof (Coq/Isabelle).** Because TLC only covers bounded configurations, conservation (I1→I3) is *also* proven inductively for the unbounded case: base case (s₀ satisfies SupplyInv trivially — all zeros); inductive step (assuming SupplyInv holds in `s`, show every enabled transition preserves it). For `Post(T)`: the precondition guarantees `Σ T = 0` per currency, so the user-balance sum changes by the sum of user-side entries, which equals the negative of the system-side entries (ISSUANCE/BURN), preserving the identity. For `Reverse(e)`: the reversing entry's effect on the sum is exactly cancelled by its mirror, preserving the identity. ∎ The inductive proof generalizes what TLC verifies in the bounded case to all configurations.
+
+## 4. Counterexample-trace format (so a failed proof is actionable)
+
+If TLC finds a violation, it emits a trace: the sequence of states `s₀ → s₁ → … → sₙ` and the transition (with its transaction argument) taken at each step, with the violated invariant and the offending state highlighted (e.g., "after `Post(T₄)`, `SupplyInv` fails for currency `c`: user-balance-sum = X, net-issuance = Y"). The trace is mapped back to a concrete test case so an engineer can reproduce it against the implementation and locate whether the bug is in the model or the code. A failed proof is therefore not a dead end but a precise, replayable defect report.
+
+## 5. Honest caveats
+
+The bounded model check is complete only up to its configuration bounds; the inductive proof closes the unbounded gap for conservation but is itself only as sound as its hand-written (or proof-assistant-checked) steps. Neither proof establishes that the PostgreSQL triggers and the Laravel service *implement* the modeled transitions — that correspondence is checked by property tests and audit, not by this proof. And the model abstracts away concurrency; the concurrency safety of `Post()` (serializability under parallel transfers) is verified separately by the concurrency stress tests in 9.2, because modeling full concurrency formally is substantially harder and is a bounded, lower-priority extension rather than a precondition.

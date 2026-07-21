@@ -1,0 +1,24 @@
+# DOCUMENT 6.4 — ZERO-KNOWLEDGE / MINIMIZED-DISCLOSURE SPECIFICATION
+### Proving the Criterion Without Revealing the Measurement
+
+**System:** Joint · **Licenses:** both · **Tier:** 6 · **Maturity:** Research · **Enforces:** I8 (no raw sensitive data in attestation paths) · **© Maher**
+
+## 0. The principle
+
+The body must sometimes verify sensitive facts — that a person met a vitality criterion, is over 18, is not sanctioned, is a unique human — without ever holding the sensitive data that proves them. The mechanism is zero-knowledge / minimized-disclosure proofs: prove *that the criterion is met* without revealing *the measurement that meets it*. This is how the body honors I8 (no raw biometric/health/neural data in attestation paths) while still minting credits like VTC that depend on health-related facts.
+
+## 1. Which credits and checks use minimized disclosure
+
+Vitality-style credits (VTC and kin) prove "the health/activity criterion was met" without revealing the underlying measurement. Age-gating proves "over/under 18" without revealing birthdate. Sanctions screening proves "not on the list" without revealing identity to the protocol (the regulated tunnel performs the check; the protocol receives only the proof). Personhood proves "unique human" via a ZK commitment without revealing biometrics. Conditional-purpose money ($TASK) proves the spending condition is met (teacher credential, disaster-zone geography) without revealing the underlying private data.
+
+## 2. The proof statements
+
+Each minimized-disclosure check is specified as a proof statement: a public statement (the criterion), a private witness (the sensitive data, held only by the prover/provider, never by the protocol), and a verification that the protocol runs on the proof alone. The protocol stores the *proof* and the *commitment*, never the *witness*. Consent is per-attestation, revocable, and never a precondition for non-credit ledger access — a person can use the ledger's basic functions without ever submitting any minimized-disclosure proof.
+
+## 3. The three-layer enforcement of "no raw sensitive data"
+
+I8 is enforced three times: *validation* (attestation ingestion rejects any payload carrying a raw biometric/health/neural field, accepting only commitments and proofs); *DB CHECK / column-allowlist* (the schema forbids columns typed for such data, and no migration may add one); and the *CI test* `NoSensitivePIIMigrationTest` (scans every migration and fails the build if one introduces an identifiable sensitive column). The neural red line is absolute: no credit mints from neural/EEG data, and no minimized-disclosure path is offered for neural data at all — it is simply outside the system.
+
+## 4. Honest caveats
+
+Zero-knowledge cryptography is powerful but Research-tier in this application: the proof systems are computationally heavy, the trusted-setup or transparency properties of the chosen scheme matter, and a flaw in a circuit can leak the witness it was meant to hide. The minimized-disclosure guarantee is only as strong as the soundness and zero-knowledge of the chosen proof system, which must be independently audited. And minimized disclosure protects the *protocol* from holding sensitive data; it does not by itself protect the data at the *provider* (who holds the witness), which is why provider obligations, consent, and the no-correlation wall (6.1) matter alongside the cryptography. The deepest caveat: ZK lets the body verify sensitive facts without holding sensitive data, but it does not make verifying sensitive facts *costless or risk-free* — every minimized-disclosure check should be questioned for whether the body needs to verify that fact at all, with the default being to verify as little as possible.

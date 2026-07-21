@@ -1,0 +1,48 @@
+# DOCUMENT 3.4 — THE MATURITY & ABANDONMENT LEDGER
+### Honest Labels, Exit Criteria, and the Courage to Stop
+
+**System:** Joint · **Tier:** 3 · **Maturity:** this document is itself Shipped-grade (it is the source of truth for all other labels) · **Surfaced at:** `/api/v1/maturity` · **© Maher**
+
+## 0. Why this document has unusual authority
+
+In a system built on *Sidq*, the maturity ledger is load-bearing: it is the single source of truth that prevents every other surface — marketing, documentation, governance, user-facing copy — from overclaiming. The licenses bind to it (AVL-2.0 §A-§C.13: no surface may present a Research capability as Shipped). Changing a label is a governance act, logged. And uniquely among maturity systems, this ledger carries **both exit criteria** (proceed when X) **and abandonment criteria** (stop and redesign if Y) — because a system intended for a third of humanity needs not only a definition of "ready" but the courage to define "stop."
+
+## 1. The four labels
+
+**Shipped** — built, audited where required, in production, and honestly available. **InDevelopment** — actively being built, not yet production-ready, must not be presented as available. **Research** — an open problem, possibly unsolved at scale, shipped (if at all) only as honestly-labelled partial coverage. **DeprecatedRemoved** — retired, kept in the record for historical honesty (e.g., the EEG-attention experiment $FOCUS, retired on the no-neural-data principle).
+
+## 2. The ledger (current state)
+
+| Subsystem | Label | Exit criterion (proceed when) | Abandonment criterion (stop/redesign if) |
+|---|---|---|---|
+| Ledger core (I1–I3, I5) | InDevelopment | DB+service+tests enforce I1–I3,I5 under concurrency; independent audit confirms append-only and conservation | a path is found that mutates/deletes an entry or breaks conservation that cannot be closed structurally |
+| Non-punishment spine (I6/I7/I10) | InDevelopment | independent audit confirms no protocol path punitively debits a personal balance; 5.2 proof passes | any path debits a personal balance without a closed arbitration case + specific mint |
+| PoVC quorum minting (I4) | Research→InDev | M-of-N quorum with replay protection live and tested | no attester configuration resists collusion without slashing that excludes honest verifiers |
+| Personhood layer (I9) | Research | ≥2 independent providers with published FA/FR; fairness audit with published demographic false-reject rates; appeal path within bound | no provider config achieves a false-reject rate low enough to avoid systematic exclusion of any major demographic/region |
+| Core Riba refusal (I11) | InDevelopment | four-element predicate implemented; engine rejects clear Core Riba; Shariah board reviews edge cases | the predicate cannot distinguish usury from permitted yield without excluding legitimate finance |
+| Dispute/clawback/arbitration | Research | one provisional-mint clawback resolved end-to-end through human arbitration without touching an innocent balance | dispute resolution cannot protect innocent holders without making fraud risk-free |
+| Policy Engine (I7) | Research | proxy-divergence monitoring throttles a test issuance; I7 (no personal-entry) proven | the engine cannot adjust the macro economy without any path to a personal balance |
+| Settlement/Hands (I10) | Research→InDev | atomic abort formally model-checked (5.3) to never net-debit an unauthorized balance | the abort path cannot be proven to leave no unauthorized debit |
+| Membrane (0.5) | InDevelopment | inbound/outbound controls live; GAS anti-correlation wall passes `PersonhoodBoundaryTest` | the anti-correlation wall cannot be made compile-time enforceable |
+| Cross-system event contract (7.1) | Research→InDev | signed/hash-chained/idempotent contract round-trips; reconciliation proves zero drift over a defined period | reconciliation cannot detect drift within an acceptable window |
+| Crisis response + Loss Fund (8.x) | Research | timelines and Loss Fund exercised in a drill; coverage boundary (bugs not market risk) defended | the Loss Fund boundary cannot be defended against moral hazard / adverse selection |
+| Data erasure / crypto-shredding (6.5) | InDevelopment | erasure reconciles with I5 via tombstones; legal-hold exception bounded | crypto-shredding cannot satisfy erasure law without breaking append-only |
+| Contribution credits (CTC…GRC, family) | Research | per-credit spec bundle (virtue/proxy/divergence/dispute/lifecycle) complete; independent virtue signal exists | no independent virtue signal exists for a given credit (then that credit is not minted) |
+| $OXY, $UNA, $TASK, $GAIA-class, $MAKE | Research | per-currency exit criteria in their specs | scope cannot be honestly maintained (e.g., $UNA coverage too exclusionary) |
+| $FLUX | Research | community-circulation pilot meets its scoped metrics | marketed or used as general-purpose store of value (scope violation) |
+| $PEG (regulated) | InDevelopment (concept) | regulated tunnel licensed; basket rebalancer verified Tier-0 | basket cannot hold purchasing power within governed band |
+| $PEG+ (experimental) | Research | jurisdiction-gating + risk-acknowledgment live | cannot be gated out of markets where unlawful |
+| $FOCUS (EEG attention) | **DeprecatedRemoved** | — (retired on the no-neural-data principle) | — (kept as honest historical record) |
+| **8 billion users / year** | **Research** | personhood coverage + sharded throughput + reconciliation + crisis drill all pass at the relevant scale milestone | personhood coverage remains insufficient to responsibly serve the stated population — in which case the **user-scale claim is formally revised downward rather than the safety floors relaxed** |
+
+## 3. The most important row
+
+The last row deserves emphasis because it is the one most likely to be tempting to overclaim. The 8-billion-users figure is **Research**, and its abandonment criterion is explicit and inverted from how ambition usually works: *if the system cannot responsibly serve the stated population, the population claim is revised downward — the safety floors are never relaxed to reach the number.* The scale serves the people; the people are never sacrificed to the scale. This row is the maturity ledger's expression of the whole project's thesis applied to its own ambition.
+
+## 4. Governance of labels
+
+A label change is a parametric governance act (Tier P), logged to the transparency record, with the simulation/audit evidence that justifies it attached. A subsystem may be *promoted* (Research → InDevelopment → Shipped) only when its exit criterion is met and the evidence is published; it must be *demoted or deprecated* when its abandonment criterion is met, and demotion is not a failure to hide but an act of *Sidq* to record. The Deprecated entries are never deleted — the honest history of what the project tried and chose to stop is part of its trustworthiness.
+
+## 5. Honest caveat
+
+A maturity ledger is only honest if it is actually consulted and enforced — the binding to the licenses and the public endpoint are what give it teeth, but the deeper safeguard is cultural: the project must treat demoting a subsystem to Research, or deprecating a currency, as a *virtue* rather than an embarrassment, because the alternative — quietly shipping Research-grade capability as if it were ready — is the exact dishonesty the whole instrument exists to forbid.

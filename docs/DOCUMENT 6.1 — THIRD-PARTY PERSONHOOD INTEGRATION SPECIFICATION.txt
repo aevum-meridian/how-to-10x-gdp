@@ -1,0 +1,38 @@
+# DOCUMENT 6.1 — THIRD-PARTY PERSONHOOD INTEGRATION SPECIFICATION
+### Personhood as a Third Party to Both Legs (Including the GAS Adapter)
+
+**System:** Joint · **Licenses:** `LicenseRef-MVL-2.0` / `LicenseRef-AVL-2.0` · **Tier:** 6 · **Maturity:** Research · **Enforces:** I9 (personhood external, never owned; provider risk signals walled off from value decisions) · **© Maher**
+
+## 0. The governing principle
+
+Personhood is the nervous system the two legs share — a verified human must be the same human in both — but per I9 it is owned by *neither* leg and *is* neither leg. Meridian and Aevum **consume** personhood as signed attestations from multiple independent third-party providers, validate them independently, and never become the personhood authority themselves. This is the structural correction that prevents the shared-personhood-service from becoming the single point of coercion that the Coercion-Resistance Spec exists to deny.
+
+## 1. Responsibilities
+
+This component (a) defines the provider-agnostic attestation contract every provider (GAS and others) must satisfy; (b) aggregates attestations from multiple providers into an effective personhood determination via a published, fairness-audited algorithm; (c) exposes an explainable denial and human-appeal path (because denial of personhood is a high-risk consequential decision under the EU AI Act); and (d) enforces the hard wall that provider *risk signals* serve authentication-fraud only and never reach value, minting, personhood-aggregation, or rights decisions.
+
+## 2. The provider-agnostic attestation contract
+
+Every personhood provider — GAS, and any other of the N — exposes attestations conforming to one interface, `PersonhoodAttestation`, carrying: a `provider_id`; an opaque `subject_commitment` (a zero-knowledge commitment or salted reference — **never** raw biometric/PII, per I8); the `assurance_rung` attested (0–3, document 6.2); a reference to the provider's published `false_accept_false_reject_profile`; a `nonce` (unique) and `expires_at` (for replay/expiry, mirroring I4 discipline); the provider's `signature`; and the provider's posted `slashing_bond` reference. Meridian and Aevum each **independently verify** the signature against the provider's registered public key — a forged attestation must defeat *both legs' independent checks*, not one shared check.
+
+## 3. Multi-provider aggregation (published and fairness-audited)
+
+A user's *effective personhood* is an aggregate over the attestations they hold from independent providers, computed by a **published, versioned algorithm** stored in `identities.aggregation_version`. The algorithm is deliberately not a single provider's verdict (no biometric monopoly): it combines providers weighted by their published FA/FR profiles and their jurisdictional independence, with a rule that no single provider can be dispositive for a constitutional-grade determination. The aggregation is subject to **mandatory fairness audits** across demographics and regions, with **published demographic false-reject rates** — because a personhood system that systematically false-rejects a region or group is financial exclusion, and must be measured and corrected, not hidden.
+
+## 4. The explainable-denial and appeal path
+
+Because denial of personhood denies access to the contribution economy and to one-human-one-vote — a consequential algorithmic decision — every denial produces a **human-readable explanation** (which providers attested what, where the aggregate fell short, what would change the outcome) and a **human appeal** with a bound turnaround. The `identities` table carries `appeal_status` and the appeal's resolution. This mirrors the GAS decision-receipt pattern (a signed, human-readable record of *why*), adopted here for personhood determinations specifically because the EU AI Act and similar regimes treat such decisions as high-risk.
+
+## 5. The GAS adapter (`GasIdentityProvider`) — and its anti-correlation wall
+
+GAS is integrated as **one provider of N**, behind the `GasIdentityProvider` adapter, never as the personhood authority. The adapter: (a) authenticates a user via GAS's intent-based `initiate`/`continue` API and receives a DPoP-bound session whose subject id is an opaque non-PII identifier (I8); (b) obtains personhood attestations conforming to §2, which Meridian/Aevum verify by signature (never trusting GAS as sole authority); (c) consumes GAS decision receipts for audit; (d) honors revocation and per-attestation consent.
+
+**The hard boundary (I9, MVL-2.0 §M-§C.11, AVL-2.0 §A-§C.11) — the most important integration decision in the project.** GAS's defining capability is a cross-relying-party reputation graph: a device or credential flagged at RP-A can trigger step-up at RP-B. For an ordinary auth product this is a feature; for *our* body it is the exact thing the anti-social-credit floor forbids touching value — a cross-context behavioral score. The adapter therefore confines all GAS cross-RP risk signals to an **authentication-fraud type** that the value, minting, personhood-aggregation, and rights layers **structurally cannot import**. This is enforced at compile time: the value layer cannot reference the auth-risk type; the dependency fails to compile across the boundary. The acceptance test is `PersonhoodBoundaryTest`, which asserts (compile-time) that no value/minting/rights module can reference the auth-risk type and (runtime) that no GAS cross-context score reaches any value decision. A person's GAS fraud-risk score can gate *whether they authenticate*; it can never influence *whether or how much they mint*, *whether their credits are touched*, or *whether their rights are gated*.
+
+## 6. Required GAS extension (if absent)
+
+GAS's README describes session-bound authentication and decision receipts but not necessarily a *standalone, signed personhood attestation separable from a session*. If GAS lacks an endpoint returning a signed `PersonhoodAttestation` per §2 that our legs can independently verify *without* a live GAS session, the adapter specifies this as a **required GAS extension** rather than coupling our value logic to GAS internals. We integrate to the contract; we do not bend our invariants to GAS's current surface.
+
+## 7. Honest caveats
+
+This is the project's hardest unsolved problem and is Research-tier honestly: **planetary proof-of-personhood does not exist.** The system ships *graceful partial coverage* with a probationary tier (document 6.2), never a claim of clean global rollout, and the maturity ledger's abandonment criterion is explicit — if no provider configuration achieves a false-reject rate low enough to avoid systematically excluding a major demographic or region, the design stops and is rethought rather than excluding people. The deepest residual risk (Coercion-Resistance Spec): a coalition of enough independent providers, all compelled simultaneously across jurisdictions, could correlate to deanonymize — mitigated by provider and jurisdictional pluralism, not yet structurally eliminated, and embargo-tracked. And the anti-correlation wall is only as strong as `PersonhoodBoundaryTest` and the typed boundary; until proven, it is partly procedural.

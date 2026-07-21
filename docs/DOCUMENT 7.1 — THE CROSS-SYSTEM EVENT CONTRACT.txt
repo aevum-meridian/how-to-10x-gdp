@@ -1,0 +1,34 @@
+# DOCUMENT 7.1 — THE CROSS-SYSTEM EVENT CONTRACT
+### The Signed, Reconciling Boundary Between the Two Legs
+
+**System:** Joint (the nervous-system signaling between legs) · **Licenses:** `LicenseRef-MVL-2.0` / `LicenseRef-AVL-2.0` · **Tier:** 7 · **Maturity:** Research → InDevelopment · **Enforces:** the failure-isolation property (5.3), I9, A-§C.14 (Aevum holds no authority over Meridian's ledger) · **© Maher**
+
+## 0. The design principle
+
+The two legs share exactly two things: the third-party personhood layer (document 6.1) and this event contract. Everything else is private to each leg, which is what keeps a break in one from dropping the body. The contract's defining property is that it is **asynchronous, event-sourced, and reconciling — never a synchronous trust handoff.** Aevum proposes; Meridian validates and commits or rejects; Meridian confirms committed facts back. Neither system authors the other's truth through the contract — Aevum's proposal is inert until Meridian validates it, and Meridian's confirmation is a fact-of-record Aevum displays, not a command Aevum obeys.
+
+## 1. Responsibilities
+
+Carry proposals from Aevum to Meridian one way, and committed-fact confirmations from Meridian to Aevum the other way, over a typed, signed, hash-chained, idempotent message stream that (a) lets the legs coordinate, (b) makes Aevum structurally incapable of authoring a Meridian balance change, and (c) provides the audit trail the nightly reconciliation (7.2) verifies.
+
+## 2. The message schema
+
+The `cross_system_events` record carries: `id` (ULID, globally unique); `source` (enum {aevum, meridian}); `kind` (enum — `proposal.transfer`, `proposal.filter_verdict`, `proposal.policy_change`, `proposal.currency_registration`, `confirmation.committed`, `confirmation.rejected`, `reconciliation.alert`); `payload` (typed, signed); `prev_hash` (the hash of the prior event in the chain); `entry_hash` (this event's hash, over its content + `prev_hash`); `idempotency_key`; `created_at`; and `status` (enum {emitted, validated, committed, rejected, reconciled}). The chain (`prev_hash` → `entry_hash`) makes the stream tamper-evident; the idempotency key makes replays and duplicates harmless; the signature (the originating leg's) makes forgery detectable.
+
+## 3. The flow: propose → validate → commit/reject → confirm
+
+When a user acts in Aevum (e.g., requests a transfer), Aevum constructs a **proposal** event, signs it, chains it, and emits it. Meridian receives the proposal through its single ingress (`ReceiveProposal`, the ingress modeled in proof 5.3), **validates** it against I1–I11 (a proposal to punitively debit is rejected by I6; to mint without quorum, by I4; to break conservation, by I1; to settle without authorization, by I10), and either **commits** a balanced transaction (via the Ledger Core, document 4.1) or **rejects** with a reason. Meridian then emits a **confirmation** event back. Aevum updates its *view* on confirmation; it never held the authoritative balance.
+
+The critical property, which is the heart of the failure-isolation proof: **Meridian validates rather than trusts.** A fully compromised Aevum can emit arbitrary proposals, but every proposal passes through validation before any entry is posted, so a compromised Aevum produces *rejected proposals and corrupt experience*, never a single invalid Meridian entry. This is the structural meaning of "two legs that move together but do not fall together."
+
+## 4. Replay protection and idempotency
+
+Every event carries an idempotency key; Meridian records processed keys (Redis + a durable table) and treats a re-received key as a no-op returning the original outcome. A replayed proposal cannot double-commit; a replayed confirmation cannot double-update Aevum's view. Combined with the hash chain, this bounds what a within-window compromise can durably achieve: an attacker who injects a forged event must defeat the signature *and* produce a valid chain link *and* evade idempotency — and even then, a forged *proposal* still faces Meridian's validation gate, which rejects anything invariant-violating.
+
+## 5. What the contract structurally forbids
+
+Aevum has **no** method that authors a Meridian entry (A-§C.14); its only path to a value change is a proposal Meridian validates. The contract carries proposals and confirmations — never commands. There is no synchronous call from Aevum into Meridian's ledger write path; the boundary is the validating ingress, not a trusted handoff. A `NoLedgerAuthorityTest` (document 4.4) asserts at compile time that Aevum cannot reference Meridian's personal-account ledger-write path.
+
+## 6. Honest caveats
+
+The contract's isolation guarantee is exactly the bounded, TCB-conditioned guarantee of proof 5.3 — it holds *given* sound cryptography, uncompromised signing keys, a correct reconciliation job, and an honest database. The asynchronous design trades immediacy for safety: a user's action is not instantly final in Aevum's view; it is final when Meridian confirms, which is correct (the ledger is the truth) but is a UX consideration the experience layer must handle honestly (showing pending vs confirmed). And the contract is Research → InDevelopment because its full hardening — particularly the interaction of the hash chain, idempotency, and reconciliation under adversarial timing — is exactly what the formal model (5.3) and the reconciliation spec (7.2) must establish before promotion.

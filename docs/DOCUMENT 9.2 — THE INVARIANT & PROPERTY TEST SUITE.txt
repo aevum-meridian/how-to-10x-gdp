@@ -1,0 +1,24 @@
+# DOCUMENT 9.2 — THE INVARIANT & PROPERTY TEST SUITE
+### Proving I1–I11 Under Adversarial Concurrency
+
+**System:** Joint · **Licenses:** both · **Tier:** 9 · **Maturity:** InDevelopment · **© Maher**
+
+## 0. The principle
+
+Every invariant (I1–I11) is enforced three times — DB constraint, service guard, property test — and this document specifies the third. Property-based tests generate large spaces of valid and invalid inputs and assert the invariant holds (or the violation is rejected) across all of them, including under concurrency. The test suite is part of the CI gate: a red invariant test blocks all merges, with no baseline and no suppression.
+
+## 1. The invariant tests (one per invariant, named per the cross-reference matrix)
+
+`ConservationTest` (I1): random balanced/unbalanced drafts; every unbalanced one rejected at service and DB; includes a concurrency stress (many parallel transfers against overlapping accounts never break conservation). `BalanceReconcileTest` (I2): recomputed balances equal stored balances after any sequence. `SupplyProofTest` (I3): user-balance-sum equals net issuance across random mint/burn/transfer sequences. `AttestationQuorumTest` (I4): sub-quorum, replayed-nonce, expired, forged-signature, and same-rotation-group-collusion attestations all rejected; only valid independent-quorum mints. `ImmutabilityTest` (I5): every entry mutation/deletion fails; reversal leaves the original intact. `NonPunishmentTest` (I6): a debit referencing no specific mint is always rejected; a reversal never drops below undisputed credits; an innocent holder is never reduced by any dispute; the only successful personal-contribution debit has both a valid target-mint and a closed-fraud case. `PolicyEngineNoEntryTest` (I7): no Policy Engine action, across all types, produces an entry against a personal account. `NoSensitivePIIMigrationTest` (I8): a CI test scanning every migration, failing the build if any introduces an identifiable biometric/health/neural column; runtime rejection of offending payloads. `PersonhoodBoundaryTest` (I9): compile-time assertion that value/minting/rights modules cannot reference the auth-risk type; runtime assertion no provider score reaches a value decision. `SettlementAbortTest` (I10): across randomized commit/abort and failure-injection, no abort leaves a net unauthorized debit. `CoreRibaRejectionTest` (I11): fixed-guaranteed-interest-on-idle-money policies always rejected; risk-sharing/rent/service-fee/staking/demurrage policies always accepted; the genuine-risk check verifies a non-degenerate loss distribution.
+
+## 2. The cross-cutting tests
+
+`IdempotencyTest`: duplicate idempotency keys return the original result with no double-post (ledger and event contract). `ConcurrencyStressTest`: high parallel load against overlapping state never violates I1–I3 or produces stale balances. `ReplayRejectionTest`: replayed attestations, proposals, and confirmations are no-ops. `EventChainIntegrityTest`: tampering with a `cross_system_events` record breaks the hash chain and is detected.
+
+## 3. CI integration
+
+The suite runs on every push and pull request alongside Pint (PSR-12) and Larastan Level 10. A red pipeline blocks merge. No baseline, no suppression — invariant violations are fixed, not silenced. The prose-logic agreement gate (document 0.1 §CI) is part of this pipeline: the invariant prose, logical form, and enforcing test must remain in declared correspondence.
+
+## 4. Honest caveats
+
+Property-based tests sample a large but finite input space; they catch the overwhelming majority of violations but cannot, alone, prove universal correctness — which is why the invariant-bearing core is *also* formally verified (Tier 5) for the keystone properties (conservation, non-punishment). The concurrency tests are essential precisely because the formal models abstract concurrency away (5.1 §5), so the suite carries the concurrency-safety burden the proofs do not. And the suite proves the *implementation* enforces the invariants, complementing the formal proofs that the *design* does — neither alone is sufficient, and the project relies on both plus audit.

@@ -1,0 +1,24 @@
+# DOCUMENT 9.3 — THE PROXY-DIVERGENCE CATALOGUE
+### The Body's Live Self-Honesty About Its Own Credits
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 9 · **Maturity:** Research · **Operationalizes:** the anti-Goodhart theory (document 2.3) · **© Maher**
+
+## 0. The principle
+
+Every contribution credit risks Goodhart drift — its measured proxy drifting from the virtue it honors as people optimize the proxy. The catalogue is the body continuously asking itself, in public, "are my measures still tracking my virtues?" and showing the answer. It is the live, post-deployment counterpart to the simulation gate's pre-deployment check, and the independent watch that keeps the gate honest.
+
+## 1. Responsibilities
+
+For each contribution credit, maintain a live-monitored record of its declared virtue, its measured proxy, its independent virtue signal, its current divergence, and its threshold — and feed the divergence into the Policy Engine's issuance-only throttle (document 4.5) when it exceeds threshold.
+
+## 2. The catalogue structure (per credit)
+
+For each credit `c`: `declared_virtue` (Φ_c — the real human good, e.g. honesty); `measured_proxy` (M_c — what the attestation measures and what mints credits); `independent_signal` (S_c — a separate, not-minting signal correlated with the virtue, the window onto whether the proxy still tracks); `divergence` (D_c(t) — the current normalized gap between the proxy's trend and the independent signal's trend); `threshold` (D*_c — the governed level above which the throttle engages); `throttle_value` (θ_c(t) — the current issuance-only throttle); and `last_evaluated`. The catalogue is published (transparency log), so the body's self-honesty about each credit is auditable.
+
+## 3. The throttle behavior (the I6/I7 guarantee, restated)
+
+When D_c(t) exceeds D*_c, the throttle reduces *future issuance* of credit `c` (θ enters the mint cap, document 2.1 §2.3 and 4.5). The mathematical guarantee from 2.3 §3 holds in the live system: θ multiplies *new mint*, appears in *no* term affecting existing balances — so detected gaming reduces the faucet, never the reservoir. A person who earned credits honestly before others gamed the proxy keeps every credit. The catalogue thus monitors honestly *and* enforces non-punitively.
+
+## 4. Honest caveats
+
+The catalogue's linchpin is the independent signal S_c: if no genuinely independent signal of a virtue exists, divergence is undetectable and the catalogue cannot govern that credit — in which case (per 2.3) the credit should not be minted at all, because an ungovernable credit is worse than no credit. The thresholds and throttle functions are empirical, calibrated in the simulation sandbox, and a poorly-set threshold either misses real gaming or throttles legitimate growth. And the deepest honest limit (2.3 §6): the catalogue can stop a credit from being minted as its meaning erodes, but it cannot *restore* a virtue's meaning once a proxy is thoroughly gamed — at that point the honest act is to deprecate the credit in the maturity ledger, not to pretend the proxy still measures anything. The catalogue defends the faucet; it cannot purify a poisoned reservoir, and it does not claim to.

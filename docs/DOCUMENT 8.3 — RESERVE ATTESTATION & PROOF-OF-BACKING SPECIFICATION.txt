@@ -1,0 +1,28 @@
+# DOCUMENT 8.3 — RESERVE ATTESTATION & PROOF-OF-BACKING SPECIFICATION
+### Real-Time Proof That Reserve-Backed Value Is Actually Backed
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 8 · **Maturity:** InDevelopment · **Enforces:** I3 (supply integrity for reserve-backed currencies), M-§C.15, the user's right to proof-of-backing · **© Maher**
+
+## 0. The principle
+
+A reserve-backed currency is a promise: each unit is backed 1:1 by custodied real-world value. The opacity of that promise — you cannot independently verify a central bank or stablecoin issuer holds what it claims — is one of the foundational failures of legacy money the body exists to correct. So reserve-backed currencies in Meridian carry **real-time, independently-verifiable proof-of-backing**, and a shortfall **automatically triggers the crisis path.** The promise is made *provable*.
+
+## 1. Responsibilities
+
+For each reserve-backed currency, maintain a real-time attestation that custodied reserves equal or exceed net issuance (I3), expose that attestation for independent verification (the user's right to proof-of-backing), refuse mints that would exceed attested reserves, and auto-trigger the crisis path on an attested shortfall.
+
+## 2. The attestation mechanism
+
+The licensed custodian (per the "tunnels are licensed institutions" doctrine, document 3.3) provides a real-time, cryptographically-signed attestation of reserves held. Meridian's issuance engine (document 4.2) refuses any `mintReserve` that would make net issuance exceed the attested reserve — so over-issuance is structurally impossible, not merely policed after the fact. The attestation is exposed (with custodian privacy preserved via minimized disclosure where possible) so any user can verify that the currency they hold is backed. This converts the opaque legacy promise into a structural, verifiable one.
+
+## 3. ISO 20022 handling (receive-tolerant / send-strict)
+
+Reserve settlement against traditional rails uses the membrane's ISO 20022 posture: **receive-tolerant** (accept inbound hybrid addresses from compliant-but-still-hybrid counterparties and normalize them) and **send-strict** (emit only fully structured party addresses, conforming to the November 2026 SWIFT rule). A reserve adapter that cannot produce a fully structured address does not send — the membrane refuses the egress rather than emit a non-conforming message.
+
+## 4. The automatic crisis trigger
+
+If an attestation reveals reserves below net issuance — a shortfall — the crisis path (document 8.1) **fires automatically**: the disclosure clock starts, the affected currency's automatic issuance/conversion is halted by the circuit breaker (document 4.5), and the incident process engages. The auto-trigger removes the discretion to delay disclosure of a shortfall, which is the moment of greatest temptation to stay silent. This is *Sidq* made structural: the body cannot quietly sit on the knowledge that a backed currency is under-backed.
+
+## 5. Honest caveats
+
+Proof-of-backing is only as honest as the custodian's attestation — a custodian that falsifies its attestation defeats the proof, which is why custodians are licensed, the attestation is signed, and (where feasible) independently audited; but the body's guarantee here is *conditional on custodian honesty*, and that condition must be stated rather than glossed. Real-time attestation reduces but does not eliminate the window between a real shortfall and its attestation — the freshness of the attestation is a parameter with a real-world floor. And proof-of-backing applies to reserve-backed currencies only; it is meaningless for contribution credits (which are backed by verified human action, not reserves) and for bridged crypto (backed by source-chain locks, a different proof) — the document is careful not to imply a backing guarantee for currencies whose nature is different, which would itself be a form of *Gharar*.

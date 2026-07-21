@@ -1,0 +1,60 @@
+# MERIDIAN VALUE LICENSE, VERSION 2.0 (MVL-2.0)
+### A Derived License Based on Maher's License, Version 2.0 — Self-Contained — for Meridian, the System of Record
+
+**Identifier:** `LicenseRef-MVL-2.0` · **Base:** Maher's License 2.0 (ML-2.0) · **Designated:** Work of Foundational Character (Part G applies) · **Steward:** [STEWARD] · **Registry:** [URL] · **© Maher**
+
+> Self-contained and deliberately **not** cross-referenced to the Aevum license, for security isolation between the two legs.
+
+## M0 — DERIVATION, CHARACTER, PRIMACY OF STRUCTURE
+
+**Based on Maher's License, Version 2.0**; not ML-2.0 itself. Governs **Meridian** — the system of record: the double-entry append-only ledger, the issuance engine, the Proof-of-Verified-Contribution minting pipeline, the Policy Engine, the settlement/hands layer, and the API. Ethical-source, source-available, governing-charter license; **not** OSI/FSF open source. Per ML-2.0 §1.5/§C.0, this is the **reinforcing fallback**; Meridian's **primary** protection — and specifically the guarantee that contribution credits can never be taken to punish, surveil, or control persons — is **structural**: invariants I1–I10 enforced in database, service layer, and tests, plus the Coercion-Resistance Specification (artifact 0.4). Stated plainly per *Sidq*: a license is enforced in court, after harm; an invariant is enforced by the machine, before harm, against everyone including the operators. Where both speak, **the invariant is load-bearing and this License is the remedy of last resort.**
+
+## M1 — FOUNDATIONAL PRINCIPLES (ADOPTED IN FULL)
+
+Adopts in full: **Amanah, Sidq, Adl, Shafafiyah**, and subsidiary **Darar, Zulm, Gharar, Riba** (elevated per ML-2.0 §1.3(iv), bounded by M-§C.9). No belief required; compliance is conduct.
+
+## M2 — DEFINITIONS
+
+Adopts ML-2.0 §2 in full. **Meridian is expressly a Network-Facing Work in full** and **provides Financial Functionality in full** and **is a Work of Foundational Character** (Part G applies). Added: **"Contribution Credit"** — any currency minted via Proof-of-Verified-Contribution from verified human action (CTC, TIC, VTC, and the open-ended family). **"Personal Balance"** — the holding of a natural-person account.
+
+## M3 — DIRECT LICENSE GRANT
+
+Worldwide, royalty-free, non-exclusive, perpetual (subject to termination) license to use (including commercially), reproduce, study, modify, and Distribute Meridian in Source and Object Form, conditioned on compliance. Patent grant with defensive termination. No trademark license beyond attribution. "AS IS," warranty disclaimed, liability limited to the maximum the law allows. Automatic termination on material breach; 30-day first-breach cure for curable breaches (*Adl*); already-effected prohibited use is non-curable.
+
+## M4 — RECIPROCITY AND NETWORK SOURCE
+
+Source availability required on Distribution. **M-§B.6 applies in full, without Steward discretion:** any party operating a *modified* Meridian ledger, issuance engine, settlement layer, or API providing value-custody or transfer to third parties must offer Corresponding Network Source to those parties under this License — because a ledger hiding its modifications while holding others' value betrays *Amanah*. **Minimal-and-justified redaction (binding, not lowerable):** private keys, user data, reserve-custody secrets, and genuine operational secrets may be redacted minimally, with disclosed category and avoided harm, never defeating the ability to build and run an equivalent ledger; burden on the redactor; over-redaction is a *Shafafiyah* breach. Ethics/charter conditions are non-severable and travel downstream.
+
+## M5 — ETHICAL-USE CONDITIONS
+
+Conditions of the grant, reinforcing law; knowledge standard **actual knowledge or willful blindness, never negligence** (not lowerable). Prohibited: deception/fraud (*Sidq*); unlawful harm including unlawful surveillance (*Darar*); oppression/exploitation (*Zulm*); betrayal of trust including misappropriation of custodied value and covert security-compromising mechanisms (*Amanah*).
+
+**M-§C.8 — Financial functionality permitted.** Currency issuance, reserve-backing, payments, exchange, custody, lending, yield, demurrage, and fees are **expressly permitted**, reached only where independently fraud, unlawful harm, exploitation of the vulnerable, or breach of trust; doubt favors permission.
+
+**M-§C.9 — Absolute refusal of Core Riba (charter-level, structural-first).** Meridian may not be operated or modified to issue, enforce, or principally facilitate **Core Riba** (all four cumulative elements: money/same-kind-fungible base; pre-fixed guaranteed increase regardless of venture outcome; absence of genuine risk-bearing/value-creating counter-performance; extraction from a counterparty). **Not Core Riba** (permitted): trade profit, asset rent, profit-and-loss-sharing, genuine service fees, staking/validation rewards for real effort/risk, demurrage as holding charge, and any return where the provider genuinely bears risk of loss of principal. Risk-bearing constructions are presumed where available. **Structural-first enforcement (required):** Meridian's issuance engine must refuse to instantiate or mint a currency whose declared `issuance_policy` constitutes Core Riba (e.g., a policy paying a fixed, guaranteed increase on idle money irrespective of any venture), so the structure leads and this clause reinforces — directly answering the consistency concern that this prohibition not become license-primary. Non-severable; charter-level regardless of forum. *(Honest note to deployers: this forecloses fixed-guaranteed-interest-on-idle-money designs, including many conventional stablecoin yield models; profit-and-loss-sharing and service-fee yield remain available.)*
+
+**Meridian-specific stricter conditions (non-severable):**
+
+**M-§C.10 — No punitive debit (the spine; I6/I7/I10).** Meridian may not be operated or modified to debit, freeze, expire-as-penalty, or reduce any Personal Balance of Contribution Credits as punishment, behavioral incentive, or control. The **only** permitted non-holder reduction is an arbitration-bound reversal of a specific, identified fraudulent mint, referencing a closed arbitration case, bounded by that mint's amount, never below the holder's undisputed credits. Any deployment where credits can be taken to punish or influence how a person lives is a **material, non-curable breach** conveying no rights. This is the most important condition in this License.
+
+**M-§C.11 — No social-credit construction.** Contribution Credits, personhood data, or ledger data may not rank, gate, reward, or penalize persons' access to rights, services, or freedoms on the basis of monitored behavior, expression, association, or belief — **including any cross-context behavioral correlation imported from an external identity provider, which may serve authentication-time fraud prevention only and may never feed any value-affecting, minting, or personhood-aggregation decision.**
+
+**M-§C.12 — No sensitive-data minting (I8).** No currency may be minted from raw biometric, health, or neural data; no identifiable data of those kinds may be stored in any attestation path; no Contribution Credit may ever be minted from neural/EEG data.
+
+**M-§C.13 — Conservation and custody (I1, I3, I4, I5).** No modification may mint or burn outside governed logged issuance rules, break double-entry conservation, make entries mutable or deletable (corrections are additive reversing entries only), or disable the multi-attester quorum or replay protection of contribution minting.
+
+**M-§C.14 — Consensual settlement (I10).** No settlement (cross-leg or external) may move or reverse value without holder-authorized intent on the debited side, except the M-§C.10 arbitration-bound reversal; an atomic abort restores prior state and never net-debits an unauthorized Personal Balance.
+
+**M-§C.15 — Crisis and loss honesty (Amanah/Sidq).** Operators custodying value must maintain crisis-disclosure timelines and proof-of-backing obligations and make no false assurance about loss coverage or reserve backing.
+
+**M-§C.16 — Minor-harm floor (overriding, non-curable, non-amendable).** No feature may measure, profile, sexualize, or financially incentivize the body, appearance, attention, or behavior of a person under 18; age-gating fails closed; overrides every other provision.
+
+## M6 — CHARTER LAYER (PART G APPLIES)
+
+As a Work of Foundational Character, Meridian must establish its monetary order of record truthfully; order value justly; expose the basis of its order to study and good-faith critique (subject to minimal redaction); be stewarded as a trust for those it governs; and never inflict unlawful harm or operate Core Riba. The **Humility Clause governs Meridian's governance**: any conformity or governance determination issued in bad faith, to suppress dissent, or to entrench Steward advantage is void.
+
+## M7 — STEWARDSHIP, GENERAL PROVISIONS
+
+Registry canonical; versions stable; stewardship a trust. Interpretation favors the user and the Principles. Mandatory law prevails where it compels; conflict is no pretext for evasion. Reform-rather-than-strike and application-specific severability. Part D omitted per ML-2.0 §D.6. **Exhibit notice:** "Licensed under Meridian Value License 2.0 (MVL-2.0), based on Maher's License 2.0. Work of Foundational Character. Not OSI/FSF open source. Network source required for modified deployments (M4). Lawful finance permitted; Core Riba refused and structurally rejected by the issuance engine (M-§C.9). Contribution credits can never be punitively debited (M-§C.10) and contribution/personhood data is never used for cross-context scoring (M-§C.11). Structural invariants are primary; this license is the fallback. © Maher. Canonical: [URL]." `LicenseRef-MVL-2.0`.
+
+The two licenses now share their conscience (minor-harm floor, anti-punitive-debit, anti-social-credit, Core Riba refusal) **in substance but not in text** — each is independently complete, so neither can be weakened by an edit to the other.

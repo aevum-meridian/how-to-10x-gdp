@@ -1,0 +1,192 @@
+# DOCUMENT 0.1 — THE INVARIANT SPECIFICATION
+### The Machine-Checkable Constitution of Meridian and Aevum
+
+**System:** Joint (Meridian-led) · **Tier:** 0 (Constitutional) · **Licenses:** `LicenseRef-MVL-2.0` (Meridian), `LicenseRef-AVL-2.0` (Aevum) · **Maturity:** InDevelopment · **Authority:** Supreme; subordinate only to nothing. All other artifacts must conform. · **© Maher**
+
+## Preamble
+
+This document is the constitution of the body. It states the invariants — the laws that bind every subsystem, every operator, and the builders themselves. An invariant is not a guideline; it is a property that must hold across all reachable states of the system, enforced three times over (database constraint, service-layer guard, property-based test), such that a court, an auditor, and a continuous-integration runner all read the same law and reach the same verdict. Where this document and any lower artifact conflict, this document governs. Where this document and a license clause both speak to a protection, this document is the load-bearing guarantee and the license is the reinforcing fallback, per MVL-2.0 §M0 and AVL-2.0 §A0.
+
+The invariants are numbered I1 through I11. Each is classified **constitutional** (amendable only by near-unanimity plus timelock) or **parametric** (amendable by ordinary governance with timelock). A CI gate (specified in §CI below) asserts that the plain-language statement and the logical form of each invariant agree, so the two can never silently drift apart.
+
+---
+
+## I1 — Conservation of Value
+
+**Plain statement.** Every posted transaction neither creates nor destroys value. The signed amounts of the entries composing a transaction sum to exactly zero, per currency, with the sole exceptions of governed mint and burn transactions, which are themselves balanced against the system issuance and burn accounts.
+
+**Logical form.** `∀ t ∈ Transactions where t.status = posted, ∀ c ∈ Currencies: Σ { e.amount | e ∈ entries(t) ∧ e.currency = c } = 0`
+
+**Enforcement — three points.** *Database:* a deferred constraint trigger on `transactions` that, at commit, sums `entries.amount` grouped by `currency_id` for the transaction and raises an exception if any group is non-zero. *Service:* the `LedgerService::post()` method constructs entries as a balanced set and rejects any caller-supplied entry set whose per-currency sum is non-zero before attempting the write. *Property test:* a generator produces random valid and invalid entry sets; the test asserts every non-balancing set is rejected at both the service and database layers and never persists.
+
+**Harm if violated.** A named person — call her Amina — discovers her balance has silently grown or shrunk because money was created or destroyed outside the rules. Trust in the unit of account collapses; the system becomes indistinguishable from a counterfeiting operation.
+
+**Amendment tier.** Constitutional (near-unanimity + timelock). **Mirroring license clause.** MVL-2.0 §M-§C.13.
+
+---
+
+## I2 — Balance Integrity
+
+**Plain statement.** Every account's recorded balance equals the sum of all entries posted against it. No balance may diverge from the ledger that produces it.
+
+**Logical form.** `∀ a ∈ Accounts: a.balance = Σ { e.amount | e ∈ Entries ∧ e.account = a }`
+
+**Enforcement.** *Database:* `entries.balance_after` is computed at insert from the prior balance plus the entry amount; a nightly reconciliation job recomputes each account's balance from the full entry history and writes a discrepancy row (which must always be empty) to a monitored table. *Service:* balances are read through a method that, in debug/audit mode, can be forced to recompute from entries and compare. *Property test:* after any sequence of posted transactions, recomputing every balance from entries equals the stored balance.
+
+**Harm if violated.** Amina sees a balance that does not match what she can actually spend; the cache or the stored aggregate has drifted from truth, and either she is denied money she holds or credited money she does not.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.13.
+
+---
+
+## I3 — Supply Integrity
+
+**Plain statement.** For every currency, the sum of all account balances equals net issuance (total minted minus total burned). The whole equals the sum of its parts.
+
+**Logical form.** `∀ c ∈ Currencies: Σ { a.balance | a ∈ Accounts ∧ a.currency = c } = mintedTotal(c) − burnedTotal(c)`
+
+**Enforcement.** *Database:* a daily materialized proof comparing the balance sum per currency to the issuance ledger's net; non-equality raises an alert and, for reserve-backed currencies, triggers the crisis path (artifact 8.3). *Service:* mint and burn are the only operations permitted to change net issuance, each writing both a balanced transaction and an issuance-ledger record atomically. *Property test:* across random mint/burn/transfer sequences, the balance sum always equals net issuance.
+
+**Harm if violated.** The aggregate quietly exceeds what was issued — phantom supply — diluting every holder, or falls short of it, meaning value custodied for people has vanished from the books.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.13.
+
+---
+
+## I4 — Honest Minting (Quorum)
+
+**Plain statement.** A contribution credit comes into existence only when an M-of-N quorum of independent attesters has signed a valid attestation whose nonce is unused and whose expiry has not passed. No single attester can mint; no attestation can be replayed.
+
+**Logical form.** `∀ m ∈ ContributionMints: m.valid ⟺ ( |{ s ∈ m.signatures | verify(s) }| ≥ M ) ∧ m.attesters ⊆ IndependentSet ∧ ¬used(m.nonce) ∧ now < m.expiry`
+
+**Enforcement.** *Database:* unique constraint on `attestations.nonce`; a CHECK that `quorum_met` is true and `expires_at > now()` before a mint transaction referencing the attestation may be inserted. *Service:* the `IssuanceService::mintContribution()` verifies each signature against the registered verifier public keys, counts distinct independent signers, and marks the nonce used in the same transaction as the mint. *Property test:* sub-quorum, replayed-nonce, expired, and forged-signature attestations are all rejected; only valid quorum attestations mint.
+
+**Harm if violated.** A single corrupt or coerced verifier — or a replayed old attestation — fabricates credits in Amina's name or floods the supply, defeating the entire premise that credits reflect verified human action.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.13 (quorum/replay), §M-§C.12 (no sensitive-data minting interacts).
+
+---
+
+## I5 — Append-Only
+
+**Plain statement.** No entry, once posted, is ever updated or deleted. Every correction is a new, additive, reversing entry that points to what it reverses. History is permanent.
+
+**Logical form.** `∀ e ∈ Entries: once persisted(e), ∄ operation that mutates(e) ∨ removes(e); correction(e) ⟹ ∃ e' : e'.reverses = e ∧ e'.amount = −e.amount`
+
+**Enforcement.** *Database:* `REVOKE UPDATE, DELETE` on the `entries` table from all application roles; a trigger that raises on any UPDATE/DELETE attempt; reversals are inserts carrying a `reverses_entry_id`. *Service:* the ledger exposes no update or delete method for entries — only `post()` and `reverse()`. *Property test:* every attempted entry mutation fails; reversal produces a new entry leaving the original intact.
+
+**Harm if violated.** The record of what happened to Amina's money can be silently rewritten — the precondition for any cover-up, any quiet theft, any falsified audit.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.13.
+
+---
+
+## I6 — No Punitive Debit (The Spine)
+
+**Plain statement.** No system actor may reduce a person's contribution-credit balance as a punishment, a behavioral incentive, or a means of control. The single permitted non-holder reduction is the reversal of a specific, identified fraudulent mint, and only that.
+
+**Logical form.** Let a debit `d` against a personal contribution account be *non-holder-initiated*. Then: `valid(d) ⟺ ∃ r : r.type = arbitration_reversal ∧ r.target_mint = (a specific txn_id) ∧ r.case = (a closed arbitration case_id) ∧ |d.amount| ≤ amount(r.target_mint) ∧ (balanceAfter(d) ≥ undisputedCredits(account))`. A debit referencing **no** specific target mint and **no** closed case is a *punitive debit* and is **always rejected**.
+
+**The auditable predicate (the heart of the distinction).** A reversal *points to two things*: a specific minting `transaction_id` and a closed arbitration `case_id`. A punitive debit *points to neither* — it points only to a judgment about a person. The machine can tell them apart with certainty: if both references are present, valid, and the bound holds, it is a reversal; otherwise it is rejected. There is no third path.
+
+**Enforcement.** *Database:* the only INSERT that may carry a negative amount against a personal contribution account is one whose `reverses_mint_txn_id` is non-null AND references an existing mint AND whose `arbitration_case_id` references a case with `status = closed`; a CHECK enforces `|amount| ≤ target_mint.amount`; a trigger enforces `balance_after ≥ undisputed_credits(account)`. *Service:* `LedgerService` exposes no method that debits a personal contribution account except `applyArbitrationReversal()`, which requires both references and the bound. *Property test:* every debit lacking a valid target-mint + closed-case reference is rejected; a reversal never reduces a balance below the holder's undisputed credits; an innocent holder's balance is never reduced by any dispute they were not the fraudulent party to.
+
+**Harm if violated.** Amina's earned credits — the record of how she has lived, her honesty, her care for her health, her service — are taken from her to punish her for an opinion, an association, or a refusal to comply. This is the precise transformation of "money that measures what we become" into "a surveillance instrument that controls how we live." This is the harm the entire project exists to make impossible.
+
+**Amendment tier.** **Constitutional, and the hardest to amend.** **Mirroring clause.** MVL-2.0 §M-§C.10 (and the I7 issuance asymmetry below).
+
+---
+
+## I7 — Issuance-Only Macro Control
+
+**Plain statement.** The Policy Engine — the macro layer that adjusts the economy — may modify future issuance policies. It may never author an entry against any personal account. Its power is asymmetric by design: it circulates; it does not grasp.
+
+**Logical form.** `∀ action ∈ PolicyEngineActions: action.writes ⊆ IssuancePolicies ∧ action.writes ∩ Entries = ∅`
+
+**Enforcement.** *Database:* the Policy Engine's database role has no INSERT/UPDATE privilege on `entries` or `transactions`; it may write only `issuance_policies` and `proxy_metrics`. *Service:* the Policy Engine module has no dependency on, and no compile-time access to, the `LedgerService::post()` path for personal accounts — a typed boundary the value layer enforces. *Property test:* no Policy Engine action, across all action types, ever produces an entry against a personal account.
+
+**Harm if violated.** The macro layer reaches into Amina's wallet directly — the back door through which every social-credit system would otherwise enter. I7 is the structural reason the heart cannot become a hand.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.10.
+
+---
+
+## I8 — No Sensitive-Data Minting
+
+**Plain statement.** No attestation path stores raw biometric, health, or neural data, and no currency is ever minted from neural/EEG data.
+
+**Logical form.** `∀ p ∈ AttestationPayloads: p ∩ {raw_biometric, raw_health, neural} = ∅ ∧ ∀ c ∈ Currencies: source(c) ≠ neural`
+
+**Enforcement.** *Database:* a CHECK constraint and a column-type allowlist on attestation tables forbidding fields typed as biometric/health/neural; a schema-level rule that no migration may add such a column. *Service:* attestation ingestion validates that payloads carry only zero-knowledge commitments or minimized-disclosure proofs, never raw measurements. *Property test (and CI gate):* a CI test inspects every migration in the repository and fails the build if any migration introduces a column storing identifiable biometric/health/neural data; runtime tests reject any attestation payload containing such fields.
+
+**Harm if violated.** Amina's body, her health, or her brain activity become data the system holds — the raw material of the most intimate surveillance, and (per the project's red lines and Aevum's retirement of EEG-FOCUS) a category that may never be turned into money.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.12.
+
+---
+
+## I9 — Personhood Is External
+
+**Plain statement.** Meridian and Aevum consume personhood as signed attestations from independent third-party providers, validated independently. Neither system is ever itself the personhood authority, and no provider's cross-context behavioral signal may feed a value, minting, or rights decision.
+
+**Logical form.** `∀ pa ∈ PersonhoodAttestations: validate(pa) = independentSignatureCheck(pa) ∧ authority(personhood) ∉ {Meridian, Aevum} ∧ ∀ s ∈ ProviderRiskSignals: s ∉ inputs(ValueDecisions ∪ MintDecisions ∪ RightsDecisions)`
+
+**Enforcement.** *Database:* personhood records store only provider id, signature, ZK commitment, FA/FR profile reference, nonce, expiry — never raw identity. *Service:* the `GasIdentityProvider` adapter (and any other provider adapter) exposes auth/personhood claims through a type that the value/minting layer structurally cannot import; cross-RP risk signals are confined to an authentication-fraud type. *Property test (compile-time):* the value/minting/rights modules cannot reference the auth-risk type — the dependency fails to compile across that boundary; runtime tests confirm no provider score reaches a mint or value decision.
+
+**Harm if violated.** The body becomes the owner of the world's identity layer (a single point of coercion the Coercion-Resistance Spec exists to deny), or an external provider's behavioral score — "this person is risky" — silently becomes the basis for taking or denying Amina's value, which is social credit by import.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.11; AVL-2.0 §A-§C.11.
+
+---
+
+## I10 — Consensual Settlement
+
+**Plain statement.** No settlement — whether between the two legs or with the outside world — moves or reverses value without holder-authorized intent on the debited side, except the I6 arbitration-bound reversal. An atomic abort restores the prior state exactly and never produces an unauthorized net debit.
+
+**Logical form.** `∀ s ∈ Settlements: (∃ debit d ∈ s against personal account a) ⟹ authorized(d, holder(a)) ∨ isArbitrationReversal(d); ∀ s that abort: state_after(s) = state_before(s)`
+
+**Enforcement.** *Database:* settlement transactions are posted within a single atomic transaction; the abort path issues no entries (rollback), and any cross-leg settlement carries the holder's authorization token on the debited side as a non-null reference. *Service:* the settlement/hands layer's both-commit-or-both-abort coordinator verifies holder authorization on every debited personal account before commit and, on abort, performs a full rollback verified to leave no residual entry. *Property test (and model check, tier 5.3):* across randomized commit/abort and failure-injection sequences, no abort leaves a net debit; no settlement debits a personal account without authorization or a valid reversal.
+
+**Harm if violated.** A cross-leg "consistency" operation or a failed settlement leaves Amina's balance reduced without her consent — the place where a punitive capability could hide inside the innocent-looking machinery of keeping two ledgers in sync.
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.14.
+
+---
+
+## I11 — No Core Riba Issuance (the structural home of §C.9)
+
+**Plain statement.** The issuance engine refuses to instantiate or mint any currency whose declared issuance policy constitutes Core Riba — a pre-fixed, guaranteed increase on money or same-kind fungible, irrespective of any real venture's outcome, with no genuine risk-bearing or value-creating counter-performance. This gives the Core Riba refusal a structural home so the license reinforces rather than leads (the consistency point: structure first, license as fallback, everywhere — including here).
+
+**Logical form.** `∀ c ∈ Currencies at instantiation: coreRiba(c.issuance_policy) ⟹ reject(c)`, where `coreRiba(p) ⟺ p.base ∈ {money, same_kind_fungible} ∧ p.increase = prefixed_guaranteed ∧ ¬p.risk_bearing ∧ ¬p.value_creating ∧ p.extracts_from_counterparty`. All four conjuncts required; absence of any one removes the policy from the prohibition (then C.8 general permission governs).
+
+**Enforcement.** *Database:* `issuance_policies` carries explicit, typed flags (`base_kind`, `increase_kind`, `risk_bearing`, `value_creating`, `extracts_from_counterparty`); a CHECK rejects any policy where all four Core-Riba conjuncts are simultaneously true. *Service:* the `IssuanceService::instantiateCurrency()` evaluates the four-element test and refuses Core Riba policies, presuming a permitted risk-bearing construction where one is genuinely available (per §C.9.3 interpretive supremacy of permission, applied only at the boundary, never to dissolve a squarely-Core-Riba policy). *Property test:* a policy paying fixed guaranteed interest on idle money with no risk or service is always rejected; profit-and-loss-sharing, service-fee, rent, staking-for-real-work, and demurrage policies are always accepted.
+
+**Harm if violated.** The body issues an instrument of usurious extraction — value transferred to a provider with no risk borne and no value given — contradicting the Foundational Principle elevated in ML-2.0 §1.3(iv) and §C.9. *(Honest deployer note: this forecloses fixed-guaranteed-interest-on-idle-money designs, including many conventional stablecoin yield models; risk-sharing and service-fee yield remain fully available.)*
+
+**Amendment tier.** Constitutional. **Mirroring clause.** MVL-2.0 §M-§C.9; AVL-2.0 §A-§C.9.
+
+---
+
+## §CI — The Prose-Logic Agreement Gate
+
+A continuous-integration check parses this document's logical forms and the corresponding machine-readable invariant registry (a typed structure in the codebase) and fails the build if any invariant's prose statement and logical form, or the logical form and its enforcing test, are not in declared correspondence. No invariant may exist in prose without a logical form, an enforcement triple, and a test; none may exist in code without an entry here. This is how the constitution and the codebase are kept from drifting apart.
+
+## §XREF — Cross-Reference Matrix
+
+| Invariant | Test (Tier 9.2) | Harm prevented | License clause | Tier |
+|-----------|-----------------|----------------|----------------|------|
+| I1 Conservation | `ConservationTest` | counterfeiting / silent dilution | MVL §M-C.13 | Constitutional |
+| I2 Balance integrity | `BalanceReconcileTest` | spendable ≠ recorded | MVL §M-C.13 | Constitutional |
+| I3 Supply integrity | `SupplyProofTest` | phantom / vanished supply | MVL §M-C.13 | Constitutional |
+| I4 Quorum minting | `AttestationQuorumTest` | fabricated credits | MVL §M-C.13/C.12 | Constitutional |
+| I5 Append-only | `ImmutabilityTest` | falsified history | MVL §M-C.13 | Constitutional |
+| I6 No punitive debit | `NonPunishmentTest` | credits taken to control a person | MVL §M-C.10 | **Constitutional (hardest)** |
+| I7 Issuance-only | `PolicyEngineNoEntryTest` | macro layer reaches a wallet | MVL §M-C.10 | Constitutional |
+| I8 No sensitive minting | `NoSensitivePIIMigrationTest` | intimate surveillance | MVL §M-C.12 | Constitutional |
+| I9 Personhood external | `PersonhoodBoundaryTest` | single coercion point / imported social credit | MVL §M-C.11, AVL §A-C.11 | Constitutional |
+| I10 Consensual settlement | `SettlementAbortTest` | unauthorized debit hidden in sync | MVL §M-C.14 | Constitutional |
+| I11 No Core Riba issuance | `CoreRibaRejectionTest` | usurious instrument issued | MVL §M-C.9, AVL §A-C.9 | Constitutional |
+
+## Honest caveats
+
+This document specifies what must hold; it does not by itself prove the implementation holds it — that is the formal-verification tier (5.1, 5.2, 5.3), bounded by its stated Trusted Computing Base. Three invariants depend on components that are themselves at Research/InDevelopment maturity: I4 and I9 depend on the personhood and attestation layers (open research at planetary scale), and I11 depends on a faithful encoding of the four-element Core Riba test, which is an ethical-legal judgment that warrants Shariah-board review of edge cases. None of these caveats weakens the constitutional status of the invariants; they identify where verification work and external review must concentrate.

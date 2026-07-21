@@ -1,0 +1,28 @@
+# DOCUMENT 7.2 — THE RECONCILIATION SPECIFICATION
+### How the Two Legs Keep Each Other Honest
+
+**System:** Joint · **Licenses:** both · **Tier:** 7 · **Maturity:** Research → InDevelopment · **© Maher**
+
+## 0. The principle
+
+The two legs keep each other honest precisely because **neither can quietly fix a discrepancy in the other.** Reconciliation proves that every value-moving fact Aevum believes occurred corresponds to a posted, balanced Meridian transaction — and when it finds drift, it *alerts a human*; it **never silently auto-corrects.** Any correction is an additive reversing entry made by a human through the normal ledger path (I5), never a quiet adjustment. Silent auto-correction would be exactly the back door that lets a compromised component "fix" the books to hide theft.
+
+## 1. Responsibilities
+
+Run on a defined cadence (nightly as baseline, with a hardening goal of tighter real-time drift detection), compare Aevum's record of value-moving facts against Meridian's authoritative ledger, prove correspondence or detect drift, and on drift, raise a human-investigated alert without auto-correcting.
+
+## 2. What it compares
+
+For the defined period, reconciliation enumerates: every `confirmation.committed` event Aevum recorded (its belief that a value movement occurred) and matches each to a posted, balanced Meridian transaction (the authoritative fact). It also runs in reverse: every Meridian transaction originating from a proposal must correspond to an Aevum proposal event. The comparison is on the *economic facts* (amounts, accounts, currencies, transaction references), which survive even crypto-shredding (document 6.5) because reconciliation never needs PII.
+
+## 3. Drift detection and alerting
+
+A drift is any of: an Aevum-believed committed fact with no matching Meridian transaction (Aevum thinks money moved that did not); a Meridian transaction with no matching Aevum proposal (money moved Meridian cannot attribute to a proposal); or an amount/account mismatch between a matched pair. Any drift raises a typed alert (`reconciliation.alert` event) routed to the incident process (document 8.1), with the specific records and the nature of the discrepancy. The alert is itself hash-chained into the event stream, so the *fact that a drift was detected* is itself tamper-evident.
+
+## 4. What it explicitly does NOT do
+
+Reconciliation **does not auto-correct.** It does not adjust a balance to make the two sides agree; it does not delete or modify any entry (I5 forbids it anyway); it does not silently re-post. It detects, alerts, and stops. The correction — if one is warranted after human investigation — is a *new, additive, reversing transaction* posted through the normal ledger path, with its own audit trail and, where it touches value, the same invariant validation as any transaction. This is deliberate: an auto-correcting reconciliation job is itself a powerful, dangerous actor (it can change balances to match a story), so the design denies it that power entirely.
+
+## 5. Honest caveats
+
+The baseline nightly cadence means a drift could persist for up to one cycle before detection — the worst-case detection latency. The hash chain and idempotency (7.1) bound what a within-window compromise can durably achieve, and tighter real-time drift detection is on the hardening backlog, but the latency is a real, stated limitation. Reconciliation's own correctness is part of the 5.3 Trusted Computing Base — a compromised reconciliation job could hide drift, which is why the job runs from independent records, is itself audited, and emits hash-chained alerts that a separate party can verify. And reconciliation proves *correspondence between the two legs*; it does not prove either leg's internal correctness (that is conservation, 5.1, and non-punishment, 5.2) — the three together, not reconciliation alone, establish the body's integrity.

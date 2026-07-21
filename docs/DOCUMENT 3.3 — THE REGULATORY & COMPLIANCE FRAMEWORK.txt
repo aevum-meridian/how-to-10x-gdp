@@ -1,0 +1,38 @@
+# DOCUMENT 3.3 — THE REGULATORY & COMPLIANCE FRAMEWORK
+### Firm Doctrine, Loose Map
+
+**System:** Joint · **Tier:** 3 · **Maturity:** InDevelopment (doctrine) / Research (jurisdiction map) · **© Maher** · *Not legal advice; scaffolding for qualified counsel.*
+
+## 0. The framing: firm doctrine, loose map
+
+2026 regulation is moving. A detailed jurisdiction-by-jurisdiction map written today is wasted effort, because it will be stale before it ships. So this framework specifies the **doctrine firmly** (the principles that hold regardless of jurisdiction) and the **map loosely** (a structure for recording per-jurisdiction obligations that is filled in by counsel as the systems enter each market). This is itself the honest posture: claim certainty about the principles, admit movement in the particulars.
+
+## 1. The central doctrine: tunnels are licensed institutions
+
+The load-bearing regulatory doctrine is that **the points where the body touches the regulated financial world — the fiat on/off-ramps, the CBDC connectors, the reserve-backed issuance — are operated by licensed institutions that hold the relevant licenses and bear the legal obligations in their jurisdiction.** The protocol does not pretend to be unregulable; it cleanly separates the *unregulated-by-nature* parts (the open ledger logic, the contribution credits which are not financial instruments in the conventional sense) from the *regulated* parts (anything touching fiat, reserves, or payment-stablecoin functionality), and routes the latter exclusively through licensed tunnel operators. This is what makes the body able to grow *inside* the existing financial world rather than in defiance of it.
+
+## 2. The 2026 regimes and the body's posture toward each
+
+**The GENIUS Act regime (US payment stablecoins).** Reserve-backed currencies that function as payment stablecoins are issued only through tunnels structured to comply with the applicable reserve, disclosure, and redemption requirements: 1:1 reserve backing, real-time attestation (artifact 8.3), and redemption rights. The body's contribution credits are *not* payment stablecoins and are not marketed as such; the maturity-honesty rule (AVL-2.0 §A-§C.13) and the naming-separation rule keep regulated and non-regulated instruments cleanly distinct.
+
+**MiCA (EU crypto-assets and stablecoins).** Crypto-asset services and the issuance of asset-referenced and e-money tokens are routed through MiCA-authorized tunnel entities. Bridged crypto is represented behind MiCA-compliant ingress; the multi-dimensional stable unit, where offered in the EU, operates under the applicable MiCA token classification, and $PEG+ (experimental) is jurisdiction-gated *out* of markets where it cannot lawfully be offered.
+
+**ISO 20022 (post-coexistence).** The body is structured-address-native, receive-tolerant and send-strict (document 0.5). Its reserve adapters emit only fully structured party addresses, so cross-border settlements conform to the November 2026 SWIFT rule and do not bounce.
+
+**The EU AI Act (and similar algorithmic-accountability regimes).** The personhood-based gate to the contribution economy is a *consequential algorithmic decision* and is treated as high-risk: the aggregation algorithm is published and versioned, denials are explainable, a human appeal path exists with a bound turnaround, and fairness audits across demographics and regions are mandatory. All ML in the system is advisory-only (Tier-1) or halt-only (the mind gates, never initiates), never executive — which keeps the system clear of the prohibited and highest-risk AI categories for autonomous consequential action.
+
+**Neural-data privacy laws (the 2025–26 wave).** Brain data is protected sensitive data; the body's response is structural and absolute — I8 forbids minting from neural/EEG data and forbids storing it in any attestation path, and the retired $FOCUS experiment is kept Deprecated as an honest record of a line the project chose not to cross.
+
+**AML / sanctions / travel rule.** Applied at the membrane's regulated-tunnel face, by the licensed tunnel operators, where law requires — using privacy-preserving compliance (selective-disclosure ZK: prove "not sanctioned" or "over 18" without revealing identity) wherever the law permits it, so dignity and lawful access are not traded against each other (Trade-off Register, privacy-vs-compliance axis).
+
+## 3. The per-jurisdiction map (structure, to be filled by counsel)
+
+For each jurisdiction the body enters, counsel records, in a living table: which tunnel licenses are required; which currencies may and may not be offered (and which are gated out); the applicable AML/KYC/travel-rule obligations; the data-protection regime (and how crypto-shredding erasure, artifact 6.5, satisfies it); the algorithmic-accountability obligations for personhood scoring; and the reserve-attestation and disclosure obligations. The doctrine ("tunnels are licensed; regulated parts route through them; structural protections satisfy data and AI obligations") is constant; the table's contents are jurisdiction-specific and counsel-maintained. **A tunnel does not go live in a jurisdiction until its row is complete and reviewed.**
+
+## 4. The Core Riba compliance posture (Islamic-finance dimension)
+
+Because the body elevates the Core Riba prohibition to an operative, structural refusal (I11, §C.9), it occupies a distinctive position: it is, by construction, compatible with Islamic-finance requirements in a way conventional systems are not, *and* it must ensure that compatibility is real, not claimed. The posture: the four-element Core Riba test is encoded in the issuance engine (I11); permitted yield forms (profit-and-loss-sharing, rent, service fees, staking-for-real-work, demurrage-as-holding-charge) are available; and **edge-case classification is referred to a Shariah board**, not decided by the engine alone. The engine refuses the clear cases and flags the ambiguous ones for human religious-legal judgment. This makes the body usable in Islamic-finance markets while honestly acknowledging that the *application* of the principle to novel structures is a matter for qualified scholars, not code.
+
+## 5. Honest caveats
+
+This framework is scaffolding for qualified counsel and is not itself legal advice; I am not a lawyer. The regulatory landscape of 2026 is genuinely in motion, so the loose-map structure is a feature, not an evasion — counsel must fill and maintain it per market. The privacy-preserving-compliance approach (ZK selective disclosure) is the right aspiration but its acceptance by regulators varies and is itself jurisdiction-specific. And the Core Riba compatibility, while structurally real, requires Shariah-board partnership to be credible in the markets where it matters most — a claim of Islamic-finance compatibility without scholarly endorsement would itself risk *Gharar* and should not be made.

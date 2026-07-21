@@ -1,0 +1,32 @@
+# DOCUMENT 7.x — THE SETTLEMENT & COORDINATION LAYER (THE HANDS)
+### Atomic Settlement That Grasps But Cannot Punch
+
+**System:** Joint (Meridian authors; Aevum proposes) · **Licenses:** both · **Tier:** 7 · **Maturity:** Research → InDevelopment · **Enforces:** I6, I7, I10 (the consensual-settlement invariant) · **© Maher**
+
+## 0. Why this is the crux
+
+The hands are where the constitution meets executable reality. Atomic cross-leg settlement is, by construction, the one place where *two ledgers change state together* — and therefore the one place where a punitive capability could hide inside the innocent-looking machinery of "consistency." The settlement layer's defining requirement is that it can **grasp** (move value between consenting parties, and reverse fraud through arbitration) but can never **punch** (it has no punitive capability; it inherits I6/I7/I10). The abort path is the most dangerous detail and is formally model-checked (proof 5.3) to prove it never produces an unauthorized net debit.
+
+## 1. Responsibilities
+
+Execute atomic both-commit-or-both-abort settlement between the two legs and against external rails (ISO 20022 reserves, crypto bridges), such that a settlement spanning Meridian and Aevum either fully commits on both sides or fully aborts on both, with the abort provably restoring prior state and never net-debiting an unauthorized personal balance.
+
+## 2. The atomic settlement protocol
+
+A cross-leg settlement is coordinated by a both-commit-or-both-abort protocol. The coordinator: (1) verifies **holder authorization on every debited personal account** before any commit (I10 — no settlement debits a personal account without the holder's authorized intent, except an arbitration-bound reversal); (2) prepares the balanced transactions on both sides; (3) commits atomically, or (4) on any failure, **aborts** — and the abort performs a full rollback verified to leave no residual entry. The actual value movement is, like all value movement, a balanced Ledger Core transaction (I1) — the settlement layer does not author balances directly; it coordinates and the Ledger Core posts.
+
+## 3. The abort-path guarantee (the crux of the crux)
+
+The single most important property: **an atomic abort restores prior state exactly and never produces a net debit against a personal balance the holder did not authorize.** This is I10, and it is where a careless implementation would let a "failed settlement" leave a person's balance reduced. The guarantee is enforced three ways: *DB* — settlement runs in a single atomic database transaction; an abort is a rollback that issues no entries, so there is physically no partial state. *Service* — the coordinator, on abort, verifies (post-rollback) that no entry persisted against any account in the settlement. *Formal proof* — proof 5.3 model-checks the abort path across randomized commit/abort and failure-injection sequences, asserting no abort leaves a net debit and no settlement debits a personal account without authorization or a valid arbitration reversal. The counterexample-trace format from 5.3 applies: any trace where an abort leaves a net personal debit is a launch-blocking defect.
+
+## 4. Inheritance of I6 and I7
+
+The hands inherit the non-punishment spine. They have **no** method to punitively debit a personal contribution balance — the only personal-contribution debit anywhere is the Dispute Engine's `applyArbitrationReversal` (document 4.3), and the settlement layer cannot invoke a punitive debit because no such capability exists (I6). The Policy Engine cannot reach the settlement layer to author a personal entry (I7). So even at the body's most powerful action point — moving value in the world — the structural denials hold: the hands grasp what is freely given and reverse proven fraud, and can do nothing else.
+
+## 5. External-rail settlement (membrane interface)
+
+Settlement against external rails goes through the membrane (document 0.5): ISO 20022 reserve settlement is receive-tolerant (accept hybrid, normalize) and send-strict (emit structured only); crypto-bridge settlement represents locked assets after confirmation depth, with ethical-filter-at-ingress. The membrane *refuses* non-conforming flows; the settlement layer *coordinates* the conforming ones; the Ledger Core *posts* the balanced result. Three organs, three roles, no single one able to move value alone.
+
+## 6. Honest caveats
+
+This layer is Research → InDevelopment and is, with the Dispute Engine, the most important thing to get formally right, because it is where a punitive capability would hide if it hid anywhere. The abort-path proof (5.3) is its gating verification — until that proof passes, the settlement layer for high-value flows is held at Research. Atomic cross-ledger settlement is genuinely hard under failure and concurrency, and the both-commit-or-both-abort protocol must handle coordinator failure, partial-network partition, and timeout without ever leaving a net unauthorized debit — the failure-injection tests are as important as the happy-path tests. And the deepest caveat: "consistency" is the most plausible disguise for a smuggled coercive capability, so this layer warrants more adversarial review than its innocent name suggests — a reviewer should assume a malicious implementer tried to hide a punitive debit in the abort path, and verify they could not.

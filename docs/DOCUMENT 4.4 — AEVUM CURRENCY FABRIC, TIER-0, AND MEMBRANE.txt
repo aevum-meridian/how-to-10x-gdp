@@ -1,0 +1,36 @@
+# DOCUMENT 4.4 — AEVUM CURRENCY FABRIC, TIER-0, AND MEMBRANE
+### The System of Engagement's Motor — Pluggable Experiences, Verified Stabilizers, the Skin
+
+**System:** Aevum · **License:** `LicenseRef-AVL-2.0` · **Tier:** 4 · **Maturity:** Research → InDevelopment · **Enforces:** A-§C.9 (Core Riba experience refusal), A-§C.10 (user sovereignty / global-block), A-§C.12 (no ML on trusted path), A-§C.14 (no authority over Meridian's ledger), and the membrane's I9 anti-correlation wall · **© Maher**
+
+## Responsibilities
+
+This is Aevum's motor: it defines pluggable currency *experiences*, runs the Tier-0 verified stabilizers (pure, no ML), implements the four-rung identity ladder (consuming external personhood), and hosts the membrane's experience face (the ethical filter). Its defining constraint, repeated because it is load-bearing: **none of this can author a Meridian balance change.** Everything it does is propose, surface, filter, or refuse.
+
+## Public interface
+
+`CurrencyExperienceRegistry` (`register(ExperienceSpec $s)`, refusing any whose underlying policy is Core Riba — A-§C.9); `Tier0Rule` (an interface implemented by pure, property-tested stabilizers — e.g., the $PEG basket rebalancer — each with hard per-epoch movement caps and no side effects); `EthicalFilter` (`evaluate(Asset $a, UserRules $r): FilterVerdict` — returns admit/warn/refuse for the experience edge); `GlobalBlockList` (`propose(GlobalBlock $b)` — which *can only enter* the timelocked, publicly-justified, appealable constitutional process, never apply directly); `IdentityLadder` (consuming GAS/other personhood via the adapter). Critically, the proposal of any value movement goes through `CrossSystemEventClient::propose()` (document 7.1) — Aevum constructs a proposal; Meridian validates and posts.
+
+## Data model
+
+`asset_labels` (id, asset_ref, category enum, source, provenance, contestation_status). `global_blocks` (id, asset_ref, justification, proposed_at, timelock_until, appeal_status, status enum {proposed, active, appealed, void}). `user_client_preferences` and filter-rule storage for user-sovereign settings. `experience_specs` (id, currency_id, presentation jsonb, core_riba_checked bool). Tier-0 rules hold no mutable state of their own — they are pure functions over inputs.
+
+## The enforcement points
+
+**A-§C.9 (no Core Riba experience).** *Service:* `CurrencyExperienceRegistry::register()` refuses to surface any experience whose underlying Meridian `issuance_policy` is Core Riba (and Meridian's I11 means such a policy cannot exist anyway — defense in depth). *Test:* a Core-Riba-policy experience cannot be registered.
+
+**A-§C.10 (user sovereignty / global block).** *DB:* `global_blocks` rows cannot reach `status = active` without `timelock_until < now()` and a non-null justification and a closed appeal window. *Service:* the filter is user-sovereign by default (a user's own rules govern admit/warn/refuse for their wallet); a global block applies only through the constitutional process. *Test:* `GlobalBlockConstitutionalTest` asserts no global block activates without timelock + justification + appeal path; a unilateral/silent global block is rejected.
+
+**A-§C.12 (no ML on trusted path).** *Service:* Tier-0 rules implement `Tier0Rule` and are verified pure (no ML, no side effects, deterministic, capped); any ML lives only in the Tier-1 advisory proposer, which emits inert `Proposal` records and executes nothing. *Test:* `Tier0PurityTest` asserts each Tier-0 rule is deterministic and within its movement cap; an architectural test asserts no ML dependency is importable into the Tier-0 path.
+
+**A-§C.14 (no authority over Meridian's ledger).** *Service:* Aevum has no method that authors a Meridian entry; all value movements are proposals through the event contract. *Test (compile-time + runtime):* `NoLedgerAuthorityTest` asserts Aevum cannot import or call `LedgerService::post()` for personal accounts — the dependency fails to compile across the boundary; the filter has no debit capability.
+
+**The membrane's I9 anti-correlation wall.** *Service:* GAS cross-RP risk signals enter only an authentication-fraud type that the value/experience layer structurally cannot import. *Test:* `PersonhoodBoundaryTest` asserts the value layer cannot reference the auth-risk type (compile failure across the boundary), so no cross-context behavioral score reaches any value or experience decision.
+
+## The four-rung identity ladder
+
+Rung 0 (pseudonymous wallet: hold and swap, no verification). Rung 1 (social attestation: probationary dividend pool, hard constitutional issuance cap, Sybil-graph defense). Rung 2 (document/institutional: regulated features where law requires). Rung 3 (full personhood: full $UNA, one-human-one-vote). The ladder consumes external personhood (I9); social recovery (M-of-N guardians, timelocked) is mandatory; personhood scoring is explainable and appealable. Age-gating fails closed (child-safety floor).
+
+## Honest caveats
+
+The currency-experience fabric is Research because most of the currencies it surfaces are Research. The Tier-0 purity discipline is achievable but demands engineering rigor (a single side-effecting or non-deterministic stabilizer breaks the no-ML-on-trusted-path guarantee). The user-sovereign filter's hardest problem is usability-meets-ethics: sensible defaults and contestable labels must keep sovereignty from becoming an inattention-trap (document 10.3). And the anti-correlation wall is only as strong as `PersonhoodBoundaryTest` and the typed boundary — until proven, it is partly procedural and tracked in the Coercion-Resistance companion register.

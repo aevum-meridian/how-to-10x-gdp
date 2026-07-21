@@ -1,0 +1,40 @@
+# DOCUMENT 4.2 — ISSUANCE & PoVC ENGINE
+### Three Issuance Models, Quorum Minting, and the Structural Core-Riba Refusal
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 4 · **Maturity:** Research → InDevelopment · **Enforces:** I4, I8, I11 (and I7 boundary) · **© Maher**
+
+## Responsibilities
+
+The Issuance Engine is the only component permitted to change net issuance, and it does so only through the Ledger Core's balanced mint/burn transactions. It implements the three issuance models (reserve-backed, distributed/bridged, contribution via PoVC), refuses Core Riba policies at instantiation (I11), enforces quorum minting for contribution credits (I4), and forbids sensitive-data attestations (I8). It is where the body decides what value comes into existence and on what terms.
+
+## Public interface
+
+`IssuanceService` exposes: `instantiateCurrency(CurrencyPolicy $policy): Currency` — evaluates the Core Riba predicate (I11) and the family rules, refusing non-conforming policies; `mintReserve(ReserveDeposit $deposit): Transaction` — mints against attested custody, refusing mints that would exceed attested reserves; `burnReserve(Redemption $r): Transaction`; `representBridged(BridgeLock $lock): Transaction` — mints a 1:1 representation only against a confirmed source-chain lock; `mintContribution(Attestation $a): Transaction` — mints only on a valid quorum attestation (I4). Every method ultimately calls `LedgerService::post()` with a balanced mint/burn transaction; the Issuance Engine never authors entries directly.
+
+## Data model additions
+
+`issuance_policies` (id, currency_id, type enum {reserve_1to1, bridge, povc}, params jsonb, max_supply nullable, rate_limit jsonb, decay_rule jsonb, base_kind enum, increase_kind enum, risk_bearing bool, value_creating bool, extracts_from_counterparty bool). `attestations` (id, currency_id, subject_proof — ZK commitment or hashed personhood ref, never raw PII —, nonce unique, expires_at, attester_set jsonb, signatures jsonb, quorum_met bool, minted_transaction_id nullable, status). `verifiers` (id, name, pubkey, family_scope, reputation, status, rotation_group, bond). The five typed Core-Riba flags on `issuance_policies` are what make I11 a DB-checkable property rather than a judgment buried in code.
+
+## The three enforcement points per invariant
+
+**I4 (quorum minting).** *DB:* unique constraint on `attestations.nonce`; a CHECK that `quorum_met = true` and `expires_at > now()` before any mint transaction referencing the attestation may insert. *Service:* `mintContribution()` verifies each signature against registered verifier pubkeys, counts distinct independent signers against the rotation groups (so the M signers are genuinely independent, not M keys from one party), requires count ≥ M, and marks the nonce used in the same atomic transaction as the mint. *Test:* `AttestationQuorumTest` asserts sub-quorum, replayed-nonce, expired, forged-signature, and same-rotation-group-collusion attestations are all rejected; only valid independent-quorum attestations mint.
+
+**I8 (no sensitive-data minting).** *DB:* a CHECK/column-allowlist on `attestations` forbidding fields typed biometric/health/neural; a schema rule blocking any migration that would add such a column. *Service:* attestation ingestion validates payloads carry only ZK commitments or minimized-disclosure proofs, never raw measurements; neural-sourced currencies are refused at `instantiateCurrency`. *Test:* `NoSensitivePIIMigrationTest` (a CI test) scans every migration and fails the build if any introduces an identifiable biometric/health/neural column; runtime tests reject offending payloads.
+
+**I11 (no Core Riba issuance).** *DB:* a CHECK on `issuance_policies` rejecting any row where all four Core-Riba conjuncts are simultaneously true (`base_kind ∈ {money, same_kind_fungible} ∧ increase_kind = prefixed_guaranteed ∧ risk_bearing = false ∧ value_creating = false ∧ extracts_from_counterparty = true`). *Service:* `instantiateCurrency()` evaluates the four-element predicate, refuses squarely-Core-Riba policies, and applies the interpretive-supremacy-of-permission rule *only at the boundary* (presuming a permitted risk-bearing construction where one genuinely exists, never to rescue a squarely-Core-Riba policy). *Test:* `CoreRibaRejectionTest` asserts a fixed-guaranteed-interest-on-idle-money policy is always rejected; profit-and-loss-sharing, rent, service-fee, staking-for-real-work, and demurrage policies are always accepted; the genuine-risk check verifies a policy claiming risk-bearing actually exposes a non-degenerate loss distribution (per document 2.1 §6).
+
+## The I7 boundary (Policy Engine separation)
+
+The Issuance Engine is the component the Policy Engine *may* influence — but only by writing `issuance_policies` (future minting), never `entries`. The Policy Engine's database role can write `issuance_policies` and `proxy_metrics` and nothing else; a `PolicyEngineNoEntryTest` proves no Policy Engine action produces an entry against a personal account. This is where I7's asymmetry is enforced at the issuance boundary.
+
+## Provisional minting (for slow/contestable credits)
+
+Contribution credits with a slow/contestable dispute profile mint *provisionally* against a clawback bond, with a `dispute_window` sized to the real verification latency. The provisional mint is a real, balanced ledger transaction (the holder has the credit), but it is marked disputable until the window closes; if invalidated within the window, the dispute engine (4.3) handles clawback — against attester/issuer bonds, or only-where-the-recipient-is-the-proven-fraudster against the specific mint, never against an innocent holder (I6). The Issuance Engine creates the provisional mint and the bond; the Dispute Engine resolves it.
+
+## GAS integration point
+
+Personhood gating for contribution minting consumes the GAS adapter (one provider of N, document 6.1); the adapter supplies *signed, independently-validated personhood attestations*, and its cross-RP risk signals are **walled off** from the minting decision by the typed boundary (I9, verified by `PersonhoodBoundaryTest`). A person's authentication-fraud risk score from GAS can gate *whether they authenticate*; it can never influence *whether or how much they mint*.
+
+## Honest caveats
+
+The PoVC pipeline is Research-tier because it depends on the personhood layer (Research) and on attester independence and slashing being calibrated so collusion is unprofitable without excluding honest verifiers — an open tuning problem hunted in the simulation sandbox. The I11 predicate is faithful to the Core Riba principle but its application to novel financial structures is referred to a Shariah board (the engine refuses clear cases, flags ambiguous ones). And provisional minting trades immediacy for the risk of a within-window fraud that must be unwound — the dispute engine (4.3) is what makes that trade safe, and until its clawback path is proven to never touch an innocent balance, provisional minting for high-value credits is held at Research.

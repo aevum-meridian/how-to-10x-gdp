@@ -1,0 +1,46 @@
+# DOCUMENT 3.1 — THE GOVERNANCE CONSTITUTION & STEWARD CHARTER
+### How the Body Is Governed, and How Its Stewards Are Bound
+
+**System:** Joint · **Tier:** 3 · **Licenses:** `LicenseRef-MVL-2.0` / `LicenseRef-AVL-2.0`; charter-governed under ML-2.0 Part G · **Maturity:** Research (the governance mechanisms are specifiable now; several depend on the personhood layer, which is Research) · **Authority:** Subordinate to 0.1 (Invariants) and 0.4 (Coercion-Resistance); supreme over all parametric and operational decisions. · **© Maher**
+
+## Preamble — governance under the inversion
+
+This constitution exists to answer one question without contradicting the body's central thesis: *how do you let a system of planetary value adapt and improve, while making it structurally impossible for anyone — including the governors — to turn it against a person?* The answer is the same anatomical inversion that governs everything else: the head serves the spine. Governance can propose, ratify, and adjust parameters, but it cannot reach the legs to author a balance change, and it cannot, by any majority short of the constitutional process, amend the invariants that protect persons. The hardest things to change in this system are the protections for people; everything else is easier. That inversion — most systems make their protections the easiest thing to override; this one makes them the hardest — is the constitution's defining property.
+
+## 1. The amendment tiers
+
+The system has three tiers of changeability, ordered from hardest to easiest. This ordering is deliberate and inverted from convention.
+
+**Tier C — Constitutional (the hardest).** The invariants I1–I11, the anti-social-credit floor, the child-safety floor, the no-neural-data line, the no-raw-PII rule, the no-punitive-debit spine (I6/I7), and the Coercion-Resistance guarantees. Amendment requires **personhood-weighted near-unanimity** (one verified human, one vote, at a near-unanimous threshold) **plus a long timelock** (a multi-month delay between ratification and effect) **plus public written justification** **plus a published appeal window**. These are the protections for persons, and they are the hardest things in the entire system to change — by design. A change here that would weaken a protection for persons faces the highest possible bar.
+
+**Tier P — Parametric.** The empirical parameters the economics depend on (the dampening functions, demurrage rate δ, basket cap κ, per-identity rate ρ, Goodhart thresholds, fee schedules, currency-type registrations). Amendment uses **conviction or quadratic voting** with a standard timelock and published rationale and an attached simulation report (the simulation gate, 9.1). Parameters can move, but never instantly and never without a public stress result.
+
+**Tier O — Operational.** Day-to-day operations within already-ratified bounds (Tier-0 verified rules executing automatically, routine maintenance). These leave an immutable audit record but need no vote, because they act only within constitutional and parametric limits already set.
+
+The mathematical guarantee tying the tiers together: a Tier-P or Tier-O action can *never* accomplish what only a Tier-C amendment could. The Policy Engine (a Tier-O/automatic actor) cannot touch a personal balance (I7); a parametric vote cannot weaken I6; only the constitutional process can change a protection for persons. The tiers are not just procedural — they are enforced by the invariants themselves.
+
+## 2. The voting mechanisms
+
+**For constitutional matters: personhood-weighted, one-human-one-vote.** Because constitutional matters are about the protection of persons, the franchise is persons — not capital. This requires the personhood layer (I9, consumed from external providers), which is honestly Research-tier, so constitutional governance has *graceful partial coverage* and an explicit rule: a constitutional amendment cannot pass on a franchise so incomplete that it excludes major populations — coverage thresholds are themselves a published, audited parameter, and where coverage is insufficient, the amendment waits rather than passing on a partial electorate. This is the one place where "we cannot do this yet" is the correct, honest answer.
+
+**For parametric matters: conviction or quadratic voting.** To resist plutocracy, parameter votes use conviction voting (where commitment over time, not raw stake, carries weight) or quadratic voting (where the cost of votes is super-linear in their number, so concentrated wealth buys sub-linear influence). The governance token grants *fee discounts, not direct revenue and not amplified constitutional power* — it cannot buy a vote on a protection for persons.
+
+**Delegation for the apathetic.** A participant may delegate their parametric vote to a trusted delegate, revocably, so non-participation does not silently hand power to whales. Constitutional votes are personhood-weighted and delegable only within published limits, because the protection of persons should not be wholly delegated away.
+
+## 3. The Steward and the Steward Charter
+
+The Steward is the body responsible for maintaining the licenses, the Registry, and the integrity of the governance process. The Steward Charter binds the Steward as a trust (*Amanah*), and its defining clause is the **Humility Clause** (ML-2.0 §G.5, carried into both child licenses):
+
+> The Steward acknowledges that this constitution and the Charter are human instruments, open to error and to good-faith critique. Any governance or conformity determination issued in bad faith, to suppress legitimate dissent, or to entrench the Steward's advantage against those the Charter is meant to serve is **void** by the Charter's own terms. A determination must engage critique on its merits, afford the affected party a fair opportunity to respond, and be revised upon sound correction.
+
+This is the constitution's deepest protection against its own authors: a Steward who turns governance into self-advantage has, by these very terms, *no authority* — the determination is void, not merely appealable. The Steward serves the governed; a Steward who inverts that relationship loses authority automatically.
+
+**Steward composition (shape specified; membership is yours, Maher, to choose).** The Steward should be a body, not a person, with members selected for independence and jurisdictional diversity (so no single state can compel the whole), bound by published conflict-of-interest rules, serving fixed terms with no single member holding a dispositive power, and subject to the threshold/key-custody model of the Coercion-Resistance Spec (no single Steward member can sign a release, mint, or cross a constitutional invariant). Succession passes only to those who undertake to maintain the Foundational Principles; any transfer to a party intending to use the system contrary to those principles is void (ML-2.0 §E.5).
+
+## 4. The appeal and dissent architecture
+
+Every consequential decision carries an appeal path with a bound turnaround: personhood denials (the gate to the contribution economy, a high-risk decision under the EU AI Act) are explainable and appealable; global blocks (the membrane's one sovereignty-overriding power) are timelocked, publicly justified, and appealable; arbitration rulings (the immune system's reversals) are public and escalating. Dissent is structurally protected: the anti-social-credit floor means no one's access to rights or value can be reduced for dissenting, and the Humility Clause means a determination issued *to suppress* dissent is void.
+
+## 5. Honest caveats
+
+The honest limits of this constitution: personhood-weighted constitutional governance depends on a personhood layer that does not yet exist at planetary scale, so constitutional governance ships with partial coverage and an explicit refusal to pass amendments on an exclusionary franchise — a real limitation, not a flaw to paper over. Anti-plutocratic voting (conviction/quadratic) resists but does not eliminate concentrated influence, and Sybil-resistance in quadratic voting itself depends on personhood. And the Humility Clause is self-enforcing only in the sense that it voids bad-faith determinations *within the system's own normative order* — its real-world enforcement still depends on the courts and on the willingness of the community to hold a Steward to it, which is why the Steward is a jurisdictionally-diverse body under threshold custody rather than a single trusted party.

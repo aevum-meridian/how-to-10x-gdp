@@ -1,0 +1,45 @@
+# DOCUMENT 0.4 — COERCION-RESISTANCE & OPERATOR-ADVERSARY SPECIFICATION
+
+**System:** Joint · **Tier:** 0 (Constitutional, co-equal with the Red-Team Dossier) · **Maturity:** Research → InDevelopment · **Authority:** Binds the operators, including the founders and Steward; subordinate only to 0.1. · **© Maher**
+
+## Preamble — why this document exists
+
+Every other artifact assumes the protocol is honest and the adversary is outside. That assumption has killed nearly every system that promised not to turn against its users. The promise "this can never be secretly turned against people" is empty unless it binds the people who run it. This document models **the operators themselves — including the builders — as potential adversaries**, and states for each what they can do, what is structurally denied to them even with full mutual cooperation, and what residual power genuinely remains and cannot be eliminated. Its purpose is not to claim the operators are trustworthy. It is to make operator trustworthiness **unnecessary** for the constitutional invariants to hold. Disclosure staging governs: structural denials are public because describing them does not weaken them; procedural-only defenses and non-trivial residual risks are embargoed in a companion register whose existence is public but whose contents are access-controlled and time-bound until structurally closed.
+
+## Register I — The Operator Adversary Model
+
+The roles, modeled alone and in coalition, each asked the same question: *what is the worst this party can do to a single named person, Amina?*
+
+The **Steward / governance body** controls the parametric amendment process and can schedule ratified changes. The **core developers** write the code and control the build and release pipeline. The **node / infrastructure operators** run the ledger nodes, the database, and the settlement layer. The **external personhood providers (including GAS)** issue the attestations that gate the contribution economy and hold cross-RP risk signals. The **oracle / verifier set** attests the real-world facts that mint credits. The **external compeller** — a state, a court, an acquirer — can legally or physically coerce any of the above. For each, the worst conceivable act against Amina is one of: take her earned credits to punish her; deanonymize her; exclude her from the economy; mint against her or inflate the supply she holds; freeze her; or silently surveil her.
+
+## Register II — Proof Obligations (what is structurally denied)
+
+**Can any operator, or a coalition of all operators, punitively debit Amina's contribution balance?** **No.** Traces to I6, I7, I10. No code path — admin endpoint, governance vote, settlement abort, policy action — authors a debit against a personal contribution account except a holder-authorized spend or an arbitration-bound reversal referencing a specific fraudulent mint and a closed case. The proof obligation on tier 5.2 is: *no reachable transition decreases a personal balance outside those two paths.* This denial holds **even with the cooperation of every operator simultaneously**, because the capability does not exist to be invoked. This is the keystone claim of the entire project.
+
+**Can a compelled provider deanonymize Amina's personhood?** **Bounded by I8/I9 and the ZK layer.** No single operator holds raw biometric data to deanonymize, because the system never stores it. **Residual risk, stated honestly:** a coalition of enough independent personhood providers, all compelled simultaneously across jurisdictions, could in principle correlate. Mitigation is provider pluralism and jurisdictional diversity; this is a residual risk, not a structural impossibility, and is embargo-tracked and flagged as a hardening priority.
+
+**Can a state force a global block on Amina or her currency secretly?** **No.** Global blocks are timelocked, publicly justified, and appealable by constitutional design (AVL-2.0 §A-§C.10, the membrane spec 0.5). The compeller can force the *process*; it cannot force *secrecy*. This is the difference between a system that can be subpoenaed and one that can be subverted.
+
+**Can operators mint against Amina or inflate her currency?** **No, not silently.** I1 (conservation), I4 (quorum minting), I11 (no Core Riba). No single party mints; minting needs M-of-N independent attesters; every mint is balanced and logged in the append-only record (I5). A coalition controlling the quorum could mint fraudulently — which is why attester pluralism and slashing exist — but the mint is *visible* in the immutable log and *reversible* via the immune system (the dispute engine) without touching innocent balances (I6).
+
+**Can developers ship a malicious update that quietly removes an invariant?** **Not silently, but the residual risk is real and must be stated honestly.** Reproducible builds, dual/threshold-signature release, transparency-log inclusion, and the requirement that I1–I11 are enforced at the database layer (not merely in application code) mean a malicious update removing an invariant would have to also alter signed, logged, independently-reproducible artifacts — *detectable, not silent*. But detection is not prevention; a coordinated developer coalition under coercion could ship harm that is caught after the fact rather than blocked before. This is the strongest argument for the formal-verification tier and for never centralizing the release key. Residual developer risk: embargo-tracked, mitigated by threshold signing.
+
+**Can GAS (or any provider) turn its cross-RP reputation graph against Amina's value?** **No.** Traces to I9 and the typed anti-correlation wall in the adapter: provider risk signals are confined to an authentication-fraud type that the value, minting, and rights layers structurally cannot import. The compile-time boundary means even a malicious or compelled provider's behavioral score cannot reach a decision about Amina's money.
+
+## Register III — The Rubber-Hose Analysis
+
+The decisive question: *what is denied even with a gun to the operator's head, because the capability does not exist?* Denied, and therefore uncoercible: punitively debiting Amina's balance (no such function exists — I6/I7/I10); minting without quorum (no single-party mint path — I4); acting on the legs without passing through the timelocked spine (the head has no direct motor connection to the legs — the anatomical inversion); reading raw biometric data the system never stored (I8); importing a cross-RP behavioral score into a value decision (I9 typed wall). 
+
+What remains — the irreducible residual power — is that a coerced operator can be forced to **refuse service**: stop shipping updates, degrade their own node, withhold their attestation. This is a *denial-of-service* power, not a *turn-against-a-person* power. The system is designed so the worst a coerced operator can do is **stop participating**, never **weaponize their participation against a user**. That distinction — coercion can break the body's legs but cannot make its hands strike — is the entire security goal of this document.
+
+## The key-custody and threshold-control model
+
+No single operator power is sufficient for any constitutional action. Release signing is M-of-N across developers. Minting is M-of-N across independent attesters. Spine amendment is near-unanimity plus timelock. The global-block power is timelocked and public. Custody distributes every dangerous capability across enough independent, jurisdictionally-diverse parties that no single coerced party, and no small coalition, suffices to cross a constitutional invariant. The two named residual risks (coordinated provider-correlation; coordinated developer-coercion) are exactly the cases where this distribution is currently incomplete, and they are the hardening backlog.
+
+## Disclosure staging
+
+Registers I and III, and all structural denials in Register II, are fully public. The residual risks and any procedural-only defense are tracked in a private companion register — access-controlled, time-bound, migrated to this public document as each is structurally closed. The existence of the companion register is public; its contents are embargoed until hardened.
+
+## Honest caveats
+
+This document proves what is denied *in the protocol logic*; it does not prove the implementation is bug-free (tier 5, within its stated Trusted Computing Base) nor that cryptography will not break (artifact 6.5's crypto-shredding caveat). Two residual operator powers — coordinated provider-correlation deanonymization and coordinated developer coercion — are mitigated and detectable, not yet structurally impossible, and the project must not claim otherwise until the custody distribution closes them. The irreducible residual power of any operator to refuse service cannot be eliminated and is not hidden; the design goal is to make refusal the worst available abuse, not to pretend refusal is impossible.

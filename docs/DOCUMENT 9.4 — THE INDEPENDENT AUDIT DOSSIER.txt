@@ -1,0 +1,26 @@
+# DOCUMENT 9.4 — THE INDEPENDENT AUDIT DOSSIER
+### Four Audits, Each Gating Its Milestone
+
+**System:** Joint · **Licenses:** both · **Tier:** 9 · **Maturity:** Research · **© Maher**
+
+## 0. The principle
+
+A system holding planetary value and minting from human behavior cannot self-certify. Four independent external audits — security, personhood-fairness, economic, and child-safety/anti-social-credit red-team — each gate the milestone they correspond to, and each publishes its result (subject to coordinated disclosure for unfixed vulnerabilities). Self-assessment is necessary but never sufficient; the audits are the outside eyes the project's honesty requires.
+
+## 1. The four audits and what each examines
+
+**Security audit.** Examines the ledger core, the cryptography (audited libraries only, no custom crypto in product paths), the DPoP/token security (via the GAS integration), the invariant enforcement, the supply chain (SBOM, reproducible builds, provenance), and the formal-verification artifacts. Gates: the non-punishment-spine milestone (M1) requires an independent confirmation that no protocol path punitively debits a personal balance.
+
+**Personhood-fairness audit.** Examines the multi-provider aggregation algorithm (document 6.1) across demographics and regions, with *published demographic false-reject rates*. Gates: the personhood milestone (M2) requires the aggregation to pass a fairness audit — because a personhood system that systematically excludes a group is financial exclusion, and the audit is how that is measured rather than hidden.
+
+**Economic audit.** Examines the monetary mathematics (Tier 2), the agent-based model and its assumptions, the simulation gate's scenario suite, and the Core-Riba-compliant yield model. Gates: economic-soundness aspects of the relevant milestones. It scrutinizes especially whether the gate's scenarios are honest (not tuned to pass) and whether the stability models' parameters are defensible.
+
+**Child-safety / anti-social-credit red-team.** The most important audit. The most hostile available external reviewers attempt every path in the Red-Team Dossier (0.3) to bend the body toward social credit or toward harming minors, and verify the structural defenses hold and the procedural ones are being hardened. Gates: every milestone — no milestone exits if this red-team finds an unmitigated path to the two non-amendable floors.
+
+## 2. Disclosure and coordination
+
+Audit results are published, with coordinated disclosure for any unfixed vulnerability (an embargo period and good-faith remediation, per the license's coordinated-disclosure principle). Structural defenses are described publicly; procedural-only defenses and live residual risks follow the staging of the Coercion-Resistance and Red-Team companion registers.
+
+## 3. Honest caveats
+
+External audits are only as good as the auditors and their access — the audits must be genuinely independent (not selected to be friendly) and given real access (including to the formal-verification artifacts and the embargoed registers under appropriate confidentiality). An audit is a snapshot; the system changes, so audits must be periodic, not one-time, and re-run on material change. And the child-safety/anti-social-credit red-team is explicitly the one the project should make *hardest* on itself, because it guards the two lines that, if crossed, make the whole body the weapon it was built not to be — a comfortable audit here would be a failure of the audit, not a success of the system.

@@ -1,0 +1,50 @@
+# DOCUMENT 1.3 — THE JOINT WHITEPAPER: "TWO LEGS, ONE BODY"
+### How a System of Record and a System of Engagement Walk Together Without Falling Together
+
+**System:** Joint · **Tier:** 1 · **Licenses:** `LicenseRef-MVL-2.0` and `LicenseRef-AVL-2.0` (both based on ML-2.0; both Works of Foundational Character) · **Maturity:** Research → InDevelopment; claims bound to `/api/v1/maturity`. · **© Maher**
+
+## Abstract
+
+Aevum and Meridian are two legs of one body — a meta-macroeconomic organism that perceives its own state, deliberates about its future, acts in the world through consensual settlement, and reverses its own mistakes, while being anatomically incapable, at every level including its own builders, of secretly turning that capacity against a single person. This whitepaper specifies the division of labor between the two legs, the two and only two things they share, and — most importantly — the failure-isolation argument proving that a compromise of one leg cannot corrupt the other's truth.
+
+## 1. Why two systems and not one
+
+A single system that both *holds authoritative value* and *delivers a rich behavior-aware experience* concentrates two dangerous capabilities in one place: the power to move value and the power to know how people live. Splitting them is a safety architecture. **Meridian is the system of record** — it knows balances, enforces conservation, mints from verified contribution, and is deliberately austere. **Aevum is the system of engagement** — it knows the user's experience, runs the ethical filter, surfaces plural currencies, and is deliberately rich. The split means the rich, knowing system (Aevum) has no power to move value, and the value-moving system (Meridian) has a minimal, austere surface that is far easier to verify and far harder to subvert.
+
+## 2. The division of labor
+
+Meridian authors truth; Aevum authors experience. Concretely: only Meridian's ledger service may post entries, mint, burn, or settle (I1–I3, I10). Aevum may propose, filter, surface, govern, and refuse — but never author a Meridian balance change (AVL-2.0 §A-§C.14). When a user acts in Aevum, Aevum constructs a *proposal* and submits it through the cross-system event contract; Meridian validates the proposal against its invariants and either posts a balanced transaction or rejects it. The user experiences a single seamless wallet; underneath, every cent and every credit is a balanced entry in Meridian's immutable ledger, and Aevum never touched it directly.
+
+## 3. The two — and only two — shared things
+
+The legs share exactly two things; everything else is private to each, which is what keeps a break in one from dropping the body.
+
+**Shared thing one: a third-party personhood layer (I9).** A verified human must be the same human in both legs, so both consume personhood — but **neither owns it.** Personhood is provided by multiple independent third-party providers (GAS is one provider of N), consumed as signed attestations that each leg independently validates. This is critical and was a correction in the design's evolution: a *shared personhood service* would itself be shared-mutable-state coupling — the very fragility the two-leg split exists to avoid. So personhood is a third party to *both*, not a service either one *is*. A compromise of the personhood layer is bounded by I8 (no raw biometric data stored) and the I9 wall (provider risk signals cannot reach value decisions), and because each leg validates independently, a forged attestation must defeat both legs' independent checks, not one shared check.
+
+**Shared thing two: a typed, signed, append-only, idempotent event contract (`cross_system_events`).** This carries proposals one way and committed-fact confirmations the other. It is asynchronous, event-sourced, and reconciling — never a synchronous trust handoff. Aevum proposes; Meridian validates and commits or rejects; Meridian confirms committed facts back. Neither system can author the other's truth through this contract — Aevum's proposal is inert until Meridian validates it, and Meridian's confirmation is a fact-of-record Aevum displays, not a command Aevum obeys.
+
+## 4. The reconciling contract in detail
+
+The event contract is signed (each event carries the originating leg's signature), hash-chained (each event references the prior event's hash, so the stream is tamper-evident), and idempotent (each event carries an idempotency key, so a replayed or duplicated event produces no second effect). The flow is strictly **propose → validate → commit/reject → confirm**. A nightly **cross-system reconciliation** job proves that every value-moving fact Aevum believes occurred corresponds to a posted, balanced Meridian transaction, and alerts on any drift. Crucially, reconciliation **never silently auto-corrects** — a detected drift raises a human-investigated alert, and any correction is an additive reversing entry made by a human through the normal ledger path (I5), never a quiet adjustment. The two legs keep each other honest precisely because neither can quietly fix a discrepancy in the other.
+
+## 5. The failure-isolation proof (the heart of "without falling together")
+
+The claim to be proven: *a compromise of one leg's experience or logic cannot corrupt the other leg's ledger truth.* The argument, stated as a proof sketch (the formal version is artifact 5.3, with its stated Trusted Computing Base):
+
+Consider a fully compromised Aevum — an attacker controls its entire experience layer. What can the attacker do to Meridian's truth? The attacker can submit arbitrary *proposals* through the event contract. But every proposal is *validated by Meridian against I1–I11* before any entry is posted: a proposal to debit a personal contribution balance punitively is rejected (I6); a proposal to mint without quorum is rejected (I4); a proposal that breaks conservation is rejected (I1); a proposal to settle without holder authorization is rejected (I10). The compromised Aevum can therefore produce *rejected proposals and corrupt experience*, but it **cannot produce a single invalid Meridian entry**, because Meridian validates rather than trusts. The blast radius of a compromised Aevum is bounded to Aevum's own experience surface; Meridian's ledger truth is untouched.
+
+Now consider a fully compromised Meridian. Can it corrupt Aevum? Aevum holds no authoritative balances — it holds a *reconciled view*. A compromised Meridian could feed Aevum false confirmations, but the nightly reconciliation (run from independent records and the immutable log) would surface the divergence, and Aevum's display being wrong is an *experience* harm, not a *value* harm — the authoritative truth is what the immutable, hash-chained ledger and transparency log say, which independent parties can verify. More importantly, a compromised Meridian cannot use Aevum to reach *more* power than Meridian already has — Aevum grants Meridian no capabilities. So the compromise of either leg is *contained to that leg's nature*: corrupt Aevum corrupts experience (recoverable, visible); corrupt Meridian corrupts records (detectable via reconciliation and the immutable log, and bounded by the constitutional invariants that even a compromised Meridian's operators cannot cross per the Coercion-Resistance Spec).
+
+The body therefore walks on two legs that move together (via the event contract and shared personhood) but do not fall together (because neither authors the other's truth, and each validates rather than trusts). This is the structural meaning of "two legs, one body."
+
+## 6. The body's full anatomy (for the record)
+
+Beyond the two legs, the body is: the **spine** (the Invariant Specification 0.1 + the Coercion-Resistance Spec 0.4 — supreme, binding even the builders); the **heart** (Meridian's Policy Engine — issuance-only, circulates but cannot grasp, I7); the **hands** (the settlement layer — grasp but cannot punch, I6/I7/I10); the **head** (Aevum's governance surface — proposes and ratifies but cannot reach the legs); the **mind** (the simulation/foresight layer — halts but never initiates); the **conscience** (the Red-Team Dossier and child-safety floor — vetoes but never commands); the **skin** (the membrane 0.5 — refuses but never reaches); the **nervous system** (the personhood layer and event contract — shared sense, owned by neither); and the **immune system** (the dispute/clawback engine — attacks fraud, never innocents). No part can command the body toward harm. That absence is the whole thesis.
+
+## 7. What the body is NOT
+
+It is **not** a single system wearing two masks — the legs are genuinely separate, with separate licenses (intentionally not cross-referenced, for security isolation), separate truth domains, and a validating (not trusting) boundary between them. It is **not** a system with a master control — there is no head that can command the legs, no operator who can cross the spine, no secret core held by one party (the Coercion-Resistance Spec proves this). It is **not** finished — the personhood layer, the event contract's full hardening, and the settlement abort-path proof are Research/InDevelopment and labelled so.
+
+## 8. Honest caveats
+
+The failure-isolation proof in §5 establishes *protocol-logic* isolation; the formal version (5.3) is bounded by an explicit Trusted Computing Base (it assumes the cryptography, the signing keys, the reconciliation job's own correctness, and the database's honesty — it does not prove the implementation is bug-free or the operators honest). The shared personhood layer, though owned by neither leg, remains a *shared dependency*, and the residual provider-correlation risk named in the Coercion-Resistance Spec applies to the body as a whole. And the event contract's reconciliation has a worst-case detection latency of one nightly cycle — a drift could in principle persist for up to that window before alerting, which is why the contract is hash-chained and idempotent (to bound what a within-window compromise can durably achieve) and why tighter real-time drift detection is on the hardening backlog.

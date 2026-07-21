@@ -1,0 +1,36 @@
+# DOCUMENT 4.3 — DISPUTE / CLAWBACK / ARBITRATION ENGINE
+### The Immune System — Reversing Fraud Without Harming the Innocent
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 4 · **Maturity:** Research · **Enforces:** I6 (the revised non-punishment predicate) · **© Maher**
+
+## Responsibilities
+
+The Dispute Engine is the body's immune system: it finds and reverses fraudulent mints the way an immune system attacks pathogens — without attacking the body's own healthy cells. Its single hardest requirement, and the most important behavior in the entire system, is that **it must be able to unwind a fraudulent mint without ever reducing an innocent holder's balance.** This is the operational implementation of I6-revised: the distinction between a *punitive debit* (forbidden) and an *arbitration-bound mint reversal* (narrowly permitted).
+
+## Public interface
+
+`DisputeService` exposes: `openDispute(Attestation $a, Challenger $c, Bond $b): Dispute` — opens a dispute against a specific provisional mint, requiring a bond; `escalate(Dispute $d, Bond $b): Dispute` — advances to the next rising-bond round; `arbitrate(Dispute $d, ArbitrationRuling $r): Resolution` — the public human arbitration tier rules; `applyArbitrationReversal(Resolution $r): Transaction` — the *only* method in the entire system that can debit a personal contribution balance, and only under the I6-revised predicate. There is no other path to such a debit anywhere.
+
+## Data model
+
+`dispute_profiles` (id, currency_id, window, bond_schedule jsonb, settlement_mode enum {immediate, provisional}). `attestation_disputes` (id, attestation_id, mint_transaction_id, round, bond, challenger_id, status enum {open, escalated, arbitrating, resolved_fraud, resolved_valid}, resolution jsonb, case_closed_at nullable). `clawbacks` (id, dispute_id, target enum {attester_bond, issuer_bond, specific_fraudulent_mint}, amount, applied_transaction_id) — with a CHECK that `target ∈ {attester_bond, issuer_bond, specific_fraudulent_mint}` and **never a generic personal-account target**.
+
+## The enforcement of I6-revised (the auditable predicate)
+
+This is the heart of the document. `applyArbitrationReversal()` may post a negative entry against a personal contribution account *only if* every one of these holds, checked at three layers:
+
+The reversal **references a specific minting `transaction_id`** (the exact fraudulent mint, not a person). It **references a closed arbitration `case_id`** (`attestation_disputes.status ∈ {resolved_fraud}` and `case_closed_at` set). The reversal **amount is bounded** by that mint's amount (`|amount| ≤ target_mint.amount`). And the resulting balance **never drops below the holder's undisputed credits** (`balance_after ≥ undisputed_credits(account)`).
+
+*DB:* the only INSERT permitted to carry a negative amount against a personal contribution account is one whose `reverses_mint_txn_id` is non-null and references an existing mint, whose `arbitration_case_id` references a closed case, with a CHECK enforcing the amount bound and a trigger enforcing the undisputed-credits floor. *Service:* `applyArbitrationReversal()` is the sole method; it requires both references and verifies the bounds before calling `LedgerService::reverse()`. *Test:* `NonPunishmentTest` asserts: (a) a debit referencing no specific mint is *always* rejected — there is no path; (b) a reversal never reduces a balance below the holder's undisputed credits; (c) an innocent holder (one not the proven fraudulent party) never has any balance reduced by any dispute; (d) the *only* successful personal-contribution debit in the entire test surface is one with both a valid target-mint and a closed-fraud case.
+
+## The dispute lifecycle
+
+A challenger opens a dispute against a *specific provisional mint* with a bond. The dispute escalates through rising-bond rounds (the rising bond filters frivolous challenges — *Adl*, proportionality). If mechanism cannot settle it, it reaches the **public human arbitration tier**, which rules in the open and produces a signed decision receipt (adopting the GAS decision-receipt pattern — a human-readable record of *why* the outcome happened). On a fraud ruling, clawback fires: first against the attester and issuer bonds; only where the *recipient is the proven fraudulent party* does the reversal touch the specific fraudulent mint (per I6-revised); an innocent recipient's balance is never the source of clawback. On a valid ruling, the provisional mint is confirmed and the challenger's bond is forfeit.
+
+## Failure modes
+
+Frivolous challenge → filtered by rising bonds; challenger loses bond. Within-window fraud by a colluding recipient → reversed against the specific mint after closed arbitration, bounded, never below undisputed credits. Attempt to use the dispute path as a punitive backdoor (a "dispute" referencing no specific mint) → rejected at the DB layer; there is no path. Arbitration deadlock → escalates; the public ruling is final and recorded.
+
+## Honest caveats
+
+This engine is Research-tier and is the single most important thing to get right in the system, because it is the *only* component with any capability to debit a personal contribution balance, and the entire non-punishment guarantee depends on that capability being confined to the I6-revised predicate. The hardest design tension: the engine must protect innocent holders absolutely *and* not make fraud risk-free for guilty ones — its abandonment criterion (maturity ledger) is that if dispute resolution cannot protect innocent holders without making fraud risk-free, the design is wrong. The human arbitration tier introduces latency and cost; the rising-bond mechanism filters frivolity but must be calibrated (simulation sandbox) so it does not also filter *legitimate* challenges by the poor — a fairness concern that intersects the anti-plutocracy principle.

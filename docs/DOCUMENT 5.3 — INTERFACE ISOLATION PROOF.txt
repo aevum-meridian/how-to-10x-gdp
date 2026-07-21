@@ -1,0 +1,42 @@
+# DOCUMENT 5.3 — INTERFACE ISOLATION PROOF
+### Bounded by Its Trusted Computing Base
+
+**System:** Joint · **Licenses:** `LicenseRef-MVL-2.0` / `LicenseRef-AVL-2.0` · **Tier:** 5 · **Maturity:** Research (deliberately bounded scope) · **Proves (within its TCB):** that a compromise of one leg's experience or logic cannot cause an invalid Meridian ledger state · **Recommended tool:** TLA+/TLC for the bounded compromise model. · **© Maher**
+
+## 0. Why this proof is deliberately bounded
+
+The joint whitepaper (1.3 §5) sketched the failure-isolation argument; this document specifies its machine-checkable form. But — per the review adjustment that produced this scope — interface isolation is **only provable given assumptions that are not themselves formally verified** (the cryptography, the signing keys, the reconciliation job's correctness, the database's honesty). To prove "a compromise of one leg cannot corrupt the other's truth" *without* stating those assumptions would be the false assurance the Loss-Fund charter forbids. So this proof is bounded, and its boundary — the Trusted Computing Base — is stated as prominently as the proof itself. Full effort is reserved for 5.1 and 5.2; 5.3 establishes a real but explicitly conditional guarantee.
+
+## 1. The property, stated precisely
+
+Model two state machines, `Meridian` (the system of record) and `Aevum` (the system of engagement), communicating only through the `cross_system_events` contract. Model a *fully compromised Aevum* as an adversary that can emit **arbitrary proposals** into the contract (any content, any timing). The property:
+
+> **LedgerIntegrityUnderCompromise** ≡ For every reachable state, regardless of what proposals a compromised Aevum emits, Meridian's ledger satisfies all of I1–I11. Formally: `□ (CompromisedAevum ⇒ MeridianInvariants)` where `MeridianInvariants ≡ I1 ∧ I3 ∧ I5 ∧ I6 ∧ I7 ∧ …`.
+
+The intuition the proof formalizes: because Meridian *validates* every proposal against its invariants before posting, rather than *trusting* Aevum, a compromised Aevum can produce *rejected proposals* but never an *invalid Meridian entry*.
+
+## 2. The model
+
+`Meridian` exposes a single ingress from the contract: `ReceiveProposal(p)`, which `validates(p)` against I1–I11 and either `Post`s a balanced transaction or `Reject`s. `Aevum` is replaced by a nondeterministic adversary `AdvAevum` that can emit any `p` at any time. The proof asserts that for *all* adversary behaviors, `MeridianInvariants` holds — i.e., the validation gate is a total filter: no proposal, however malicious, passes validation unless it is invariant-conforming, and a conforming proposal cannot violate invariants by definition.
+
+The reverse direction (a compromised Meridian corrupting Aevum) is modeled by noting Aevum holds no authoritative balances — it holds a *reconciled view* — so a compromised Meridian can feed false confirmations, but (i) the authoritative truth remains the immutable hash-chained ledger and transparency log, independently verifiable, and (ii) the nightly reconciliation (run from independent records) surfaces the divergence. The property here is weaker and is stated honestly: *a compromised Meridian can corrupt Aevum's display, but cannot make Aevum grant Meridian any capability Meridian did not already have, and the corruption is detectable via reconciliation* — display-integrity is not proven (it cannot be, against a compromised record-keeper), only *detectability* and *non-amplification* are.
+
+## 3. The proof obligation and method
+
+TLC explores all reachable states under the nondeterministic adversary for a bounded configuration and confirms `MeridianInvariants` holds in every reachable state regardless of adversary proposals — or returns a trace showing a proposal that passed validation yet violated an invariant (which would reveal a hole in the validation gate). The proof's core is establishing that `validates(p)` is *sound and total*: it rejects every non-conforming proposal (soundness) and is applied to every proposal (totality — there is no ingress that bypasses validation). The totality obligation is the analog of 5.2's transition-inventory completeness: the proof depends on `ReceiveProposal` being the *only* ingress from Aevum to Meridian's ledger, discharged by the architectural boundary and the I9/A-§C.14 enforcement that Aevum has no other path to author a Meridian entry.
+
+## 4. The Trusted Computing Base (stated as prominently as the proof)
+
+This proof establishes `LedgerIntegrityUnderCompromise` **assuming** the following, none of which it proves:
+
+The **cryptography is sound** — signatures on `cross_system_events` are unforgeable and the hash chain is collision-resistant; a break here lets an adversary forge confirmations or rewrite the chain, defeating the detectability guarantee. The **signing keys are uncompromised** — the threshold custody model (0.4) bounds this, but the proof assumes keys are not all stolen. The **reconciliation job is itself correct** — the proof assumes the job faithfully compares independent records; a compromised reconciliation job could hide drift. The **database is honest** — the proof assumes PostgreSQL enforces its constraints and does not silently violate them; a compromised database underneath the application defeats the DB-layer enforcement of every invariant. And the **implementation matches the model** — the validation gate code actually realizes `validates(p)`, discharged by tests and audit, not by this proof.
+
+These five assumptions are the Trusted Computing Base. The proof is real and valuable: it establishes that the *protocol design* isolates the legs. But it is *conditional* on the TCB, and the project must never state the isolation guarantee without also stating these conditions — to do otherwise would convert a sound conditional proof into an unsound absolute claim, the exact dishonesty the Loss-Fund charter and ML-2.0 §1.5 forbid.
+
+## 5. Counterexample-trace format
+
+A violation trace shows an adversary proposal sequence that either (a) passed validation yet violated a Meridian invariant — revealing the validation gate is unsound or incomplete — or (b) reached Meridian's ledger through a path other than `ReceiveProposal` — revealing the totality assumption is false (an unintended ingress exists). Either is a launch-blocking defect, mapped to a reproducing test, because it would mean the legs are not actually isolated.
+
+## 6. Honest caveats
+
+This is the most caveated proof in the tier, deliberately. It proves *protocol-logic* isolation within a stated TCB; it does not prove the cryptography, keys, reconciliation, database, or implementation are sound — those are assumptions, discharged (to the degree they can be) by the threshold-custody model, audits, and tests, not by this proof. The reverse-direction guarantee (compromised Meridian → Aevum) is honestly weaker: *detectability and non-amplification*, not *display integrity*. And the one-nightly-cycle reconciliation latency (joint whitepaper §8) means a within-window compromise could persist briefly before detection; the hash chain and idempotency bound what such a window can durably achieve, but tighter real-time drift detection remains on the hardening backlog. The right way to read 5.3: it proves the *design* is isolating, and tells you *exactly* what else must be true (the TCB) for that isolation to hold in reality — which is more useful, and more honest, than an unconditional claim.

@@ -1,0 +1,52 @@
+# DOCUMENT 1.2 — THE MERIDIAN WHITEPAPER
+### A System of Record That Mints Value From Human Action Without the Power to Punish
+
+**System:** Meridian (the system of record) · **Tier:** 1 · **License:** `LicenseRef-MVL-2.0` (based on ML-2.0; Work of Foundational Character) · **Maturity:** mixed; all claims bound to `/api/v1/maturity`, labelled inline. · **© Maher**
+
+## Abstract
+
+Meridian is the other leg of the body: the **system of record**. It is the authoritative double-entry ledger, the issuance engine, the Proof-of-Verified-Contribution minting pipeline, the asymmetric macroeconomic Policy Engine, the settlement layer, and the API. It unifies three currency families — reserve-backed, distributed (bridged crypto), and a new class minted from verified human flourishing — behind one conservation-enforcing ledger. Its defining property is a single inversion of power: **issuance is a macro lever the system may pull; personal balances are sacrosanct ground the system may never touch to punish.** This whitepaper specifies Meridian at architectural depth, grounds it in 2026 reality, and states what it is not.
+
+## 1. The problem Meridian addresses
+
+No existing monetary substrate can do three things at once: hold *all* forms of value (fiat, crypto, and non-monetary value like verified contribution) in one conservation-guaranteed ledger; mint value from how people actually live without that capability decaying into surveillance and control; and prove, structurally, that no operator — including the builders — can turn the ledger against a person. Fiat ledgers are opaque and freezable. Crypto ledgers are transparent but cannot represent non-monetary value and offer no recourse. Behavior-scoring systems can represent how people live but are, by design, instruments of control. Meridian is the attempt to have the representational power of behavior-aware money with the structural impossibility of behavioral punishment.
+
+## 2. The one inversion (the spine of the design)
+
+Every Meridian decision descends from this: the macroeconomic Policy Engine can slow, pause, or shape *future minting* across a whole currency (a macro lever); it can never reach into the credits a human has already earned. Credits reward how you live; they are structurally incapable of being taken to control how you live. This is not a license promise — it is invariants I6 (no punitive debit) and I7 (issuance-only macro control), enforced in the database, the service layer, and the test suite, and placed in the hardest-to-amend constitutional tier. The license (MVL-2.0 §M-§C.10) reinforces; the invariant is load-bearing.
+
+## 3. Architecture
+
+**3.1 The Ledger Core (Maturity: InDevelopment).** Double-entry, event-sourced, append-only. Every transaction's entries sum to zero per currency (I1); every balance equals its entries (I2); total balances equal net issuance per currency (I3); no entry is ever mutated or deleted — corrections are additive reversing entries (I5). Money is integer minor units, never floating point. This is the foundation everything else rests on, and it is built and proven first.
+
+**3.2 The Issuance Engine (Maturity: InDevelopment).** Three issuance models behind one interface: reserve-backed (mint-on-deposit, burn-on-redemption, against real-time-attested custody); distributed (lock on source chain, represent in Meridian); and contribution (Proof-of-Verified-Contribution). The engine structurally refuses to instantiate any currency whose policy is Core Riba (I11) — the structural home of the §C.9 refusal, so even the anti-usury principle follows the "structure first" rule.
+
+**3.3 The PoVC Pipeline (Maturity: Research → InDevelopment).** Contribution credits mint only on an M-of-N independent attester quorum with nonce and expiry (I4) — no single attester, no replay. Attestation payloads forbid raw biometric/health/neural data (I8). Slow or contestable credits mint *provisionally against a clawback bond* with a dispute window sized to the real verification latency; the dispute escalates in rising-bond rounds to a public human arbitration tier; clawback fires against attester/issuer bonds, or — only where the recipient is the proven fraudster — against the specific fraudulent mint, never against an innocent holder (I6-revised). Personhood is consumed from external providers (I9), never owned, with provider risk signals walled off from value decisions.
+
+**3.4 The Policy Engine (Maturity: Research).** The asymmetric macro layer. It observes aggregate flows across all three families and may dampen conversion rates, throttle future issuance, fire circuit breakers, and apply fraud filters — and is structurally forbidden (I7) from authoring any entry against a personal account. Its anti-gamification arm watches per-credit proxy-divergence metrics for Goodhart drift and throttles *future issuance only*. Every action is versioned to the append-only transparency log.
+
+**3.5 The Settlement Layer / Hands (Maturity: Research → InDevelopment).** Atomic both-commit-or-both-abort settlement between the legs and against external rails, inheriting I6/I7/I10: no settlement moves or reverses value without holder-authorized intent on the debited side (except the arbitration-bound reversal), and an abort restores prior state without ever producing an unauthorized net debit. This is the crux where the constitution meets executable reality, and its abort path is formally model-checked (tier 5.3).
+
+## 4. The three currency families (issuance models)
+
+**Reserve-backed** (e-USD, e-EUR, e-TND, CBDCs, commodity tokens): custodied 1:1 with real-time attestation; mint-on-deposit, burn-on-redemption; a shortfall attestation auto-triggers the crisis path (8.3). Maturity: InDevelopment.
+
+**Distributed** (xBTC, xETH, bridged tokens): locked on the native chain to required confirmation depth, represented in Meridian's ledger which holds the authoritative balance; ethical-filtered at ingress via the membrane. Maturity: Research.
+
+**Contribution credits** (the open-ended 2030B family): minted via PoVC from verified human action; default non-transferable per type; can never be punitively debited (I6); never minted from sensitive/neural data (I8). Each ships a specification bundle — declared virtue, measured proxy, proxy-divergence metric, dispute profile, transferability flag, decay/rate-limit policy, and lifecycle position (expiry/dormancy/death). Maturity: Research.
+
+## 5. Credit lifecycle (a structural honesty)
+
+Because credits reward how a person lives, what happens to them over time is ethically loaded and must be governed, not silent. Default: **credits do not expire** — silent expiry is a punitive debit wearing a calendar (I6). Dormant credits are never confiscated; the Policy Engine may exclude long-dormant balances from macro *velocity calculations* (a measurement) but never debit them (a forbidden action). On verified death, non-transferable "being" credits **retire to the historical record** — you cannot inherit another's honesty — counted in the person's permanent ledger of contribution; transferable credits follow designated succession. Each position is per-type, governed, and disclosed at mint time.
+
+## 6. Grounding in 2026 reality
+
+Meridian is built post-coexistence: **ISO 20022** structured-address-native, receive-tolerant (accept hybrid, normalize) and send-strict (emit structured only). **GENIUS Act** and **MiCA** shape the reserve-backed and stablecoin families — reserve attestation in real time, reserves in regulated custody, tunnels as licensed entities. The **EU AI Act** governs the personhood-based gate to the contribution economy as a high-risk consequential decision: explainable, appealable, advisory-only ML. **Neural-data laws** are codified as the I8 red line. And the **Islamic-finance** distinction between profit/risk-sharing and usury is encoded in I11 and §C.9: genuine profit, rent, profit-and-loss-sharing, service fees, staking-for-real-work, and demurrage are permitted; a pre-fixed guaranteed increase on idle money with no risk borne is structurally refused.
+
+## 7. What Meridian is NOT
+
+Meridian is **not** a social-credit system — it cannot punitively debit a balance (I6), its macro layer cannot touch personal accounts (I7), it does not own personhood (I9), and it cannot import a behavioral score into a value decision (I9 wall). It is **not** a bank with discretionary control over your money — the only non-holder debit is an arbitration-bound reversal of a specific proven-fraudulent mint. It is **not** a usury engine — Core Riba is structurally refused (I11). It is **not** a surveillance ledger — no raw biometric/health/neural data enters the attestation path (I8). It is **not** mutable — history is append-only (I5). It is **not** OSI/FSF open source — it is ethical-source under MVL-2.0. And it is **not** finished — the PoVC, personhood, and Policy Engine layers are Research-tier and labelled so.
+
+## 8. Honest caveats
+
+The deepest caveats: planetary personhood (which gates contribution minting) is an open research problem; Meridian ships graceful partial coverage and honestly-labelled scope. The I11 Core Riba refusal forecloses common fixed-guaranteed-interest yield designs — a deliberate, disclosed cost (risk-sharing and service-fee yield remain available), and one warranting Shariah-board review of edge cases. The settlement abort-path proof (I10/5.3) is the single most important verification task and is incomplete until formally checked. And the residual operator risks named in the Coercion-Resistance Spec (coordinated provider-correlation; coordinated developer-coercion) are mitigated and detectable, not yet structurally impossible — the project must not claim otherwise until the custody distribution closes them.

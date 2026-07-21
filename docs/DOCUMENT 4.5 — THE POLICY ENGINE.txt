@@ -1,0 +1,36 @@
+# DOCUMENT 4.5 — THE POLICY ENGINE
+### The Heart — Issuance-Only Macro Control That Circulates but Cannot Grasp
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 4 · **Maturity:** Research · **Enforces:** I7 (the asymmetry), and operationalizes the anti-Goodhart throttle · **© Maher**
+
+## Responsibilities
+
+The Policy Engine is the body's heart: it observes aggregate flows across all three currency families and circulates macroeconomic adjustment outward — but it has no hands. It may dampen conversion rates, throttle *future* issuance, fire circuit breakers, apply fraud filters, and watch proxy-divergence for Goodhart drift. It may **never** author an entry against a personal account (I7). Its power is asymmetric by design: it shapes the faucet, never the reservoir.
+
+## Public interface
+
+`PolicyEngineService` exposes: `observe(): MacroState` — reads aggregate flows and signals; `adjustIssuancePolicy(Currency $c, PolicyDelta $d): IssuancePolicy` — writes future-issuance parameters (the *only* kind of write it can make); `fireCircuitBreaker(Currency $c, BreakerReason $r): void` — halts a currency's automatic issuance/conversion on anomaly; `evaluateProxyDivergence(Currency $c): ThrottleDecision` — computes the Goodhart throttle θ. Every action is versioned and written to the append-only transparency log.
+
+## Data model
+
+`proxy_metrics` (id, currency_id, declared_virtue, measured_proxy, independent_signal, divergence, threshold, throttle_value, last_evaluated). `policy_actions` (id, currency_id, action_type, delta jsonb, justification, transparency_log_ref, created_at). `circuit_breakers` (id, currency_id, status, reason, fired_at, cleared_at). The Policy Engine writes to `issuance_policies`, `proxy_metrics`, `policy_actions`, and `circuit_breakers` — and to **nothing else**.
+
+## The enforcement of I7 (the asymmetry)
+
+This is the document's heart. *DB:* the Policy Engine's database role has **no INSERT/UPDATE privilege on `entries` or `transactions`** — it is granted write access only to its own four tables and to `issuance_policies`. *Service:* the Policy Engine module has no dependency on, and no compile-time access to, `LedgerService::post()` for personal accounts — a typed architectural boundary. *Test:* `PolicyEngineNoEntryTest` asserts that across *all* Policy Engine action types and *all* inputs, no action ever produces an entry against a personal account; an architectural test asserts the Policy Engine cannot import the personal-account ledger-write path.
+
+## The anti-Goodhart throttle (operationalizing document 2.3)
+
+The Policy Engine computes, per credit, the divergence `D_c(t)` between the measured proxy and the independent virtue signal, and when it exceeds the governed threshold `D*_c`, sets the throttle `θ_c(t) ∈ [0,1]` that enters the Issuance Engine's mint cap. The mathematical guarantee from document 2.3 §3 holds here in code: `θ` multiplies *future mint*, appears in *no* term affecting existing balances — so no matter how severe the gaming, the response is *mint fewer new credits*, never *take existing ones*. The throttle is the heart slowing the faucet, never reaching the reservoir.
+
+## Circuit breakers and the crisis interface
+
+On anomalous input (a reserve shortfall attestation, an attack signature from the simulation/monitoring layer, a divergence spike), the Policy Engine fires a circuit breaker halting the affected currency's automatic issuance/conversion, and — for reserve-backed shortfall — triggers the crisis path (document 8.x) with its bound disclosure timelines. The breaker is a *halt* (a negative, protective power), consistent with the body-wide rule that the higher faculties can refuse and halt but never command.
+
+## Failure modes
+
+Bad oracle/input → bounded by per-epoch movement caps and the circuit breaker (a corrupted signal can move policy by at most the capped step, then the breaker can halt). Attempted reach into a personal balance → impossible (no DB privilege, no code path, proven by test). Goodhart spike → throttle reduces future issuance; existing balances untouched. Over-throttling (legitimate growth mistaken for gaming) → governance can override the throttle parameters (Tier-P), and the independent-signal design (document 2.3) reduces false positives.
+
+## Honest caveats
+
+The Policy Engine is Research because its parameters (dampening functions, divergence thresholds, breaker triggers) are empirical and must be calibrated in the simulation sandbox, and because the proxy-divergence monitoring depends on each credit having a genuine independent virtue signal (document 2.3's linchpin). The deepest design point, worth stating plainly: the Policy Engine is the component that *most resembles* the dangerous "autonomous currency governor" the project deliberately rejected — and the only thing that makes it safe is the I7 asymmetry, rigorously enforced, that it can shape issuance but can never touch a person's balance. That asymmetry is the difference between a heart and a hand, and it is enforced three times over precisely because it is the place where a careless design would let the macro layer become a coercive one.

@@ -1,0 +1,24 @@
+# DOCUMENT 9.1 — THE SIMULATION SANDBOX
+### A Blocking Gate, Not a Rubber Stamp
+
+**System:** Joint · **Licenses:** both · **Tier:** 9 · **Maturity:** Research · **Operationalizes:** the agent-based macro model (document 2.2) as a CI gate · **© Maher**
+
+## 0. The principle
+
+No new currency and no policy change reaches production without a published stress result from the simulation sandbox. The sandbox runs the agent-based model (2.2) against the proposed change and blocks the merge if the change breaks an invariant, pushes a stabilised quantity outside its governed band, opens an exploitable gap for the attacker agents, or produces a conservation-valid-but-ruinous trajectory. The gate is *blocking* and its results are *published* — so it is accountable, not a rubber stamp. The deepest design risk, named openly: a gate whose scenarios are chosen to let favored proposals pass is theater, which is why the live proxy-divergence monitor (9.3) watches *after* deployment as an independent check on what the gate approved *before*.
+
+## 1. Responsibilities
+
+Provide a sandboxed environment that (a) instantiates the proposed currency/policy change, (b) runs the full agent-based scenario suite against it, (c) produces a published stress report with pass/fail per scenario, and (d) blocks the governance proposal or code merge if any scenario fails — until the change is redesigned and re-passed.
+
+## 2. The scenario suite (from document 2.2)
+
+The blocking suite runs: recession (deflationary-spiral check), hyperinflation of a tunnelled fiat (isolation check), bank run (reserve + breaker + crisis-trigger check), velocity shock ($UNA stabiliser oscillation check), and the combined adversarial scenario (Sybil + oracle-corruption + run simultaneously). For each, the pass criteria are explicit: no invariant broken (confirmed, not assumed); every stabilised quantity within its governed band; no new exploitable gap for the attacker agents; and no conservation-valid-but-ruinous trajectory. The combined adversarial scenario is weighted most heavily because real attacks are combined.
+
+## 3. The gate mechanics
+
+A currency-registration or policy-change proposal carries a *required* attached simulation report (the gate). The CI pipeline runs the sandbox; a failing scenario sets the proposal's status to blocked and records *which* scenario failed and *how* (the failure-trace, mapped to a reproducing configuration). A blocked proposal cannot be ratified or merged until redesigned and re-run to a pass. The report — pass or fail — is published to the transparency log and the Trade-off Register, so the community can see what was tested and what the result was.
+
+## 4. Honest caveats
+
+The sandbox is *necessary but not sufficient*: it can only find failure modes its scenarios and agents represent, and it cannot model the full reflexivity of eight billion real people. It is paired with the red-team dossier, external audits, and staged rollout with abandonment criteria precisely because no simulation is complete. The gravest honest risk is the rubber-stamp failure mode — scenarios tuned (even unconsciously) to pass favored proposals — and the structural antidote is twofold: the scenario suite and its pass criteria are themselves governed and published (you cannot quietly weaken a scenario), and the live proxy-divergence monitor (9.3) provides an independent post-deployment check, so the gate's *before* and the monitor's *after* hold each other honest.

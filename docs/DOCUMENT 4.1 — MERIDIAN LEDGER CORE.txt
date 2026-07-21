@@ -1,0 +1,44 @@
+# DOCUMENT 4.1 — MERIDIAN LEDGER CORE
+### The Double-Entry, Event-Sourced, Append-Only Foundation
+
+**System:** Meridian · **License:** `LicenseRef-MVL-2.0` · **Tier:** 4 · **Maturity:** InDevelopment · **Enforces:** I1, I2, I3, I5 · **© Maher**
+
+## Responsibilities
+
+The Ledger Core is the foundation everything else rests on. It does exactly one thing and does it with absolute integrity: it records balanced, immutable transactions and maintains correct balances. It does **not** know about contribution credits, personhood, policy, or settlement — those are higher layers that call *into* the Ledger Core. Keeping it austere is a security property: the smaller and more austere the truth-authoring surface, the easier it is to verify and the harder to subvert.
+
+## Public interface
+
+The core exposes a single service, `LedgerService`, with a deliberately minimal method set: `post(TransactionDraft $draft): Transaction` — validates and persists a balanced transaction atomically, returning the posted record; `reverse(Transaction $original, ReversalReason $reason): Transaction` — posts an additive reversing transaction (never mutates the original); `balance(Account $account): Money` — returns the current balance; and `reconcile(Account $account): ReconciliationResult` — recomputes balance from entries for the nightly check. There is **no** `update`, **no** `delete`, **no** `setBalance`. The absence of those methods is the I5/I6 guarantee at the API surface: you cannot do what there is no method to do.
+
+A `TransactionDraft` is a value object carrying a set of `EntryDraft`s (each: account, currency, signed `Money` amount), an idempotency key, and metadata. The service rejects any draft whose entries do not sum to zero per currency before attempting any write.
+
+## Data model
+
+`currencies` (id, code, name, family enum {reserve, distributed, contribution}, decimals, issuance_policy_id, is_transferable, is_active, governance_metadata jsonb). `accounts` (id ULID, owner_id, owner_type, currency_id, type enum {asset, liability, equity, income, expense, system}, status, created_at) — including the system accounts ISSUANCE, BURN, FEE per currency. `transactions` (id ULID, reference, status enum {pending, posted, reversed}, reverses_transaction_id nullable, idempotency_key unique, metadata jsonb, posted_at, created_at). `entries` (id, transaction_id, account_id, currency_id, amount bigint signed, balance_after bigint, reverses_entry_id nullable, created_at). All money columns are `bigint` minor units; arithmetic uses `brick/money`.
+
+## The three enforcement points per invariant
+
+**I1 (conservation).** *DB:* a deferred constraint trigger on `transactions` that, at commit, sums `entries.amount` grouped by `currency_id` for the transaction and raises if any group ≠ 0. *Service:* `LedgerService::post()` computes the per-currency sum of the draft and throws `UnbalancedTransactionException` before any insert. *Test:* `ConservationTest` generates random balanced and unbalanced drafts and asserts every unbalanced one is rejected at both layers and never persists.
+
+**I2 (balance integrity).** *DB:* `entries.balance_after` is computed at insert from the account's prior balance plus the entry amount, within the same atomic transaction. *Service:* `balance()` reads the latest `balance_after`; `reconcile()` recomputes from the full entry history and compares, writing any discrepancy to a monitored table that must stay empty. *Test:* `BalanceReconcileTest` asserts that after any random transaction sequence, recomputed balances equal stored balances.
+
+**I3 (supply integrity).** *DB:* a daily materialized check comparing per-currency user-balance sum to net issuance (`mintedTotal − burnedTotal`), raising on inequality. *Service:* only mint/burn change net issuance, each posting a balanced transaction against ISSUANCE/BURN. *Test:* `SupplyProofTest` asserts user-balance-sum equals net issuance across random mint/burn/transfer sequences.
+
+**I5 (append-only).** *DB:* `REVOKE UPDATE, DELETE` on `entries` and `transactions` from all application roles; a trigger raises on any UPDATE/DELETE attempt; reversals are inserts carrying `reverses_entry_id`. *Service:* no update/delete methods exist. *Test:* `ImmutabilityTest` asserts every attempted entry mutation fails and that `reverse()` produces a new entry leaving the original intact.
+
+## Concurrency model
+
+`post()` runs inside a database transaction with appropriate isolation (serializable for balance-affecting writes, or row-level locking on the affected accounts) so that concurrent transfers cannot violate conservation or produce a stale `balance_after`. Idempotency keys (stored in Redis and the `transactions` table) ensure a replayed `post()` returns the original result rather than double-posting. `ConservationTest` includes a concurrency stress: many parallel transfers against overlapping accounts must never break I1–I3.
+
+## Failure modes and their handling
+
+Unbalanced draft → rejected before write (no partial state). Concurrent conflicting writes → serialization failure, retried with backoff or surfaced as a conflict (never a silent partial post). Idempotency-key replay → original result returned. Attempted entry mutation → hard failure at DB and absence-of-method at service. Reconciliation discrepancy → alert raised, the discrepancy is *never* silently corrected; a human investigates and any correction is an additive reversing transaction.
+
+## GAS integration point
+
+The Ledger Core itself consumes no GAS; account creation and authentication are gated upstream by the GAS adapter (document 6.1), and **no GAS claim ever authors an entry** — the adapter identifies and gates, the Ledger Core posts. This separation is part of I9.
+
+## Honest caveats
+
+The Ledger Core is the most mature and most verifiable layer precisely because it is austere; its correctness is a precondition for everything above it, which is why it is built and audited *first* and why the formal-verification tier (5.1) targets its conservation and append-only properties before anything else.

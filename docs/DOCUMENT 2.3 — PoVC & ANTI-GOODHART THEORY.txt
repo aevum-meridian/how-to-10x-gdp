@@ -1,0 +1,42 @@
+# DOCUMENT 2.3 — PoVC & ANTI-GOODHART THEORY
+### Formalizing the Gap Between the Virtue and Its Measure
+
+**System:** Meridian · **Tier:** 2 · **Maturity:** Research · **© Maher**
+
+## 0. The problem Goodhart names
+
+"When a measure becomes a target, it ceases to be a good measure." A contribution credit mints from a *measured proxy* of a *real virtue* — TIC measures attested honesty, VTC measures attested vitality behavior. The instant a credit has value, people optimize the proxy, and the proxy drifts from the virtue. A behavior-based currency that does not formally confront Goodhart will, with certainty, end up rewarding the gaming of its proxies rather than the virtues it was built to honor. This document formalizes the gap and the defense.
+
+## 1. The three signals
+
+For each contribution credit `c`, define three things explicitly in its specification bundle:
+
+The **declared virtue** `Φ_c` — the real human good the credit honors (e.g., honesty). It is, by nature, not directly measurable; if it were, there would be no Goodhart problem.
+
+The **measured proxy** `M_c` — what the attestation actually measures (e.g., attested honest acts). This is what mints credits.
+
+An **independent virtue signal** `S_c` — one or more *separate*, *not-minting* signals correlated with the virtue but not used to award credits (e.g., third-party trust ratings, downstream outcomes, audit samples). `S_c` is the model's window onto whether the proxy still tracks the virtue.
+
+## 2. The divergence metric
+
+Goodhart drift is the growing gap between the proxy and the independent signal. Define the divergence at epoch `t` as a normalized discrepancy between the trend of `M_c` and the trend of `S_c`:
+`D_c(t) = dist( normalize(ΔM_c(t)), normalize(ΔS_c(t)) )`
+where `dist` is a chosen statistical distance (the implementation may use a normalized difference of growth rates, or a divergence of distributions). When the proxy rises while the independent signal does not — `ΔM_c ≫ ΔS_c` — `D_c(t)` grows. That growth is the mathematical fingerprint of gaming: the measure is rising, the virtue is not.
+
+## 3. The throttle (issuance-only, never balances)
+
+When `D_c(t)` exceeds a governed threshold `D*_c`, the Goodhart throttle reduces *future issuance*: `θ_c(t) = f(D_c(t))`, a monotone-decreasing function with `f(D ≤ D*) = 1` (no throttle below threshold) and `f → 0` as divergence grows. This `θ_c(t)` is exactly the term that enters the supply function in document 2.1 §2.3: `mint_c(a,t) ≤ ρ_c · g(v_a(t)) · θ_c(t)`.
+
+**The critical theorem (the I6/I7 guarantee, restated mathematically).** The throttle appears *only* as a multiplier on `mint_c` — the flow of *new* credits. It appears in *no* term that affects `B_c` — the *stock* of existing credits. Therefore, no matter how severe the detected gaming, the system's only response is to **mint fewer new credits**, never to **take existing ones**. A person who earned credits honestly before a proxy was later gamed by others keeps every credit. This is the mathematical proof that anti-Goodhart enforcement cannot become punishment: the defense acts on the faucet, never on the reservoir. ∎
+
+## 4. Why measuring outputs not bodies resists gaming
+
+A design principle with a mathematical consequence: proxies based on *verifiable outputs* (work produced, acts attested by independent quorum) have an independent-signal `S_c` that is comparatively cheap to obtain and hard to fake at quorum scale, keeping `D_c` observable. Proxies based on *measured bodies or attention* (the retired $FOCUS, any biometric proxy) have an `S_c` that is expensive, invasive, or impossible to obtain without the very surveillance the project forbids — so divergence becomes undetectable, and the credit becomes ungovernable as well as unethical. This is a second, independent reason (beyond I8 and child-safety) that the project measures outputs, not bodies: output-proxies are *governable against Goodhart*; body-proxies are not.
+
+## 5. The proxy-divergence catalogue (the live artifact)
+
+Document 9.3 is the operational form of this theory: per credit, a live-monitored record of `Φ_c` (declared virtue), `M_c` (measured proxy), `S_c` (independent signal), `D_c(t)` (current divergence), and `D*_c` (threshold). It is published so the body's self-honesty about its own credits is auditable — the system continuously asks itself "are my measures still tracking my virtues?" and shows the answer.
+
+## 6. Honest caveats
+
+The independent signal `S_c` is the linchpin and the weak point: if no genuinely independent signal of a virtue exists, the credit's Goodhart drift is *undetectable*, and such a credit should not be minted at all — better no credit than an ungovernable one. The threshold `D*_c` and the throttle function `f` are empirical and must be calibrated in the simulation sandbox (the adversarial scenario specifically hunts for how fast a proxy can be gamed before the throttle reacts). And the deepest limit: anti-Goodhart enforcement can stop a credit from being *minted* when its meaning erodes, but it cannot *restore* a virtue's meaning once a proxy is thoroughly gamed — at that point the honest act is to deprecate the credit (mark it Deprecated in the maturity ledger) rather than pretend the proxy still measures anything. The theory defends the faucet; it cannot purify a poisoned reservoir, and it does not claim to.

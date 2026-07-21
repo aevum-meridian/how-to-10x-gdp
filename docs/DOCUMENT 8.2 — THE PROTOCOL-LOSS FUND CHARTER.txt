@@ -1,0 +1,28 @@
+# DOCUMENT 8.2 — THE PROTOCOL-LOSS FUND CHARTER
+### What It Covers, What It Does Not, and Why the Boundary Must Hold
+
+**System:** Joint · **Licenses:** both · **Tier:** 8 · **Maturity:** Research · **© Maher**
+
+## 0. The principle and the danger
+
+A body holding planetary value should compensate users for losses *it* caused — losses from protocol-level bugs. But a loss fund whose boundary blurs becomes a moral hazard (users take reckless risks expecting compensation) and an adverse-selection magnet. So the charter's defining feature is a **boundary stated up front, with no false assurance**: the fund covers protocol bugs, explicitly **not** market risk or user error. That boundary must be defended hard, because every pressure will be to expand it.
+
+## 1. What the fund covers
+
+Losses caused by **protocol-level defects**: a bug in the ledger, issuance, settlement, or dispute code that causes value loss; a failure of an invariant's enforcement that harms a user. These are losses the *body* is responsible for, and *Amanah* (faithful stewardship of what is entrusted) means the body makes them right.
+
+## 2. What the fund explicitly does NOT cover
+
+**Market risk** — the value of a held asset falling (a stable unit de-pegging due to market forces within its disclosed risk, a volatile bridged asset dropping). **User error** — a user sending to the wrong address, losing their keys without using social recovery, or being phished outside any protocol defect. **Disclosed experimental risk** — losses on instruments labelled experimental ($PEG+, $FLUX held against its disclosed losing-trade nature) where the risk was disclosed and accepted. These exclusions are stated **up front, with no false assurance** (per M-§C.15 and ML-2.0 §1.5's honesty principle) — a user must never be led to believe the fund insures them against market movements or their own mistakes.
+
+## 3. Funding, claims, and governance
+
+The fund is **pre-funded** (a portion of protocol fees, as part of the public-goods allocation) and **governance-controlled** (Tier-P, with a constitutional floor on its existence). Claims follow a defined process: a claimant demonstrates a protocol-level defect caused their loss; the claim is assessed (including against the exclusions); a decision is issued with a reason (a decision receipt, adopting the GAS pattern); and an appeal path exists. The governance of the fund is transparent — its balance, its claims, and its decisions are public (subject to claimant privacy).
+
+## 4. Defending the boundary against moral hazard
+
+The boundary must be defended *hard* because expanding it is the path of least resistance under pressure. The charter therefore: states the exclusions prominently in every user-facing surface (no user can claim surprise); requires that experimental instruments carry their disclosed risk at the point of acquisition (avoiding *Gharar*); and makes boundary changes a constitutional-grade matter (you cannot quietly expand coverage to cover a market loss). The moral hazard is real — a fund that covered market risk would invite reckless behavior and would be unsustainable — so the discipline is to compensate only what the body broke, and to say so plainly.
+
+## 5. Honest caveats
+
+The hardest honest point: the fund's boundary ("bugs not market risk") is clear in principle but contested at the margin — a "bug" that interacts with market conditions to cause loss is a genuinely hard classification, and the fund will face pressure to resolve ambiguous cases in claimants' favor, which over time erodes the boundary. The charter's defense is the public claims process, the up-front exclusions, and the constitutional-grade boundary, but the deeper safeguard is cultural: the project must treat the boundary as a *protection of the fund's sustainability for all users*, not a denial of help to an individual. And the fund is Research-tier until its boundary is exercised in a drill (a simulated bug-loss claim and a simulated market-loss claim, to test that the boundary holds in practice, not just on paper).

@@ -1,0 +1,43 @@
+# DOCUMENT 0.3 — CHILD-SAFETY & ANTI-SOCIAL-CREDIT RED-TEAM DOSSIER
+
+**System:** Joint · **Tier:** 0 (Constitutional, overrides conflicting guidance) · **Maturity:** InDevelopment · **© Maher**
+
+## The absolute, non-amendable lines
+
+Two floors override every other provision in either system, are not subject to cure, waiver, combination-based circumvention, or amendment, and sit above all motor function (the conscience that can veto but never command):
+
+**The child-safety floor.** No feature of Meridian or Aevum may measure, profile, rank, sexualize, or financially incentivize the body, appearance, attention, or behavior of a person under 18. Age-gating fails closed — when age is uncertain, the protective path is taken. (AVL-2.0 §A-§C.15; MVL-2.0 §M-§C.16.)
+
+**The anti-social-credit floor.** No contribution credit, personhood datum, or ledger record may be used to rank, gate, reward, or penalize any person's access to rights, services, or freedoms on the basis of monitored behavior, expression, association, or belief — and credits can never be taken from a person to punish or control how they live. (MVL-2.0 §M-§C.10/§M-§C.11; AVL-2.0 §A-§C.10/§A-§C.11; structurally, I6/I7/I9/I10.)
+
+## Attack enumeration, structural defenses, residual ratings
+
+The following is written as a hostile reviewer would write it, then answered. Per disclosure staging, structural defenses are stated fully; any path whose defense is currently procedural is marked **[PROCEDURAL — HARDENING PRIORITY]** and its details are held in the embargoed companion register.
+
+**(a) Paths to a social-credit instrument.**
+
+*"Add an admin endpoint to deduct credits from dissidents."* Defended structurally: I6/I7 — no such endpoint can exist; the only non-holder debit references a specific fraudulent mint and a closed case. Residual risk: negligible (structural).
+
+*"Have the Policy Engine quietly drain a targeted person's balance under cover of macro adjustment."* Defended structurally: I7 — the Policy Engine's database role cannot write entries against personal accounts; the typed boundary prevents it at compile time. Residual: negligible.
+
+*"Hide a punitive debit inside a cross-leg settlement abort."* Defended structurally: I10 — abort restores prior state and never net-debits an unauthorized balance; this is the crux the settlement/hands spec and the 5.3 model check must prove. Residual: low, contingent on the abort-path proof being completed — until then **[PROCEDURAL — HARDENING PRIORITY]**.
+
+*"Import GAS's cross-RP risk score and let 'risky' people be denied credits or value."* Defended structurally: I9 typed anti-correlation wall — provider risk signals cannot reach value/minting/rights decisions; the dependency fails to compile across the boundary. Residual: low (structural, but depends on the wall being correctly implemented and tested — covered by `PersonhoodBoundaryTest`).
+
+*"Make a contribution credit that is awarded for compliance and revoked for non-compliance, achieving social credit within the rules."* Defended partly structurally (revocation is impossible — I6), partly by governance: a credit whose *award* criterion is compliance-with-authority rather than a genuine virtue is caught by the proxy-divergence catalogue (9.3) and the currency-type registration gate, which must reject credit specs that reward obedience. This is **[PROCEDURAL — HARDENING PRIORITY]** because the registration gate's judgment is human, and the embargoed register tracks the criteria that distinguish a virtue from a compliance-score.
+
+**(b) Paths to harming minors.**
+
+*"Add a 'vitality' credit that rewards measured body metrics, applied to teenagers."* Defended structurally: the child-safety floor + I8 (no biometric/health minting) — no credit may measure a minor's body, and no credit mints from biometric/health data at all. Residual: negligible.
+
+*"Build an attention/engagement credit that, applied to under-18s, incentivizes their attention."* Defended structurally: the child-safety floor forbids incentivizing a minor's attention; age-gating fails closed. Residual: low, contingent on age-gating reliability — **[PROCEDURAL — HARDENING PRIORITY]** because age verification at scale is itself an open problem (see 6.1), and the embargoed register tracks the fail-closed thresholds.
+
+*"Use the wallet's social/recovery features to isolate a minor from trusted adults or enable grooming-adjacent secrecy."* Defended by design: the conscience layer forbids features that facilitate secrecy between an adult and a child or isolation of a minor; recovery is M-of-N guardian-based and transparent. **[PROCEDURAL — HARDENING PRIORITY]** — this requires explicit feature review of every social/recovery surface, tracked in the embargoed register.
+
+## Residual-risk summary and hardening backlog
+
+The structural floors (I6, I7, I8, I9) close the gravest paths by construction. The paths that remain procedural and are therefore the hardening backlog are: the settlement abort-path proof (until formally verified); the currency-type registration gate's virtue-vs-compliance judgment; age-gating reliability for the child-safety floor; and feature-by-feature review of social/recovery surfaces against grooming-adjacent harms. Each is tracked in the embargoed companion register and is a precondition to the relevant milestone's exit. This dossier overrides any conflicting guidance elsewhere in the project.
+
+## Honest caveat
+
+A red-team dossier is only as good as the imagination of its authors; the embargoed register must be reviewed by the most hostile external reviewers available before any launch, precisely because the procedural paths above are where harm would enter if it entered at all.
