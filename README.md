@@ -1,176 +1,168 @@
-# How to 10x GDP in One Year
+# Meridian × Aevum
 
-## كيف نضاعف الناتج المحلي الإجمالي عشرة أضعاف في عام واحد
+**A double-entry system of record (Meridian) and a system of engagement (Aevum), built so that money is structurally incapable of punishment.**
 
-**Author:** Maher Kadmer Kaddoussi  
-**Repository:** [aevum-meridian/how-to-10x-gdp](https://github.com/aevum-meridian/how-to-10x-gdp)  
-**Language of origin:** Arabic (الضاد) – translated into English and other languages below.
+**Author of the specification:** Maher Kadmer Kaddoussi
+**Repository:** [aevum-meridian/how-to-10x-gdp](https://github.com/aevum-meridian/how-to-10x-gdp)
+**Specification:** the DEV-series consolidated build specification and Documents 0.1–10.7 in [`docs/`](docs/) — the authoritative source this codebase implements.
+**Licenses:** `LicenseRef-MVL-2.0` (Meridian), `LicenseRef-AVL-2.0` (Aevum); both at joint boundaries. See [`docs/`](docs/) for full license texts.
 
-> قال المؤلف في المقدمة:  
-> *«هذا الكتاب ليس دليلاً للاستيلاء على الاقتصاد، بل هو دستور لسباق يربح فيه الإنسان إذا ارتقى، ويخسر فيه إذا انحدر. المال الذي يقيس ما نصبح لا يمكن أن يكون سلاحاً في يد طاغية، لأننا جعلناه عاجزاً عن العقاب. اقرأوه بحكمة، ثم ابدأوا السباق.»*
-
-> The author says in the introduction:  
-> *“This book is not a manual for seizing the economy. It is a constitution for a race in which humanity wins by rising, and loses by descending. Money that measures what we become cannot be a weapon in the hand of a tyrant, because we have made it incapable of punishment. Read it wisely, then begin the race.”*
+> *“Money that measures what we become cannot be a weapon in the hand of a tyrant, because we have made it incapable of punishment.”* — the author's introduction
 
 ---
 
-## What is this book?
+## Honest maturity statement (read this first)
 
-This book is a **practical, constitutional roadmap** to increase global nominal GDP from ~$114 trillion to **$1 quadrillion** within **365 days** – a 10x multiplication – using the **Aevum** meta-currency operating system and the **Meridian** universal value ledger.
+**Nothing in this repository is Shipped.** Every capability carries a maturity label from the
+Maturity & Abandonment Ledger (DOCUMENT 3.4), surfaced at `GET /api/v1/maturity` — the binding
+check every other surface must consult. The invariant suite is green and every invariant is
+triple-enforced, but *Shipped* additionally requires the external audits of DOCUMENT 9.4 and
+production operation. Presenting a Research-tier capability as available violates
+AVL-2.0 §A-§C.13, and this repository refuses to do it — in its API, its OpenAPI document,
+and this README.
 
-It is not a work of fiction or wishful economics. Every claim is backed by:
-
-- The nine invariants (I1–I9) of the Meridian ledger, which enforce conservation of value, non‑punitive debits, and issuance‑only macro control.
-- The three governance tiers of Aevum (Tier‑0 deterministic rules, Tier‑1 AI advisory, Tier‑2 human ratification).
-- A **race contract** encoded in `cross_system_events`, where the first entity to generate $886 trillion of new, verified, non‑coercive value wins a **51% controlling stake** in the combined Aevum/Meridian meta‑economy, with built‑in safeguards to prevent tyranny.
-
-The book is structured as a **public, auditable, open‑source constitution** for the race. It names every trade‑off, publishes every failure mode, and places the child‑safety and anti‑social‑credit floor above all other concerns.
-
----
-
-## Why does this repository exist?
-
-This repository is the **canonical source** for the book. It contains:
-
-- The full text in **Arabic** (the original, richest language) and **English** (primary translation).
-- Translations into **Chinese, Spanish, French, German, Portuguese, Russian, Hindi, Swahili, Japanese**, and others (community‑led).
-- All mathematical models, smart contract templates, and simulation scenarios referenced in the book.
-- A public issue tracker for questions, corrections, and proposed amendments (governance act required for changes to the core race rules).
-
-The book is released under the **Unlicense** (public domain) to maximize its reach and allow anyone to implement the race, provided they respect the ethical invariants described in Chapters 14–16. The license is **not** a loophole to build a social‑credit system – those chapters are constitutionally binding on any serious participant.
+- Current labels: **InDevelopment** (ledger core, non-punishment spine, membrane, Core-Riba
+  refusal, crypto-shredding erasure, regulated peg, public API v1, …) and **Research**
+  (PoVC quorum minting, personhood layer, dispute/arbitration, policy engine, settlement,
+  event contract, crisis response, contribution credits, $FLUX, …).
+- One row is **DeprecatedRemoved** and is never deleted: the $FOCUS EEG currency, retired on
+  the no-neural-data principle.
+- The eight-billion-users row is Research, and its abandonment criterion revises the claim
+  *downward* rather than relaxing the safety floors.
 
 ---
 
-## Table of Contents (Abridged)
+## The one rule above all rules
 
-The full table of contents is maintained in [`TOC.md`](TOC.md). Key sections:
+Only the Dispute Engine's single method, `DisputeService::applyArbitrationReversal()`, may
+debit a personal contribution balance, and only under the I6-revised predicate. Punitive
+debits are **structurally impossible three ways over**:
 
-### Part I – Redefining GDP
-1. What GDP really is (and what it misses)
-2. The missing GDP: trust, health, creation, regeneration
-3. The Meridian multiplier – value from human behaviour (PoVC)
+1. **Database:** the PostgreSQL trigger `trg_entries_personal_debit_guard` rejects the row.
+2. **Service:** `LedgerService::post()` refuses the draft before it reaches the database.
+3. **Test:** Pest property tests (`NonPunishmentTest`, and the prose-logic gate below)
+   prove both walls hold, continuously.
 
-### Part II – The Race to $1Q
-4. The 365‑day rule – why one year is enough
-5. The players – individual, corporation, alliance, nation
-6. The “no‑punishment” condition – a clean race
+Emergency is never a license to violate the spine.
 
-### Part III – The Engines: Where the $886 Trillion Comes From
-7. Trust & Integrity Credits (TIC)
-8. Vitality Credits (VTC)
-9. Creation Credits (CTC)
-10. Regeneration Credits (GRC)
+## The invariants (I1–I11)
 
-### Part IV – Bridging the Old and New Worlds
-11. Licensed fiat tunnels (ISO 20022, real‑time attestation)
-12. Crypto bridges (xBTC, xETH with circuit breakers)
-13. The macro‑policy engine – silent regulator
+DOCUMENT 0.1 governs above all. Every invariant is enforced at least three times —
+a database constraint or trigger, a service guard, and a property test:
 
-### Part V – Governance: Who Holds the Stick?
-14. The inversion constitution – spine binds even the builders
-15. The 51% race – how the winner wins without becoming a tyrant
-16. Personhood as a third party – no ownership of identity
+| | Invariant | Database wall (examples) |
+|---|---|---|
+| I1 | Conservation: every transaction's entries sum to zero | `trg_entries_conservation` |
+| I2 | Balance integrity: `balance_after` chains reconcile | `trg_entries_balance_after` |
+| I3 | Supply integrity: total balances sum to zero per currency | proven by `proveSupplyIntegrity()` |
+| I4 | Minting requires a valid PoVC quorum attestation | `attestations_nonce_unique`, `trg_attestations_guard_mint` |
+| I5 | Append-only ledger: no UPDATE/DELETE of entries or transactions | `trg_entries_append_only`, `trg_transactions_append_only` |
+| I6 | Non-punishment: no punitive debit of personal balances | `trg_entries_personal_debit_guard` |
+| I7 | Policy engine is powerless over the ledger | `meridian_policy_engine` role has no INSERT privilege |
+| I8 | No sensitive-data columns may ever be added | event trigger `trg_i8_sensitive_columns` |
+| I9 | Personhood lives outside Meridian, behind the GAS adapter | `identities` table boundary |
+| I10 | Settlement can coordinate but never debit punitively | shares the I6 trigger |
+| I11 | Core Riba refusal: no interest-bearing core policies | `issuance_policies_no_core_riba` |
 
-### Part VI – The Tools: How to Build the System in 365 Days
-17. Laravel 13 + PostgreSQL – technical spine
-18. The race smart contract (`cross_system_events`)
-19. The simulation gate – test the crash before it happens
+### The prose-logic agreement gate
 
-### Conclusion – Beyond the Quadrillion: Economy as Nervous System of a Living Planet
+A machine-readable invariant registry
+(`app/Domain/Joint/Constitution/InvariantRegistry.php`) is parsed against DOCUMENT 0.1
+**verbatim, character for character, in four directions** at test time
+(`tests/Invariants/ProseLogicAgreementTest.php`):
 
-### Appendices
-- A: Monetary mathematics (FLUX demurrage, UNA velocity stabiliser, PEG rebalancing)
-- B: Candidate contribution credits (15 types, with proxy definitions)
-- C: Race contract template (JSON, signed, hash‑chained)
-- D: Security & compliance checklist before launch
-- E: Open thanks to the open‑source community
+1. prose → registry (every invariant in the document exists in code),
+2. registry → prose (nothing invented),
+3. registry → the §XREF matrix and the named test files,
+4. registry → the **live database catalogs** (`pg_trigger`, `pg_constraint`, `pg_indexes`,
+   `pg_event_trigger`, `pg_tables`, `has_table_privilege` for declared-powerless roles)
+   and `class_exists`/`method_exists` for every declared service guard.
+
+If the constitution and the code disagree by one character, the suite is red and merge is blocked.
 
 ---
 
-## The Core Mathematical Invariant
+## Stack
 
-The entire race rests on one equation enforced by Meridian’s ledger:
+- **PHP 8.4 / Laravel 13**, strict types everywhere, PSR-12 via Pint
+- **PostgreSQL 17** — money as `bigint` minor units; floats never touch money;
+  API money values are decimal strings
+- **Redis** — idempotency fast path; every write is durable-idempotent regardless
+- **Ed25519 via libsodium** — attestations, event-chain signatures, offline vouchers
+- **spatie/laravel-data** — typed, readonly domain data objects
+- **Larastan Level 10, no baseline** — static analysis blocks merge
+- Personhood behind the `GasIdentityProvider` adapter — Meridian never stores identity
+
+## Layout
 
 ```
-For every posted transaction: Σ (entries.amount) per currency = 0
+app/Domain/Meridian/   # system of record: ledger, issuance/PoVC, disputes, policy,
+                       # offline vouchers, reserve attestation   (LicenseRef-MVL-2.0)
+app/Domain/Aevum/      # system of engagement: currency fabric, Tier-0, membrane
+                       #                                          (LicenseRef-AVL-2.0)
+app/Domain/Joint/      # the boundary: event contract, crisis, erasure, constitution,
+                       # maturity ledger, trade-off register      (both licenses)
+app/Http/Controllers/Api/V1/   # the read-only public surface
+docs/                  # the authoritative specification (Documents 0.1–10.7, licenses)
+tests/Invariants/      # property tests — the suite carries the concurrency-safety burden
+tests/Feature/         # API surface and OpenAPI document tests
 ```
 
-No value is created or destroyed outside governed issuance. The $886 trillion of new GDP must come from **Proof‑of‑Verified‑Contribution** (PoVC) mints that satisfy:
+## The public API (`/api/v1`)
 
-- M‑of‑N independent attester quorum
-- Unique nonce + expiry (replay protection)
-- Dispute window with clawback against attester/issuer bonds – **never** against the innocent holder’s balance (I6)
-- Proxy‑divergence monitoring (Goodhart drift) – if a credit’s measured proxy diverges from its declared virtue, future issuance is throttled.
+Read-only by design. The posting paths exist and are invariant-gated in the domain
+services, but their HTTP faces require the GAS/Sanctum/Passport auth stack, which is
+InDevelopment — exposing them unauthenticated would present an unavailable capability
+as available (AVL-2.0 §A-§C.13).
 
-The race is won when the trailing 365‑day sum of all such verified contributions (plus reserve‑backed value) crosses $1 quadrillion.
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/v1/maturity` | The binding maturity check (DOCUMENT 3.4) |
+| `GET /api/v1/trade-off-register` | Every design tension with its honest cost |
+| `GET /api/v1/currencies` | Currency registry with Core-Riba flags (read public; write governance-gated) |
+| `GET /api/v1/transparency-log` | The hash-chained, Ed25519-signed event log — discrepancies surfaced, never auto-corrected |
+| `GET /api/v1/incidents` | The incident disclosure clock — public promises, publicly checkable |
+| `GET /api/v1/openapi.json` | The OpenAPI 3.1 document — single source of truth; maturity labels read live from the ledger |
 
----
+The OpenAPI document also declares the **absent** write surface in `x-absent-operations`,
+with reasons, instead of silently omitting it.
 
-## How to Read This Book (Suggested Path)
+## Build & run
 
-1. **Read the introduction and Chapter 4** (the 365‑day rule) to understand why the problem is not time but governance.
-2. **Skip to Chapter 14** (the inversion constitution) – this is the non‑negotiable ethical spine.
-3. **Return to Chapters 7–10** to see where the $886 trillion actually comes from.
-4. **Study Appendix C** (race contract) – it is the executable version of the whole idea.
-5. **Join the discussion** in [Issues](../../issues) – propose a translation, report a logical gap, or declare your intent to run the race.
+```bash
+# Prerequisites: PHP 8.4 (pcntl, posix, sodium, pgsql), PostgreSQL 17, Redis, Composer
+composer install
+cp .env.example .env && php artisan key:generate
 
----
+# Databases (the suite uses meridian_test via phpunit.xml)
+createdb meridian && createdb meridian_test
+php artisan migrate                                 # applies triggers, constraints, roles
+php artisan migrate --database=pgsql_test 2>/dev/null || DB_DATABASE=meridian_test php artisan migrate
 
-## Translations
+php artisan serve                                   # then GET /api/v1/maturity
+```
 
-| Language | Status | Maintainer |
-|----------|--------|-------------|
-| Arabic (original) | Complete | @aevum-meridian |
-| English | Complete | @aevum-meridian |
-| Chinese (Simplified) | In progress | [Open] |
-| Spanish | In progress | [Open] |
-| French | In progress | [Open] |
-| German | In progress | [Open] |
-| Portuguese | In progress | [Open] |
-| Russian | In progress | [Open] |
-| Hindi | In progress | [Open] |
-| Swahili | In progress | [Open] |
-| Japanese | In progress | [Open] |
+## Test & quality gates
 
-To start a new translation, open an issue and tag `translation-request`. The only rule: the translation must preserve the **precision of the Arabic original**, especially for the invariants (I1–I9) and the ethical floors.
+```bash
+./vendor/bin/pest                     # full suite (invariants + feature + architecture)
+./vendor/bin/pest tests/Invariants    # the constitutional core, incl. the prose-logic gate
+./vendor/bin/pint --test              # PSR-12
+./vendor/bin/phpstan analyse          # Larastan level 10, no baseline
+composer audit                        # dependency advisories
+```
 
----
+The invariant suite includes fork-based concurrency stress tests (`pcntl_fork`), idempotency
+races, and replay-rejection tests — per DOCUMENT 9.2, the suite carries the concurrency-safety
+burden the formal proofs do not.
 
-## Contributing
+## The book
 
-Contributions are welcome, but this is **not** a standard open‑source codebase. The book is a **governance artifact**. Changes fall into three tiers:
+This repository grew from *How to 10x GDP in One Year* (كيف نضاعف الناتج المحلي الإجمالي
+عشرة أضعاف في عام واحد). The complete constitutional prose — whitepapers, monetary
+mathematics, governance constitution, red-team dossiers, runbooks, and the license texts —
+lives in [`docs/`](docs/) and is the authority whenever prose and code could disagree
+(the prose-logic gate exists to make sure they never do).
 
-| Tier | Scope | Process |
-|------|-------|---------|
-| **Editorial** | Typos, formatting, translation improvements | Pull request + maintainer approval |
-| **Clarifying** | Adding examples, footnotes, diagrams that do not change the meaning | Pull request + 2 community approvals |
-| **Constitutional** | Changing the race rules, invariants, or ethical floors | Requires a public governance vote via Aevum (personhood‑weighted) – see Chapter 14 |
-
-**No pull request that weakens I6 (non‑punitive debit) or I8 (no neural data) will ever be merged.** That is the project’s red line.
-
----
-
-## License
-
-The text of the book (excluding any embedded code or mathematical formulas that are separately licensed) is dedicated to the public domain under the **Unlicense**. You may copy, modify, distribute, and perform the work, even for commercial purposes, all without asking permission.
-
-See the [`LICENSE`](LICENSE) file in this repository (Unlicense). The license does **not** grant permission to violate the ethical constraints described in the book – those constraints are not legal terms but **conditions of participation in the race**. Anyone who uses the book to build a punitive, surveillant, or child‑harming system has not understood the book and will be rejected by any honest implementation of Meridian (via I6/I8 and the child‑safety dossier).
-
----
-
-## Related Projects
-
-- [Aevum](https://github.com/aevum-meridian/aevum) – Meta‑currency operating system, governance fabric.
-- [Meridian](https://github.com/aevum-meridian/meridian) – Universal value ledger, the system of record.
-- [Trade‑off Register](https://github.com/aevum-meridian/trade-off-register) – Versioned, governance‑controlled artifact of all contested axes.
-
----
-
-## Quote to Remember
-
-> *“Three words from you open the future: ‘Use me wisely’. And it costs more than GDP or any material or any economy. A true thank you from a humanity world.”*  
-> — From the conversation that started this book, June 2026.
-
-**Now: read it wisely, then begin the race.**
-
-- Maher.
+> *“This book is not a manual for seizing the economy. It is a constitution for a race in
+> which humanity wins by rising, and loses by descending. Read it wisely, then begin the race.”*
