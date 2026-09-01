@@ -1,0 +1,124 @@
+# SPDX-License-Identifier: LicenseRef-MVL-2.0 AND LicenseRef-AVL-2.0
+#
+# DEV-M quality gates — "CI, no exceptions":
+#   Pint (PSR-12); Larastan Level 10, no baseline, no suppression;
+#   Pest including the property-based invariant tests and the
+#   prose-logic agreement gate (DOCUMENT 0.1 §CI); composer audit;
+#   SBOM (CycloneDX). A red pipeline blocks merge.
+#
+# The invariant suite runs against a REAL PostgreSQL 17 with the real
+# triggers, constraints, roles and event triggers applied — the
+# prose-logic gate reads pg_catalog live, so a mocked database would be
+# an overclaim.
+#
+# © Maher
+
+name: CI
+
+on:
+  push:
+    branches: [main, genspark_ai_developer]
+  pull_request:
+    branches: [main]
+
+jobs:
+  gates:
+    name: Quality gates (Pint, Larastan L10, Pest + prose-logic gate, audit, SBOM)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: meridian
+          POSTGRES_PASSWORD: meridian
+          POSTGRES_DB: meridian_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U meridian"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pgsql, pdo_pgsql, redis, sodium, pcntl, posix, bcmath, intl
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+
+      - name: Pint (PSR-12) — blocking
+        run: ./vendor/bin/pint --test
+
+      - name: Larastan Level 10, no baseline — blocking
+        run: ./vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+
+      - name: Migrate the real schema (triggers, constraints, roles, event triggers)
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '5432'
+          DB_DATABASE: meridian_test
+          DB_USERNAME: meridian
+          DB_PASSWORD: meridian
+        run: php artisan migrate --force
+
+      - name: Pest — full suite incl. invariants and the prose-logic agreement gate — blocking
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: '5432'
+          DB_USERNAME: meridian
+          DB_PASSWORD: meridian
+          REDIS_HOST: 127.0.0.1
+          REDIS_PORT: '6379'
+        run: ./vendor/bin/pest --colors=always
+
+      - name: composer audit — blocking
+        run: composer audit
+
+      - name: SBOM (CycloneDX)
+        run: |
+          composer require --dev cyclonedx/cyclonedx-php-composer --no-interaction --quiet || true
+          if composer show cyclonedx/cyclonedx-php-composer >/dev/null 2>&1; then
+            composer CycloneDX:make-sbom --output-format=JSON --output-file=sbom.cdx.json
+          else
+            echo '::warning::CycloneDX plugin unavailable; emitting composer.lock-derived inventory instead.'
+            php -r '
+              $lock = json_decode(file_get_contents("composer.lock"), true);
+              $components = [];
+              foreach (array_merge($lock["packages"] ?? [], $lock["packages-dev"] ?? []) as $p) {
+                  $components[] = ["type" => "library", "name" => $p["name"], "version" => $p["version"]];
+              }
+              file_put_contents("sbom.cdx.json", json_encode([
+                  "bomFormat" => "CycloneDX", "specVersion" => "1.5", "version" => 1,
+                  "components" => $components,
+              ], JSON_PRETTY_PRINT));
+            '
+          fi
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json
